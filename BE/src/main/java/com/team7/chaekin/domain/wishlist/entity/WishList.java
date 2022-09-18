@@ -15,11 +15,11 @@ public class WishList {
     private Long id;
 
     //    member id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Member member;
 
     //    book id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Book book;
 
     private boolean isRemoved;

@@ -16,10 +16,10 @@ public class TodayBook extends BaseTimeEntity {
     private Long id;
 
 //    member id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Member member;
 
 //    book id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Book book;
 }
