@@ -16,10 +16,12 @@ public class WishList {
 
     //    member id
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     //    book id
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id")
     private Book book;
 
     private boolean isRemoved;
