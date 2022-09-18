@@ -3,7 +3,9 @@ package com.team7.chaekin.domain.reportlike.entity;
 import com.team7.chaekin.domain.common.entity.BaseTimeEntity;
 import com.team7.chaekin.domain.member.entity.Member;
 import com.team7.chaekin.domain.report.entity.Report;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -12,15 +14,15 @@ import javax.persistence.*;
 @Entity
 public class ReportLike extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "report_id")
+    @JoinColumn(name = "report_id", nullable = false)
     private Report report;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     private boolean isRemoved;
