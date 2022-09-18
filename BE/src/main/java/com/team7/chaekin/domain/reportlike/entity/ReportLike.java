@@ -7,8 +7,6 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Builder
-@AllArgsConstructor
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity

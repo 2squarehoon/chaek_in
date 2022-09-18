@@ -8,8 +8,6 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Builder
-@AllArgsConstructor
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -27,8 +25,9 @@ public class BookLog extends BaseTimeEntity {
     @JoinColumn(name = "book_id")
     private Book book;
 
-    @Column
-    private String read_status;
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char(8)")
+    private ReadStatus readStatus;
 
     @Column
     private LocalDate start_date;

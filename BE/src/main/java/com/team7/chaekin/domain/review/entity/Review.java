@@ -6,8 +6,6 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Builder
-@AllArgsConstructor
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -24,9 +22,9 @@ public class Review extends BaseTimeEntity {
     @Column
     private Double score;
 
-    @Column
+    @Column(length = 1000)
     private String comment;
 
     @Column
-    private Boolean isRemoved;
+    private boolean isRemoved;
 }

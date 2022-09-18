@@ -6,8 +6,6 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Builder
-@AllArgsConstructor
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -21,12 +19,12 @@ public class Memo extends BaseTimeEntity {
     @JoinColumn(name = "booklog_id")
     private BookLog bookLog;
 
-    @Column
+    @Column(length = 10)
     private String color;
 
-    @Column
+    @Column(length = 1000)
     private String content;
 
     @Column
-    private Boolean isRemoved;
+    private boolean isRemoved;
 }

@@ -6,8 +6,6 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Builder
-@AllArgsConstructor
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -21,15 +19,15 @@ public class Report extends BaseTimeEntity {
     @JoinColumn(name = "booklog_id")
     private BookLog bookLog;
 
-    @Column
+    @Column(length = 100)
     private String title;
 
-    @Column
+    @Column(length = 10000)
     private String content;
 
     @Column
     private int like;
 
     @Column
-    private Boolean isRemoved;
+    private boolean isRemoved;
 }
