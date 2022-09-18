@@ -8,11 +8,9 @@ import lombok.*;
 import javax.persistence.*;
 
 @Getter
-@Builder
 @Entity
 @Table(name = "")
 @NoArgsConstructor
-@AllArgsConstructor
 public class TodayBook extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

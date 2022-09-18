@@ -7,11 +7,9 @@ import lombok.*;
 import javax.persistence.*;
 
 @Getter
-@Builder
 @Entity
 @Table(name = "")
 @NoArgsConstructor
-@AllArgsConstructor
 public class WishList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
