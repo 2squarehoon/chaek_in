@@ -12,7 +12,6 @@ import java.util.Date;
 @NoArgsConstructor
 public class Book {
     @Id
-    @Column(columnDefinition = "bigint(20)")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -34,17 +33,16 @@ public class Book {
     private String cover;
 
     //    카테고리 id
-    @ManyToOne(targetEntity = Category.class, fetch = FetchType.LAZY)
-    private Category categoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @Column(length = 50)
     private String publisher;
 
-    @Column(columnDefinition = "int(11)")
     private int page;
 
     private double ratingScore;
 
-    @Column(columnDefinition = "int(11)")
     private int ratingCount;
 }
