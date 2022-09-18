@@ -11,13 +11,13 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Member extends BaseTimeEntity {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 255)
+    @Column(length = 255, nullable = false)
     private String identifier;
 
-    @Column(length = 45)
+    @Column(length = 45, nullable = false)
     private String nickname;
 
     @Column(length = 45)
@@ -26,7 +26,7 @@ public class Member extends BaseTimeEntity {
     private int age;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "char(6)")
+    @Column(columnDefinition = "char(6) NOT NULL")
     private Gender gender;
 
     private boolean isRemoved;

@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class ReportComment extends BaseTimeEntity {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,7 +33,7 @@ public class ReportComment extends BaseTimeEntity {
     @OneToMany(mappedBy = "parent")
     private List<ReportComment> children = new ArrayList<>();
 
-    @Column(length = 1000)
+    @Column(length = 1000, nullable = false)
     private String content;
 
     private boolean isRemoved;

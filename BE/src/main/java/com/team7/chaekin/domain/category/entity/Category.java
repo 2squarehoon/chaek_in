@@ -6,24 +6,22 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "category")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category {
     @Id
-    @Column(columnDefinition = "bigint(20)")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 70)
+    @Column(nullable = false, length = 70)
     private String cid;
 
-    @Column(length = 70)
+    @Column(nullable = false, length = 70)
     private String name;
 
-    @Column(columnDefinition = "char(4)")
+    @Column(nullable = false, columnDefinition = "char(4)")
     private String mall;
 
-    @Column(length = 70)
+    @Column(nullable = false, length = 70)
     private String depth1;
 
     @Column(length = 70)

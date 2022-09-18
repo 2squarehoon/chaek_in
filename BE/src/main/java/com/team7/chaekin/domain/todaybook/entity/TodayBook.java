@@ -9,18 +9,17 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TodayBook extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
 //    member id
-    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
-    private Member memberId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
 
 //    book id
-    @ManyToOne(targetEntity = Book.class, fetch = FetchType.LAZY)
-    private Book bookId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Book book;
 }

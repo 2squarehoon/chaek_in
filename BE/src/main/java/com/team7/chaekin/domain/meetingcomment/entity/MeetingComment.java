@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 public class MeetingComment extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,7 +34,7 @@ public class MeetingComment extends BaseTimeEntity {
     @OneToMany(mappedBy = "parent")
     private List<MeetingComment> children = new ArrayList<>();
 
-    @Column(length = 500)
+    @Column(length = 500, nullable = false)
     private String content;
 
     private boolean isRemoved;

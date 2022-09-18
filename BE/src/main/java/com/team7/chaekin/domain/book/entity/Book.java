@@ -9,11 +9,9 @@ import java.util.Date;
 
 @Getter
 @Entity
-@Table(name = "book")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Book {
     @Id
-    @Column(columnDefinition = "bigint(20)")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -34,18 +32,17 @@ public class Book {
     @Column(length = 1000)
     private String cover;
 
-    //    카테고리 id
-    @ManyToOne(targetEntity = Category.class, fetch = FetchType.LAZY)
-    private Category categoryId;
+    //    카테고리 id, null 허용
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @Column(length = 50)
     private String publisher;
 
-    @Column(columnDefinition = "int(11)")
     private int page;
 
     private double ratingScore;
 
-    @Column(columnDefinition = "int(11)")
     private int ratingCount;
 }
