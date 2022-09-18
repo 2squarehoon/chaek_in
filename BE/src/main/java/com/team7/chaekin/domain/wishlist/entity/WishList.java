@@ -8,7 +8,6 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "")
 @NoArgsConstructor
 public class WishList {
     @Id

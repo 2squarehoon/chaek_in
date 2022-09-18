@@ -6,7 +6,6 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "category")
 @NoArgsConstructor
 public class Category {
     @Id

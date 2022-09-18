@@ -9,7 +9,6 @@ import java.util.Date;
 
 @Getter
 @Entity
-@Table(name = "book")
 @NoArgsConstructor
 public class Book {
     @Id

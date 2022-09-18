@@ -9,7 +9,6 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "")
 @NoArgsConstructor
 public class TodayBook extends BaseTimeEntity {
     @Id
