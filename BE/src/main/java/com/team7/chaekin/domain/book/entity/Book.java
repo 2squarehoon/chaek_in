@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,8 +32,8 @@ public class Book {
     @Column(length = 1000)
     private String cover;
 
-    //    카테고리 id
-    @ManyToOne(fetch = FetchType.LAZY)
+    //    카테고리 id, null 허용
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id")
     private Category category;
 
