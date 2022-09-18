@@ -19,8 +19,10 @@ public class Meeting extends BaseTimeEntity {
     @JoinColumn(name = "book_id")
     private Book book;
 
+    @Column(length = 100)
     private String title;
 
+    @Column(length = 2000)
     private String description;
 
     private int capacity;

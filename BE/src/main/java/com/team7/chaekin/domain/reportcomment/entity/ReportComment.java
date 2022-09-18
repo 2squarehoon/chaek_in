@@ -33,7 +33,8 @@ public class ReportComment extends BaseTimeEntity {
     @OneToMany(mappedBy = "parent")
     private List<ReportComment> children = new ArrayList<>();
 
-    private String contents;
+    @Column(length = 1000)
+    private String content;
 
     private boolean isRemoved;
 }

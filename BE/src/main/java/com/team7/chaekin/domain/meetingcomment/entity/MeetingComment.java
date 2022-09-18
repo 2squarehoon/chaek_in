@@ -34,7 +34,8 @@ public class MeetingComment extends BaseTimeEntity {
     @OneToMany(mappedBy = "parent")
     private List<MeetingComment> children = new ArrayList<>();
 
-    private String contents;
+    @Column(length = 500)
+    private String content;
 
     private boolean isRemoved;
 }
