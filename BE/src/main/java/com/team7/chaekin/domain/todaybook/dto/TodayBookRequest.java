@@ -1,5 +1,8 @@
 package com.team7.chaekin.domain.todaybook.dto;
 
-public class BookLogRequest {
+import lombok.Data;
+
+@Data
+public class TodayBookRequest {
     private String isbn;
 }

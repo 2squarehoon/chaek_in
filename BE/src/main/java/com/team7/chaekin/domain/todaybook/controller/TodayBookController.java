@@ -1,33 +1,29 @@
 package com.team7.chaekin.domain.todaybook.controller;
 
-import com.team7.chaekin.domain.report.dto.*;
-import com.team7.chaekin.domain.todaybook.dto.AllBookLogListResponse;
-import com.team7.chaekin.domain.todaybook.dto.BookLogRequest;
-import org.springframework.data.domain.Pageable;
+import com.team7.chaekin.domain.todaybook.dto.TodayBookListResponse;
+import com.team7.chaekin.domain.todaybook.dto.TodayBookRequest;
+import com.team7.chaekin.domain.todaybook.dto.TodayBookSearchRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-
 @RestController
-@RequestMapping("api/v1/booklogs")
+@RequestMapping("api/v1/todaybooks")
 @CrossOrigin(origins = "*")
 public class TodayBookController {
 
     @GetMapping("")
-    public ResponseEntity<?> getAllReportList(@RequestParam long memberId, @RequestParam String period, @RequestParam Date date) throws Exception {
-        return ResponseEntity.ok(new AllBookLogListResponse());
+    public ResponseEntity<?> getTodayBookList(@RequestBody TodayBookSearchRequest todayBookSearchRequest) {
+        return ResponseEntity.ok(new TodayBookListResponse());
     }
 
     @PostMapping("")
-    public ResponseEntity<?> writeReport(@RequestBody BookLogRequest bookLogRequest) throws Exception {
+    public ResponseEntity<?> registerTodayBook(@RequestBody TodayBookRequest todayBookRequest) {
 
-        // ok만 보내주면 되나?
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{booklogId}")
-    public ResponseEntity<?> deleteReport(@PathVariable Long booklogId) throws Exception {
+    @DeleteMapping("/{todayBookId}")
+    public ResponseEntity<?> deleteTodayBook(@PathVariable Long todayBookId) {
         return ResponseEntity.noContent().build();
     }
 

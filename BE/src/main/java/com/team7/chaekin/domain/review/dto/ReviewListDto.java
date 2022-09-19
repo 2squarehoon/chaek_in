@@ -1,5 +1,8 @@
 package com.team7.chaekin.domain.review.dto;
 
+import lombok.Data;
+
+@Data
 public class ReviewListDto {
     private long reviewId;
     private String writer;

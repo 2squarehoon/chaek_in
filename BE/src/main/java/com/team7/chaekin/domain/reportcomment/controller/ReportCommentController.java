@@ -13,24 +13,24 @@ import org.springframework.web.bind.annotation.*;
 public class ReportCommentController {
 
     @GetMapping("/{reportId}/comments")
-    public ResponseEntity<?> getReportCommentList(@PathVariable Long reportId, Pageable pageable) throws Exception {
+    public ResponseEntity<?> getReportCommentList(@PathVariable long reportId, Pageable pageable) {
         return ResponseEntity.ok(new ReportCommentListResponse());
     }
 
     @PostMapping("/{reportId}/comments")
-    public ResponseEntity<?> writeReportComment(@RequestBody ReportCommentRequest reportCommentRequest) throws Exception {
+    public ResponseEntity<?> writeReportComment(@PathVariable long reportId, @RequestBody ReportCommentRequest reportCommentRequest) {
 
         return ResponseEntity.ok(new ReportCommentIdResponse());
     }
 
     @PatchMapping("/{reportId}/comments/{reportCommentId}")
-    public ResponseEntity<?> modifyReportComment(@RequestBody ReportCommentRequest reportCommentRequest) throws Exception {
+    public ResponseEntity<?> modifyReportComment(@PathVariable long reportId, @PathVariable long reportCommentId, @RequestBody ReportCommentRequest reportCommentRequest) {
 
         return ResponseEntity.ok(new ReportCommentIdResponse());
     }
 
     @DeleteMapping("/{reportId}/comments/{reportCommentId}")
-    public ResponseEntity<?> deleteReportComment(@PathVariable Long reportCommentId) throws Exception {
+    public ResponseEntity<?> deleteReportComment(@PathVariable long reportId, @PathVariable long reportCommentId) {
 
         return ResponseEntity.noContent().build();
     }

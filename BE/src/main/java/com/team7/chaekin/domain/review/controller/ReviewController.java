@@ -10,26 +10,26 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/v1/books")
 @CrossOrigin(origins = "*")
-public class RiviewController {
+public class ReviewController {
 
     @GetMapping("/{bookId}/reviews")
-    public ResponseEntity<?> getAllReViewList(@PathVariable long bookId, Pageable pageable) throws Exception {
+    public ResponseEntity<?> getAllReViewList(@PathVariable long bookId, Pageable pageable) {
         return ResponseEntity.ok(new AllReviewListResponse());
     }
 
     @PostMapping("/{bookId}/reviews")
-    public ResponseEntity<?> writeReview(@PathVariable long bookId, @RequestBody ReviewRequest reviewRequest) throws Exception {
+    public ResponseEntity<?> writeReview(@PathVariable long bookId, @RequestBody ReviewRequest reviewRequest) {
 
         return ResponseEntity.ok(new ReportIdResponse());
     }
 
     @PatchMapping("/{bookId}/reviews/{reviewId}")
-    public ResponseEntity<?> modifyReport(@PathVariable long bookId, @PathVariable Long reviewId, @RequestBody ReviewRequest reviewRequest) throws Exception {
+    public ResponseEntity<?> modifyReport(@PathVariable long bookId, @PathVariable long reviewId, @RequestBody ReviewRequest reviewRequest) {
         return ResponseEntity.ok(new ReportIdResponse());
     }
 
     @DeleteMapping("/{bookId}/reviews/{reviewId}")
-    public ResponseEntity<?> deleteReview(@PathVariable long bookId, @PathVariable Long reviewId) throws Exception {
+    public ResponseEntity<?> deleteReview(@PathVariable long bookId, @PathVariable long reviewId) {
         return ResponseEntity.noContent().build();
     }
 

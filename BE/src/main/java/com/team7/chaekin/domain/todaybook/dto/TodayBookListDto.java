@@ -1,7 +1,10 @@
 package com.team7.chaekin.domain.todaybook.dto;
 
-public class BookLogListDto {
-    private long booklogId;
+import lombok.Data;
+
+@Data
+public class TodayBookListDto {
+    private long TodayBookId;
     private String readDate;
     private long bookId;
     private String image;
