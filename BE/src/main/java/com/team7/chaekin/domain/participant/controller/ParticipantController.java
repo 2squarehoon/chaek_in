@@ -12,17 +12,17 @@ public class ParticipantController {
     private static int memberid = 1;
 
     @GetMapping("/{meetingId}/participants")
-    public ResponseEntity<ParticipantListResponse> getMeetingParticipants(@PathVariable int meetingId) {
+    public ResponseEntity<ParticipantListResponse> getMeetingParticipants(@PathVariable long meetingId) {
         return ResponseEntity.ok(new ParticipantListResponse());
     }
 
     @PostMapping("/{meetingId}/participants")
-    public ResponseEntity<ParticipantIdResponse> joinMeeting(@PathVariable int meetingId) {
+    public ResponseEntity<ParticipantIdResponse> joinMeeting(@PathVariable long meetingId) {
         return ResponseEntity.ok(new ParticipantIdResponse());
     }
 
     @DeleteMapping("/{meetingId}/participants/{participantId}")
-    public ResponseEntity<Void> getMeetingParticipants(@PathVariable int meetingId, @PathVariable int participantId) {
+    public ResponseEntity<Void> getMeetingParticipants(@PathVariable long meetingId, @PathVariable long participantId) {
         return ResponseEntity.ok().build();
     }
 

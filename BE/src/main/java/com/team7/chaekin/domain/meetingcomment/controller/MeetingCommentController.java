@@ -12,24 +12,24 @@ import org.springframework.web.bind.annotation.*;
 public class MeetingCommentController {
 
     @GetMapping("/{meetingId}/comments")
-    public ResponseEntity<MeetingCommentListResponse> getMeetingComments(@PathVariable int meetingId) {
+    public ResponseEntity<MeetingCommentListResponse> getMeetingComments(@PathVariable long meetingId) {
         return ResponseEntity.ok(new MeetingCommentListResponse());
     }
 
     @PostMapping("/{meetingId}/comments")
-    public ResponseEntity<MeetingCommentIdResponse> createMeetingComment(@PathVariable int meetingId,
+    public ResponseEntity<MeetingCommentIdResponse> createMeetingComment(@PathVariable long meetingId,
                                                 @RequestBody MeetingCommentCreateRequest CommentCreateRequest) {
         return ResponseEntity.ok(new MeetingCommentIdResponse());
     }
 
     @PatchMapping("/{meetingId}/comments/{meetingCommentId}")
-    public ResponseEntity<MeetingCommentIdResponse> updateMeetingComment(@PathVariable int meetingId,
+    public ResponseEntity<MeetingCommentIdResponse> updateMeetingComment(@PathVariable long meetingId,
                                                 @RequestBody MeetingCommentUpdateRequest commentUpdateRequest) {
         return ResponseEntity.ok(new MeetingCommentIdResponse());
     }
 
     @DeleteMapping("/{meetingId}/comments/{meetingCommentId}")
-    public ResponseEntity<Void> deleteMeetingComment(@PathVariable int meetingId) {
+    public ResponseEntity<Void> deleteMeetingComment(@PathVariable long meetingId) {
         return ResponseEntity.ok().build();
     }
 

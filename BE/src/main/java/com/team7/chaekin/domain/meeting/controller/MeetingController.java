@@ -17,7 +17,7 @@ public class MeetingController {
     }
 
     @GetMapping("/{meetingId}")
-    public ResponseEntity<MeetingDetailResponse> getMeetingDetail(@PathVariable int meetingId) {
+    public ResponseEntity<MeetingDetailResponse> getMeetingDetail(@PathVariable long meetingId) {
         return ResponseEntity.ok(new MeetingDetailResponse());
     }
 
@@ -27,13 +27,13 @@ public class MeetingController {
     }
 
     @PatchMapping("/{meetingId}")
-    public ResponseEntity<MeetingIdResponse> updateMeeting(@PathVariable int meetingId,
+    public ResponseEntity<MeetingIdResponse> updateMeeting(@PathVariable long meetingId,
                                            @RequestBody MeetingUpdateRequest meetingUpdateRequest) {
         return ResponseEntity.ok(new MeetingIdResponse());
     }
 
     @DeleteMapping("/{meetingId}")
-    public ResponseEntity<Void> deleteMeeting(@PathVariable int meetingId) {
+    public ResponseEntity<Void> deleteMeeting(@PathVariable long meetingId) {
         return ResponseEntity.ok().build();
     }
 }

@@ -15,7 +15,7 @@ public class MemberController {
     }
 
     @GetMapping("/{memberId}/books")
-    public ResponseEntity<?> getMemberBooks(@PathVariable int memberId) {
+    public ResponseEntity<?> getMemberBooks(@PathVariable long memberId) {
         return ResponseEntity.ok(new MemberBooksResponse());
     }
 
