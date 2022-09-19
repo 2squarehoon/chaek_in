@@ -11,4 +11,5 @@ public class WishlistResponse {
     String title;
     String author;
     String image;
+
 }
