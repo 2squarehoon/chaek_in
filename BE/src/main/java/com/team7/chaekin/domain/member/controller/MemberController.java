@@ -20,12 +20,12 @@ public class MemberController {
     }
 
     @PostMapping("/me")
-    public ResponseEntity<?> saveAdditionalInformation(@RequestBody MemberInfoRequest updateMemberRequest) {
+    public ResponseEntity<?> saveAdditionalInformation(@RequestBody MemberInfoRequest memberInfoRequest) {
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/me")
-    public ResponseEntity<?> updateAdditionalInformation(@RequestBody MemberInfoRequest updateMemberRequest) {
+    public ResponseEntity<?> updateAdditionalInformation(@RequestBody MemberInfoRequest memberInfoRequest) {
         return ResponseEntity.ok().build();
     }
 

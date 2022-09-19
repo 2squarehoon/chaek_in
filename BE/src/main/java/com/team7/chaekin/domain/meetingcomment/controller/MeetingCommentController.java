@@ -18,18 +18,19 @@ public class MeetingCommentController {
 
     @PostMapping("/{meetingId}/comments")
     public ResponseEntity<MeetingCommentIdResponse> createMeetingComment(@PathVariable long meetingId,
-                                                @RequestBody MeetingCommentCreateRequest CommentCreateRequest) {
+                                                @RequestBody MeetingCommentCreateRequest meetingCommentUpdateRequest) {
         return ResponseEntity.ok(new MeetingCommentIdResponse());
     }
 
     @PatchMapping("/{meetingId}/comments/{meetingCommentId}")
     public ResponseEntity<MeetingCommentIdResponse> updateMeetingComment(@PathVariable long meetingId,
-                                                @RequestBody MeetingCommentUpdateRequest commentUpdateRequest) {
+                                                                         @PathVariable long meetingCommentId,
+                                                                         @RequestBody MeetingCommentUpdateRequest meetingCommentUpdateRequest) {
         return ResponseEntity.ok(new MeetingCommentIdResponse());
     }
 
     @DeleteMapping("/{meetingId}/comments/{meetingCommentId}")
-    public ResponseEntity<Void> deleteMeetingComment(@PathVariable long meetingId) {
+    public ResponseEntity<Void> deleteMeetingComment(@PathVariable long meetingId, @PathVariable long meetingCommentId) {
         return ResponseEntity.noContent().build();
     }
 

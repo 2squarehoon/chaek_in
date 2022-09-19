@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class MeetingDetailResponse {
-    private long id;
+    private long meetingId;
     private String bookName;
     private String image;
     private String title;

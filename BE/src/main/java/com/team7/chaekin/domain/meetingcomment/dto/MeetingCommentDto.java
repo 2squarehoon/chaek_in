@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class MeetingCommentDto {
-    private long id;
+    private long meetingCommentId;
     private String writer;
     private String content;
     private String createdAt;
