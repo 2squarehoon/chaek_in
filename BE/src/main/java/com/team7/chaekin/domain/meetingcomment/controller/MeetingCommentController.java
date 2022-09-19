@@ -30,7 +30,7 @@ public class MeetingCommentController {
 
     @DeleteMapping("/{meetingId}/comments/{meetingCommentId}")
     public ResponseEntity<Void> deleteMeetingComment(@PathVariable long meetingId) {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }
