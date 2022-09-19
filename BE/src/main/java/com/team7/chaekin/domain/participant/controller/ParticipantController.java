@@ -23,7 +23,7 @@ public class ParticipantController {
 
     @DeleteMapping("/{meetingId}/participants/{participantId}")
     public ResponseEntity<Void> getMeetingParticipants(@PathVariable long meetingId, @PathVariable long participantId) {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }

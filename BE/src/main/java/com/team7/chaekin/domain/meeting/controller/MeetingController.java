@@ -34,6 +34,6 @@ public class MeetingController {
 
     @DeleteMapping("/{meetingId}")
     public ResponseEntity<Void> deleteMeeting(@PathVariable long meetingId) {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

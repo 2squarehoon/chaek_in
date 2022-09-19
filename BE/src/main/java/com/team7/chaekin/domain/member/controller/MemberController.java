@@ -31,6 +31,6 @@ public class MemberController {
 
     @DeleteMapping("/me")
     public ResponseEntity<?> deleteMember() {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
