@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public class WishListDto {
     private long wishListId;
+    private long bookId;
     private String isbn;
     private String title;
     private String author;
     private String image;
-
 }

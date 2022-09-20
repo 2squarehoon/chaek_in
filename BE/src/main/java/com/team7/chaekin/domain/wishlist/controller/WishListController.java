@@ -1,6 +1,6 @@
 package com.team7.chaekin.domain.wishlist.controller;
 
-import com.team7.chaekin.domain.wishlist.dto.WishListListResponse;
+import com.team7.chaekin.domain.wishlist.dto.WishListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ public class WishListController {
 
     @GetMapping
     public ResponseEntity<?> getWishList(){
-        return ResponseEntity.ok(new WishListListResponse());
+        return ResponseEntity.ok(new WishListResponse());
     }
 
     @PostMapping("/books/{bookId}")
