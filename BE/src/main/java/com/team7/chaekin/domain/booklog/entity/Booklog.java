@@ -45,4 +45,8 @@ public class Booklog extends BaseTimeEntity {
         this.readStatus = ReadStatus.READING;
         this.startDate = LocalDate.now();
     }
+
+    public void updateStatus(){
+        this.readStatus = ReadStatus.COMPLETE;
+    }
 }

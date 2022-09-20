@@ -74,7 +74,7 @@ public class TodayBookService {
         // findOneByIsbn 필요
         Book book = bookRepository.findByIsbn(todayBookRequest.getIsbn());
 
-        Booklog booklog = booklogRepository.findOneByMemberAndBook(member, book).orElseGet(() -> new Booklog(member, book));
+        Booklog booklog = booklogRepository.findByMemberAndBook(member, book).orElseGet(() -> new Booklog(member, book));
 
         TodayBook todayBook = TodayBook.builder().booklog(booklog).build();
         todayBookRepository.save(todayBook);
