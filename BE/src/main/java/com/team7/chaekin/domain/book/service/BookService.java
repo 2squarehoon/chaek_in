@@ -66,7 +66,7 @@ public class BookService {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new NoSuchElementException("해당 책이 존재하지 않습니다."));
 
-        BookLog booklog = booklogRepository.findByMemberAndBook(member, book).get();
+        BookLog bookLog = booklogRepository.findByMemberAndBook(member, book).get();
         bookLog.updateStatus();
     }
 }
