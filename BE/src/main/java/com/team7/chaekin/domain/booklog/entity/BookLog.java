@@ -14,7 +14,8 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Booklog extends BaseTimeEntity {
+@Table(name = "booklog")
+public class BookLog extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +40,7 @@ public class Booklog extends BaseTimeEntity {
     private LocalDate endDate;
 
     @Builder
-    public Booklog(Member member, Book book) {
+    public BookLog(Member member, Book book) {
         this.member = member;
         this.book = book;
         this.readStatus = ReadStatus.READING;

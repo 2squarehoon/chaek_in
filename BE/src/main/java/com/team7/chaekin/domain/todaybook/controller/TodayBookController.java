@@ -33,7 +33,7 @@ public class TodayBookController {
     }
 
     @DeleteMapping("/{todayBookId}")
-    public ResponseEntity<?> deleteTodayBook(@PathVariable Long todayBookId) {
+    public ResponseEntity<?> deleteTodayBook(@PathVariable long todayBookId) {
 
         todayBookService.deleteTodayBook(todayBookId);
         return ResponseEntity.noContent().build();
