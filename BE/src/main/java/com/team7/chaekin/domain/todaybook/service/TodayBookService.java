@@ -35,17 +35,24 @@ public class TodayBookService {
 
     public TodayBookListResponse getTodayBookList(TodayBookSearchRequest todayBookSearchRequest) {
 
-        LocalDateTime start = LocalDateTime.of(todayBookSearchRequest.getDate(), LocalTime.of(0, 0, 0));
+        LocalDateTime start = null;
         LocalDateTime end = null;
-        if (todayBookSearchRequest.getPeriod().equals("DAILY"))
-            end = LocalDateTime.of(todayBookSearchRequest.getDate().plusDays(1), LocalTime.of(0, 0, 0));
-        else if (todayBookSearchRequest.getPeriod().equals("WEEKLY"))
-            end = LocalDateTime.of(todayBookSearchRequest.getDate().plusDays(7), LocalTime.of(0, 0, 0));
-        else
-            end = LocalDateTime.of(todayBookSearchRequest.getDate().with(TemporalAdjusters.lastDayOfMonth()).plusDays(1), LocalTime.of(0, 0, 0));
 
-        Member member = memberRepository.findById(todayBookSearchRequest.getMemberId()).get();
-        List<TodayBook> todayBooks = todayBookRepository.findByMemberAndCreatedAtBetween(member, start, end);
+        // 나중에 enum으로 변경
+        // 나중에 weekly와 monthly는 날마다 1개의 데이터만 넣어서 주는 로직으로 변경할지도?
+        if (todayBookSearchRequest.getPeriod().equals("DAILY")) {
+            start = LocalDateTime.of(todayBookSearchRequest.getDate(), LocalTime.of(0, 0, 0));
+            end = LocalDateTime.of(todayBookSearchRequest.getDate().plusDays(1), LocalTime.of(0, 0, 0));
+        } else if (todayBookSearchRequest.getPeriod().equals("WEEKLY")) {
+            start = LocalDateTime.of(todayBookSearchRequest.getDate().minusDays(7), LocalTime.of(0, 0, 0));
+            end = LocalDateTime.of(todayBookSearchRequest.getDate(), LocalTime.of(0, 0, 0));
+        } else {
+            start = LocalDateTime.of(todayBookSearchRequest.getDate().with(TemporalAdjusters.firstDayOfMonth()), LocalTime.of(0, 0, 0));
+            end = LocalDateTime.of(todayBookSearchRequest.getDate().with(TemporalAdjusters.lastDayOfMonth()).plusDays(1), LocalTime.of(0, 0, 0));
+        }
+
+        Member member = memberRepository.findById(todayBookSearchRequest.getMemberId()).orElseThrow(() -> new RuntimeException("message"));
+        List<TodayBook> todayBooks = todayBookRepository.findByMemberAndCreatedAtBetween(member, start, end).orElseThrow(() -> new RuntimeException("message"));
 
         List<TodayBookListDto> todayBookListDtos = new ArrayList<>();
         for (TodayBook todayBook : todayBooks) {
@@ -65,13 +72,9 @@ public class TodayBookService {
 
         Member member = memberRepository.findById(memberId).get();
         // findOneByIsbn 필요
-        Book book = bookRepository.findOneByIsbn(todayBookRequest.getIsbn());
+        Book book = bookRepository.findByIsbn(todayBookRequest.getIsbn());
 
-        Booklog booklog = booklogRepository.findOneByMemberAndBook(member, book);
-        if (booklog == null) {
-            booklog = Booklog.builder().member(member).book(book).build();
-            booklogRepository.save(booklog);
-        }
+        Booklog booklog = booklogRepository.findOneByMemberAndBook(member, book).orElseGet(() -> new Booklog(member, book));
 
         TodayBook todayBook = TodayBook.builder().booklog(booklog).build();
         todayBookRepository.save(todayBook);
