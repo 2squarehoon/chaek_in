@@ -2,8 +2,8 @@ package com.team7.chaekin.domain.todaybook.service;
 
 import com.team7.chaekin.domain.book.entity.Book;
 import com.team7.chaekin.domain.book.repository.BookRepository;
-import com.team7.chaekin.domain.booklog.entity.Booklog;
-import com.team7.chaekin.domain.booklog.repository.BooklogRepository;
+import com.team7.chaekin.domain.booklog.entity.BookLog;
+import com.team7.chaekin.domain.booklog.repository.BookLogRepository;
 import com.team7.chaekin.domain.member.entity.Member;
 import com.team7.chaekin.domain.member.repository.MemberRepository;
 import com.team7.chaekin.domain.todaybook.dto.TodayBookListDto;
@@ -29,7 +29,7 @@ import java.util.List;
 public class TodayBookService {
 
     private final TodayBookRepository todayBookRepository;
-    private final BooklogRepository booklogRepository;
+    private final BookLogRepository bookLogRepository;
     private final MemberRepository memberRepository;
     private final BookRepository bookRepository;
 
@@ -56,7 +56,7 @@ public class TodayBookService {
 
         List<TodayBookListDto> todayBookListDtos = new ArrayList<>();
         for (TodayBook todayBook : todayBooks) {
-            Book book = todayBook.getBooklog().getBook();
+            Book book = todayBook.getBookLog().getBook();
             String readDate = todayBook.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
             TodayBookListDto todayBookListDto = TodayBookListDto.builder().TodayBookId(todayBook.getId()).readDate(todayBook.getCreatedAt().toString()).bookId(book.getId()).cover(book.getCover()).build();
@@ -72,16 +72,16 @@ public class TodayBookService {
 
         Member member = memberRepository.findById(memberId).get();
         // findOneByIsbn 필요
-        Book book = bookRepository.findByIsbn(todayBookRequest.getIsbn());
+        Book book = bookRepository.findByIsbn(todayBookRequest.getIsbn()).orElseThrow(() -> new RuntimeException("message"));
 
-        Booklog booklog = booklogRepository.findByMemberAndBook(member, book).orElseGet(() -> new Booklog(member, book));
+        BookLog bookLog = bookLogRepository.findByMemberAndBook(member, book).orElseGet(() -> bookLogRepository.save(new BookLog(member, book)));
 
-        TodayBook todayBook = TodayBook.builder().booklog(booklog).build();
+        TodayBook todayBook = TodayBook.builder().bookLog(bookLog).build();
         todayBookRepository.save(todayBook);
 
     }
 
-    public void deleteTodayBook(Long todayBookId) {
+    public void deleteTodayBook(long todayBookId) {
         todayBookRepository.deleteById(todayBookId);
     }
 }

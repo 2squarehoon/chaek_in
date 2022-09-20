@@ -1,6 +1,6 @@
 package com.team7.chaekin.domain.todaybook.entity;
 
-import com.team7.chaekin.domain.booklog.entity.Booklog;
+import com.team7.chaekin.domain.booklog.entity.BookLog;
 import com.team7.chaekin.domain.common.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,10 +19,10 @@ public class TodayBook extends BaseTimeEntity {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "booklog_id")
-    private Booklog booklog;
+    private BookLog bookLog;
 
     @Builder
-    public TodayBook(Booklog booklog) {
-        this.booklog = booklog;
+    public TodayBook(BookLog bookLog) {
+        this.bookLog = bookLog;
     }
 }
