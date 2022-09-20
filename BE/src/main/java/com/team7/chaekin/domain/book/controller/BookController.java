@@ -19,6 +19,9 @@ public class BookController {
 
     private final BookService bookService;
 
+    //TODO: 로그인 로직 도입 후 삭제
+    private static long memberId = 1;
+
     @GetMapping
     public ResponseEntity<?> searchBook(@RequestBody BookSearchRequest bookSearchRequest,
                                         Pageable pageable){
@@ -28,11 +31,13 @@ public class BookController {
 
     @GetMapping("/{bookId}")
     public ResponseEntity<?> getBookDetail(@PathVariable long bookId){
-        return ResponseEntity.ok(new BookDetailResponse());
+        BookDetailResponse bookDetailResponse = bookService.detail(bookId);
+        return ResponseEntity.ok(bookDetailResponse);
     }
 
     @PatchMapping("/{bookId}/complete")
-    public ResponseEntity<?> endReadBook(@PathVariable long bookId){
+    public ResponseEntity<?> endReadBook(long memberId, @PathVariable long bookId){
+        bookService.endRead(memberId, bookId);
         return ResponseEntity.ok().build();
     }
 
