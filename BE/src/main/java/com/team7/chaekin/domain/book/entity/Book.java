@@ -1,7 +1,9 @@
 package com.team7.chaekin.domain.book.entity;
 
 import com.team7.chaekin.domain.category.entity.Category;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -28,10 +30,12 @@ public class Book {
     @Column(length = 2000)
     private String description;
 
+    @Column(length = 2000)
+    private String index;
+
     @Column(length = 1000)
     private String cover;
 
-    //    카테고리 id, null 허용
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id")
     private Category category;
