@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from "react-native";
+import {StyleSheet, Text, View} from 'react-native';
 
 function RecommendScreen () {
   return (
@@ -6,7 +6,7 @@ function RecommendScreen () {
       <Text>추천</Text>
     </View>
   )
-};
+}
 
 const styles = StyleSheet.create({
   container: {

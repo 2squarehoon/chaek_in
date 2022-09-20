@@ -6,7 +6,7 @@ module.exports = {
   },
   extends: [
     'plugin:react/recommended',
-    'standard-with-typescript',
+    // 'standard-with-typescript',
     'eslint:recommended',
     'plugin:react-hooks/recommended'
     // 'plugin:@typescript-eslint/eslint-recommended',
@@ -19,12 +19,12 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module'
   },
-  plugins: ['react', 'react-hooks', '@typescript-eslint'],
+  plugins: ['react', 'react-hooks'],
   rules: {
     indent: ['error', 2, { SwitchCase: 1 }],
     quotes: ['error', 'single', { avoidEscape: true }],
     'no-empty-function': 'off',
-    '@typescript-eslint/no-empty-function': 'off',
+    // '@typescript-eslint/no-empty-function': 'off',
     'react/display-name': 'off',
     'react/prop-types': 'off',
     // suppress errors for missing 'import React' in files

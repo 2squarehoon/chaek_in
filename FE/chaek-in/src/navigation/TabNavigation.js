@@ -7,6 +7,7 @@ import RecommendScreen from '../screens/RecommendScreen'
 import MeetingScreen from '../screens/MeetingScreen'
 import RecordScreen from '../screens/RecordScreen'
 import HomeNavigation from './HomeNavigation'
+import ReadScreen from '../screens/ReadScreen'
 
 const Tab = createBottomTabNavigator()
 
@@ -16,6 +17,7 @@ function TabNavigation () {
     <Tab.Navigator>
       <Tab.Screen name="Home" component={HomeNavigation} options={{ headerShown: false }} />
       <Tab.Screen name="Recommend" component={RecommendScreen} />
+      <Tab.Screen name="Read" component={ReadScreen} />
       <Tab.Screen name="Meeting" component={MeetingScreen} />
       <Tab.Screen name="Record" component={RecordScreen} />
     </Tab.Navigator>
