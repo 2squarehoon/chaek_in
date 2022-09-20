@@ -1,6 +1,6 @@
 package com.team7.chaekin.domain.memo.entity;
 
-import com.team7.chaekin.domain.booklog.entity.Booklog;
+import com.team7.chaekin.domain.booklog.entity.BookLog;
 import com.team7.chaekin.domain.common.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,7 +19,7 @@ public class Memo extends BaseTimeEntity {
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "booklog_id")
-    private Booklog bookLog;
+    private BookLog bookLog;
 
     @Column(length = 10)
     private String color;
