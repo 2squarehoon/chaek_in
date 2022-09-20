@@ -6,6 +6,10 @@ import com.team7.chaekin.domain.book.dto.BookListResponse;
 import com.team7.chaekin.domain.book.dto.BookSearchRequest;
 import com.team7.chaekin.domain.book.entity.Book;
 import com.team7.chaekin.domain.book.repository.BookRepository;
+import com.team7.chaekin.domain.booklog.entity.BookLog;
+import com.team7.chaekin.domain.booklog.repository.BooklogRepository;
+import com.team7.chaekin.domain.member.entity.Member;
+import com.team7.chaekin.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +27,9 @@ import java.util.Optional;
 @Slf4j
 public class BookService {
     private final BookRepository bookRepository;
+
+    private final MemberRepository memberRepository;
+    private final BooklogRepository booklogRepository;
 
     @Transactional(readOnly = true)
     public BookListResponse search(BookSearchRequest bookSearchRequest, Pageable pageable) {
@@ -51,5 +58,14 @@ public class BookService {
                 .title(book.getTitle())
                 .ratingScore(book.getRatingScore())
                 .build();
+    }
+
+    @Transactional
+    public void endRead(long memberId, long bookId){
+        Member member = memberRepository.findById(memberId).get();
+        Book book = bookRepository.findById(bookId).get();
+
+        BookLog bookLog = booklogRepository.findByMemberAndBook(member, book).get();
+        bookLog.updateStatus();
     }
 }

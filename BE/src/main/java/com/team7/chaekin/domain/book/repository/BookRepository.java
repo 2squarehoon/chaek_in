@@ -10,4 +10,6 @@ import java.util.Optional;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
     Optional<Slice<Book>> findByTitleContaining(String title, Pageable pageable);
+
+    Optional<Book> findByIsbn(String isbn);
 }
