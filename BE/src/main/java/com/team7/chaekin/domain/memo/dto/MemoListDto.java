@@ -4,7 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class MemoRequest {
+public class MemoListDto {
+    private long memoId;
     private String color;
     private String content;
 }

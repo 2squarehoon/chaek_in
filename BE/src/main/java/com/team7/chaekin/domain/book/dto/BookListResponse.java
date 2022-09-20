@@ -6,7 +6,6 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@Builder
 public class BookListResponse {
-    List<BookResponse> books;
+    private List<BookListDto> books;
 }

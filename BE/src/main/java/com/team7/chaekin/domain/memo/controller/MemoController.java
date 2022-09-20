@@ -1,5 +1,6 @@
 package com.team7.chaekin.domain.memo.controller;
 
+import com.team7.chaekin.domain.memo.dto.MemoListResponse;
 import com.team7.chaekin.domain.memo.dto.MemoRequest;
 import com.team7.chaekin.domain.memo.service.MemoService;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +17,13 @@ public class MemoController {
     private final MemoService memoService;
 
     @GetMapping("/{bookId}/memos")
-    public ResponseEntity<?> getMemo(@PathVariable Long bookId){
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> getMemo(@PathVariable long bookId){
+        return ResponseEntity.ok(new MemoListResponse());
     }
 
     @PostMapping("/{bookId}/memos")
-    public ResponseEntity<?> createMemo(@PathVariable Long bookId,
-                                        @RequestBody MemoRequest memoCreateRequest){
+    public ResponseEntity<?> createMemo(@PathVariable long bookId,
+                                        @RequestBody MemoRequest memoRequest){
         return ResponseEntity.ok().build();
     }
 

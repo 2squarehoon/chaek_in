@@ -4,12 +4,12 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
 public class BookDetailResponse {
-    long bookId;
-    String isbn;
-    String author;
-    String index;
-    String description;
-    String image;
+    private long bookId;
+    private String isbn;
+    private String author;
+    private String index;
+    private String description;
+    private String image;
+    private String title;
 }
