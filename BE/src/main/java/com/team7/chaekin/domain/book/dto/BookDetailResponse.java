@@ -11,7 +11,7 @@ public class BookDetailResponse {
     private String author;
     private String index;
     private String description;
-    private String image;
+    private String cover;
     private String title;
     private double ratingScore;
 }

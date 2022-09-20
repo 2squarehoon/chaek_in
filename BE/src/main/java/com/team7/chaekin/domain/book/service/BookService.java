@@ -12,6 +12,7 @@ import com.team7.chaekin.domain.member.entity.Member;
 import com.team7.chaekin.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,14 +35,15 @@ public class BookService {
 
     @Transactional(readOnly = true)
     public BookListResponse search(BookSearchRequest bookSearchRequest, Pageable pageable) {
-        Slice<Book> slice = bookRepository.findByTitleContaining(bookSearchRequest.getKeyword(), pageable)
+        Page<Book> page = bookRepository.findByTitleContaining(bookSearchRequest.getKeyword(), pageable)
                 .orElseThrow(() -> new NoSuchElementException("검색 결과가 존재하지 않습니다."));
-        List<BookListDto> list = new ArrayList<>();
-        for (Book book : slice) {
-            list.add(new BookListDto(book.getId(), book.getTitle(), book.getCover()));
-        }
 
-        return new BookListResponse(list);
+        return new BookListResponse(page.stream().map(book -> BookListDto.builder()
+                .bookId(book.getId())
+                .title(book.getTitle())
+                .cover(book.getCover())
+                .build())
+                .collect(Collectors.toList()));
     }
 
     @Transactional(readOnly = true)
@@ -54,7 +57,7 @@ public class BookService {
                 .author(book.getAuthor())
                 .index(book.getIndex())
                 .description(book.getDescription())
-                .image(book.getCover())
+                .cover(book.getCover())
                 .title(book.getTitle())
                 .ratingScore(book.getRatingScore())
                 .build();
@@ -63,9 +66,10 @@ public class BookService {
     @Transactional
     public void endRead(long memberId, long bookId){
         Member member = memberRepository.findById(memberId).get();
-        Book book = bookRepository.findById(bookId).get();
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new NoSuchElementException("해당 책이 존재하지 않습니다."));
 
-        BookLog bookLog = booklogRepository.findByMemberAndBook(member, book).get();
+        Booklog booklog = booklogRepository.findByMemberAndBook(member, book).get();
         bookLog.updateStatus();
     }
 }

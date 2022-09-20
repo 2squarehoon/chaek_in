@@ -1,7 +1,9 @@
 package com.team7.chaekin.domain.book.entity;
 
 import com.team7.chaekin.domain.category.entity.Category;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
