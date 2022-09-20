@@ -3,7 +3,7 @@ package com.team7.chaekin.domain.member.service;
 import com.team7.chaekin.domain.book.entity.Book;
 import com.team7.chaekin.domain.booklog.entity.BookLog;
 import com.team7.chaekin.domain.booklog.entity.ReadStatus;
-import com.team7.chaekin.domain.booklog.repository.BooklogRepository;
+import com.team7.chaekin.domain.booklog.repository.BookLogRepository;
 import com.team7.chaekin.domain.member.dto.MemberBookListDto;
 import com.team7.chaekin.domain.member.dto.MemberBooksResponse;
 import com.team7.chaekin.domain.member.dto.MemberCreateRequest;
@@ -24,18 +24,18 @@ import java.util.List;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final BooklogRepository booklogRepository;
+    private final BookLogRepository bookLogRepository;
 
     @Transactional
     public MemberBooksResponse getMemberBooks(long memberId) {
         Member member = getMember(memberId);
-        //TODO: booklogRepository에서 member를 가지고 있는 Booklog들 리스트 뽑기.
-        List<BookLog> booklogList = new ArrayList();
+        //TODO: bookLogRepository에서 member를 가지고 있는 BookLog들 리스트 뽑기.
+        List<BookLog> bookLogList = new ArrayList();
 
         List<MemberBookListDto> readingBooks = new ArrayList<>();
         List<MemberBookListDto> completeBooks = new ArrayList<>();
 
-        for (BookLog bookLog : booklogList) {
+        for (BookLog bookLog : bookLogList) {
             List<MemberBookListDto> saveList = bookLog.getReadStatus().equals(ReadStatus.READING) ?
                     readingBooks : completeBooks;
 
