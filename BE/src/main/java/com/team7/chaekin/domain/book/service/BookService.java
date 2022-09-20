@@ -14,14 +14,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,7 +66,7 @@ public class BookService {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new NoSuchElementException("해당 책이 존재하지 않습니다."));
 
-        Booklog booklog = booklogRepository.findByMemberAndBook(member, book).get();
+        BookLog bookLog = booklogRepository.findByMemberAndBook(member, book).get();
         bookLog.updateStatus();
     }
 }
