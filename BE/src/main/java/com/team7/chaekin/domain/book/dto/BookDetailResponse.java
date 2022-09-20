@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class BookDetailResponse {
     private long bookId;
     private String isbn;
@@ -12,4 +13,5 @@ public class BookDetailResponse {
     private String description;
     private String image;
     private String title;
+    private double ratingScore;
 }

@@ -1,5 +1,6 @@
 package com.team7.chaekin.domain.book.service;
 
+import com.team7.chaekin.domain.book.dto.BookDetailResponse;
 import com.team7.chaekin.domain.book.dto.BookListDto;
 import com.team7.chaekin.domain.book.dto.BookListResponse;
 import com.team7.chaekin.domain.book.dto.BookSearchRequest;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class BookService {
     private final BookRepository bookRepository;
 
     @Transactional(readOnly = true)
-    public BookListResponse search(BookSearchRequest bookSearchRequest, Pageable pageable){
+    public BookListResponse search(BookSearchRequest bookSearchRequest, Pageable pageable) {
         Slice<Book> slice = bookRepository.findByTitleContaining(bookSearchRequest.getKeyword(), pageable)
                 .orElseThrow(() -> new NoSuchElementException("검색 결과가 존재하지 않습니다."));
         List<BookListDto> list = new ArrayList<>();
@@ -32,5 +34,22 @@ public class BookService {
         }
 
         return new BookListResponse(list);
+    }
+
+    @Transactional(readOnly = true)
+    public BookDetailResponse detail(long bookId){
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new NoSuchElementException("검색 결과가 존재하지 않습니다."));
+
+        return BookDetailResponse.builder()
+                .bookId(book.getId())
+                .isbn(book.getIsbn())
+                .author(book.getAuthor())
+                .index(book.getIndex())
+                .description(book.getDescription())
+                .image(book.getCover())
+                .title(book.getTitle())
+                .ratingScore(book.getRatingScore())
+                .build();
     }
 }

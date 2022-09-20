@@ -28,7 +28,8 @@ public class BookController {
 
     @GetMapping("/{bookId}")
     public ResponseEntity<?> getBookDetail(@PathVariable long bookId){
-        return ResponseEntity.ok(new BookDetailResponse());
+        BookDetailResponse bookDetailResponse = bookService.detail(bookId);
+        return ResponseEntity.ok(bookDetailResponse);
     }
 
     @PatchMapping("/{bookId}/complete")
