@@ -22,8 +22,10 @@ public class BookController {
     @GetMapping
     public ResponseEntity<?> searchBook(@RequestBody BookSearchRequest bookSearchRequest,
                                         Pageable pageable){
-        return ResponseEntity.ok(new BookListResponse());
+        BookListResponse bookListResponse = bookService.search(bookSearchRequest, pageable);
+        return ResponseEntity.ok(bookListResponse);
     }
+
     @GetMapping("/{bookId}")
     public ResponseEntity<?> getBookDetail(@PathVariable long bookId){
         return ResponseEntity.ok(new BookDetailResponse());
