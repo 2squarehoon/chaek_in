@@ -1,4 +1,5 @@
 import {StyleSheet, Text, View, Button} from "react-native";
+import React from "react";
 
 function HomeScreen ({navigation}) {
   const goToBookLog = (e) => {
@@ -12,7 +13,7 @@ function HomeScreen ({navigation}) {
   };
 
   return (
-    <>
+    <View style={styles.container}>
       <View>
         <Text>서재</Text>
       </View>
@@ -20,20 +21,17 @@ function HomeScreen ({navigation}) {
         <Button onPress={goToBookLog} title="오늘의 책"></Button>
       </View>
       <View>
-        <Button onPress={goToBookDetail} title="책 상세정보"></Button>
+        <Button onPress={goToBookDetail} title='책 상세정보'></Button>
       </View>
-      <View>
-        <Button onPress={goToLogin} title="로그인"></Button>
-      </View>
-    </>
-  )
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   }
 })
 

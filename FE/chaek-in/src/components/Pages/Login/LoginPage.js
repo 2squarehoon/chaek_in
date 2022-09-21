@@ -1,27 +1,23 @@
-import React from 'react'
-import { StyleSheet, View, Button } from 'react-native'
-import styled from 'styled-components/native'
+import React from 'react';
+import { StyleSheet, View, Button } from 'react-native';
+import styled from 'styled-components/native';
 
 const LoginPage = () => {
   return (
     <View style={styles.inputContainer}>
-      <StyledTextInput
-        placeholder="Add an item!"
-        placeholderTextColor={'#999'}
-        autoCorrect={false}
-      />
+      <StyledTextInput placeholder='Add an item!' placeholderTextColor={'#999'} autoCorrect={false} />
       <View style={styles.button}>
         <Button title={'zzz'} />
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   input: {
     flex: 1,
@@ -29,12 +25,12 @@ const styles = StyleSheet.create({
     borderBottomColor: '#bbb',
     borderBottomWidth: 1,
     fontSize: 24,
-    marginLeft: 20
+    marginLeft: 20,
   },
   button: {
-    marginRight: 10
-  }
-})
+    marginRight: 10,
+  },
+});
 
 const StyledTextInput = styled.TextInput`
   padding: 20px;
@@ -43,6 +39,6 @@ const StyledTextInput = styled.TextInput`
   font-size: 24px;
   margin-left: 20px;
   color: palevioletred;
-`
+`;
 
-export default LoginPage
+export default LoginPage;
