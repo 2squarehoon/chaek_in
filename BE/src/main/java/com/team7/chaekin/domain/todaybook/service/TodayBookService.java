@@ -35,12 +35,6 @@ public class TodayBookService {
 
     public TodayBookListResponse getTodayBookList(TodayBookSearchRequest todayBookSearchRequest) {
 
-        Member member = memberRepository.findById(todayBookSearchRequest.getMemberId()).orElseThrow(() -> new RuntimeException("message"));
-        List<BookLog> bookLogs = bookLogRepository.findByMember(member).orElseThrow(()-> new RuntimeException("message"));
-        for (BookLog bookLog:bookLogs) {
-            ;
-        }
-
         LocalDateTime start = null;
         LocalDateTime end = null;
 
@@ -57,17 +51,26 @@ public class TodayBookService {
             end = LocalDateTime.of(todayBookSearchRequest.getDate().with(TemporalAdjusters.lastDayOfMonth()).plusDays(1), LocalTime.of(0, 0, 0));
         }
 
-
-        List<TodayBook> todayBooks = new ArrayList<>();
-//                todayBookRepository.findByMemberAndCreatedAtBetween(member, start, end).orElseThrow(() -> new RuntimeException("message"));
+        Member member = memberRepository.findById(todayBookSearchRequest.getMemberId()).orElseThrow(() -> new RuntimeException("message"));
+//        List<BookLog> bookLogs = bookLogRepository.findByMember(member).orElseThrow(() -> new RuntimeException("message"));
+        List<BookLog> bookLogs = bookLogRepository.findWithTodayBooksByMember(member).orElseThrow(() -> new RuntimeException("message"));
 
         List<TodayBookListDto> todayBookListDtos = new ArrayList<>();
-        for (TodayBook todayBook : todayBooks) {
-            Book book = todayBook.getBookLog().getBook();
-            String readDate = todayBook.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
-            TodayBookListDto todayBookListDto = TodayBookListDto.builder().TodayBookId(todayBook.getId()).readDate(todayBook.getCreatedAt().toString()).bookId(book.getId()).cover(book.getCover()).build();
-            todayBookListDtos.add(todayBookListDto);
+        for (BookLog bookLog : bookLogs) {
+            List<TodayBook> todayBooks = bookLog.getTodayBooks();
+            // 날짜가 저 사이인 값만 리턴하기
+
+            for (TodayBook todayBook : todayBooks) {
+                LocalDateTime readDateTime = todayBook.getCreatedAt();
+                if(readDateTime.isAfter(end) || readDateTime.isBefore(start))
+                    continue;
+
+                Book book = todayBook.getBookLog().getBook();
+                String readDate = readDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                TodayBookListDto todayBookListDto = TodayBookListDto.builder().TodayBookId(todayBook.getId()).readDate(todayBook.getCreatedAt().toString()).bookId(book.getId()).cover(book.getCover()).build();
+                todayBookListDtos.add(todayBookListDto);
+            }
         }
 
         TodayBookListResponse todayBookListResponse = new TodayBookListResponse();
@@ -78,17 +81,18 @@ public class TodayBookService {
     public void registerTodayBook(long memberId, TodayBookRequest todayBookRequest) {
 
         Member member = memberRepository.findById(memberId).get();
-        // findOneByIsbn 필요
         Book book = bookRepository.findByIsbn(todayBookRequest.getIsbn()).orElseThrow(() -> new RuntimeException("message"));
-
         BookLog bookLog = bookLogRepository.findByMemberAndBook(member, book).orElseGet(() -> bookLogRepository.save(new BookLog(member, book)));
 
-        TodayBook todayBook = TodayBook.builder().bookLog(bookLog).build();
+        TodayBook todayBook = new TodayBook(bookLog);
         todayBookRepository.save(todayBook);
 
     }
 
     public void deleteTodayBook(long todayBookId) {
-        todayBookRepository.deleteById(todayBookId);
+
+        TodayBook todayBook = todayBookRepository.findById(todayBookId).orElseThrow(() -> new RuntimeException("message"));
+        todayBook.delete();
+        todayBookRepository.delete(todayBook);
     }
 }
