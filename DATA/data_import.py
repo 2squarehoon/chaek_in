@@ -115,7 +115,7 @@ def process(conn, logger):
     API_HEAD = 'http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey='
     
     #   api key
-    API_KEYS = [['ttbkit38631200001', 4000, '인태'],['ttbbeckhem961036001', 4000, '희영'],['ttbgmldud03231035001', 4000, '완택']]
+    API_KEYS = [['ttbkit38631200001', 0, '인태'],['ttbbeckhem961036001', 0, '희영'],['ttbgmldud03231035001', 3907, '완택']]
     
     API_BODY = '&itemIdType=ISBN13&ItemId='
     
@@ -132,7 +132,7 @@ def process(conn, logger):
     for item in list:
         book_id = item[0]
         isbn = item[1]
-        print(f'id: {item[0]}, isbn: {item[1]} 작업 시작')
+        # print(f'id: {item[0]}, isbn: {item[1]} 작업 시작')
         # logger.info(f'id: {item[0]}, isbn: {item[1]} 작업 시작')
         logger.info("id: %s, isbn: %s 작업 시작" % (item[0], item[1]))
 
@@ -156,6 +156,12 @@ def process(conn, logger):
 
             #   api 요청 중 카테고리 정보 파싱
             parsing_category_result = parsing_category_json(res.json())
+            
+            # parsing_category_result가 None면 eBook인 경우
+            if parsing_category_result is None:
+                update_book_isbn_has_err(conn, isbn, logger)
+                continue
+
             category_cid = parsing_category_result[0]
 
             parsing_book_result = []
@@ -257,8 +263,12 @@ def parsing_category_json(data):
     category_list = data['item'][0]['categoryName'].split('>')
     
     value.append(category_id)
+
+    # category name이 eBook인 경우 제외
+    if len(category_list[0]) > 4:
+        return None
     
-    if(len(category_list) > 3):
+    if len(category_list) > 3:
         last_element = category_list[len(category_list)-1]
 
         # print(type(category_id), category_id)
@@ -419,7 +429,8 @@ def main():
     formatter = logging.Formatter('%(name)s - %(levelname)s - %(asctime)s - %(message)s')
 
     # filehandler와 streamhandler 생성    
-    filehandler = logging.FileHandler('/Users/kit938639/S07P22A107/DATA/logfile_{:%Y%m%d}.log'.format(datetime.now()), encoding='utf-8')
+    filehandler = logging.FileHandler('C:\\Users\\SSAFY\\log\\_{:%Y%m%d}.log'.format(datetime.now()), encoding='utf-8')
+
     streamhandler = logging.StreamHandler()
 
     # Handler에 formatter 세팅
