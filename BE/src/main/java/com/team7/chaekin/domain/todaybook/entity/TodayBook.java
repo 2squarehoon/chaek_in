@@ -25,4 +25,17 @@ public class TodayBook extends BaseTimeEntity {
     public TodayBook(BookLog bookLog) {
         this.bookLog = bookLog;
     }
+
+    public void setBookLog(BookLog bookLog) {
+        if(this.bookLog != null){
+            this.bookLog.getTodayBooks().remove(this);
+        }
+        this.bookLog = bookLog;
+
+        if(bookLog==null)
+            return;
+        if(!bookLog.getTodayBooks().contains(this))
+            bookLog.addTodayBook(this);
+    }
+
 }

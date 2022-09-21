@@ -9,5 +9,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TodayBookRepository extends JpaRepository<TodayBook, Long> {
-    Optional<List<TodayBook>> findByMemberAndCreatedAtBetween(Member member, LocalDateTime start, LocalDateTime end);
+//    Optional<List<TodayBook>> findByMemberAndCreatedAtBetween(Member member, LocalDateTime start, LocalDateTime end);
 }
