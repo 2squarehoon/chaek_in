@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, Image } from 'react-native';
 import styled from 'styled-components/native';
 import React from 'react';
+import ReviewList from '../components/review/ReviewList';
 
 function BookDetailScreen() {
   return (
@@ -73,11 +74,12 @@ function BookDetailScreen() {
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
             <View>
-              <Text style={{ width: 50, textAlign: 'center', fontSize: 15 }}>평점</Text>
+              <Text style={{ width: 50, textAlign: 'center', fontSize: 15 }}>리뷰</Text>
             </View>
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
           </View>
         </MiddleContainer>
+        <ReviewList />
       </ScrollViewContainer>
     </>
   );
