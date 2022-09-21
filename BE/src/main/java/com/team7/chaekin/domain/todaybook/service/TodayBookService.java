@@ -35,6 +35,12 @@ public class TodayBookService {
 
     public TodayBookListResponse getTodayBookList(TodayBookSearchRequest todayBookSearchRequest) {
 
+        Member member = memberRepository.findById(todayBookSearchRequest.getMemberId()).orElseThrow(() -> new RuntimeException("message"));
+        List<BookLog> bookLogs = bookLogRepository.findByMember(member).orElseThrow(()-> new RuntimeException("message"));
+        for (BookLog bookLog:bookLogs) {
+            ;
+        }
+
         LocalDateTime start = null;
         LocalDateTime end = null;
 
@@ -51,8 +57,9 @@ public class TodayBookService {
             end = LocalDateTime.of(todayBookSearchRequest.getDate().with(TemporalAdjusters.lastDayOfMonth()).plusDays(1), LocalTime.of(0, 0, 0));
         }
 
-        Member member = memberRepository.findById(todayBookSearchRequest.getMemberId()).orElseThrow(() -> new RuntimeException("message"));
-        List<TodayBook> todayBooks = todayBookRepository.findByMemberAndCreatedAtBetween(member, start, end).orElseThrow(() -> new RuntimeException("message"));
+
+        List<TodayBook> todayBooks = new ArrayList<>();
+//                todayBookRepository.findByMemberAndCreatedAtBetween(member, start, end).orElseThrow(() -> new RuntimeException("message"));
 
         List<TodayBookListDto> todayBookListDtos = new ArrayList<>();
         for (TodayBook todayBook : todayBooks) {

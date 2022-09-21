@@ -9,7 +9,6 @@ public class BookDetailResponse {
     private long bookId;
     private String isbn;
     private String author;
-    private String index;
     private String description;
     private String cover;
     private String title;

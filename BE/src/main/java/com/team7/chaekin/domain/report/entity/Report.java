@@ -28,7 +28,7 @@ public class Report extends BaseTimeEntity {
     private String content;
 
     @Column
-    private int like;
+    private int likeCount;
 
     @Column
     private boolean isRemoved;

@@ -40,7 +40,7 @@ public class BookService {
     public BookDetailResponse detail(long bookId) {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new NoSuchElementException("검색 결과가 존재하지 않습니다."));
 
-        return BookDetailResponse.builder().bookId(book.getId()).isbn(book.getIsbn()).author(book.getAuthor()).index(book.getIndex()).description(book.getDescription()).cover(book.getCover()).title(book.getTitle()).ratingScore(book.getRatingScore()).build();
+        return BookDetailResponse.builder().bookId(book.getId()).isbn(book.getIsbn()).author(book.getAuthor()).description(book.getDescription()).cover(book.getCover()).title(book.getTitle()).ratingScore(book.getRatingScore()).build();
     }
 
     @Transactional

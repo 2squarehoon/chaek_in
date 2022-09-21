@@ -30,9 +30,6 @@ public class Book {
     @Column(length = 2000)
     private String description;
 
-    @Column(length = 2000)
-    private String index;
-
     @Column(length = 1000)
     private String cover;
 

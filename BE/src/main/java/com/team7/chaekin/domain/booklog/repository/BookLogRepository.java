@@ -5,8 +5,11 @@ import com.team7.chaekin.domain.booklog.entity.BookLog;
 import com.team7.chaekin.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface BookLogRepository extends JpaRepository<BookLog, Long> {
     Optional<BookLog> findByMemberAndBook(Member member, Book book);
+
+    Optional<List<BookLog>> findByMember(Member member);
 }
