@@ -29,6 +29,7 @@
     },
     "web": {
       "favicon": ""
-    }
+    },
+    "scheme": "chaek_in"
   }
 }
