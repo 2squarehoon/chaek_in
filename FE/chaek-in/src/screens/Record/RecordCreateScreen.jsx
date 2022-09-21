@@ -14,7 +14,7 @@ const RecordCreateScreen = () => {
       <Text>내용</Text>
       <TitleInput value={text} onChangeText={onChangeText}></TitleInput>
       <ButtonContainer>
-        <Text>작성</Text>
+        <Text>작성.</Text>
       </ButtonContainer>
     </View>
   );

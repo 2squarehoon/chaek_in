@@ -1,3 +1,4 @@
+import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import RecordScreen from '../screens/record/RecordScreen';
 import RecordCreateScreen from '../screens/record/RecordCreateScreen';
