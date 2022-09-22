@@ -46,9 +46,9 @@ public class Book {
 
     private int ratingCount;
 
-    public Book(String isbn, String title, Category category) {
-        this.isbn = isbn;
-        this.title = title;
-        this.category = category;
-    }
+//    public Book(String isbn, String title, Category category) {
+//        this.isbn = isbn;
+//        this.title = title;
+//        this.category = category;
+//    }
 }

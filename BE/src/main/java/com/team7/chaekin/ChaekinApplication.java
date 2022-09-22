@@ -23,7 +23,7 @@ public class ChaekinApplication {
 		SpringApplication.run(ChaekinApplication.class, args);
 	}
 
-	@Bean
+//	@Bean
 	CommandLineRunner run(MemberRepository memberRepository,
 						  MeetingRepository meetingRepository,
 						  BookRepository bookRepository,
