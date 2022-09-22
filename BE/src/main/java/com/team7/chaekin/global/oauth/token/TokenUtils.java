@@ -29,8 +29,9 @@ public class TokenUtils {
     }
 
     public void setBlackList(String accessToken, long memberId) {
-        if (!StringUtils.hasText(accessToken) || memberId == 0)
+        if (!StringUtils.hasText(accessToken) || memberId <= 0)
             return;
+        log.info("Set Blacklist accessToken = {}, id = {}", accessToken, memberId);
         blackList.put(accessToken, memberId);
     }
 
@@ -90,7 +91,9 @@ public class TokenUtils {
     public long getTokenMemberId(String token) {
         try {
             Claims claims = getClaimsInToken(token);
-            return (long) claims.get("id");
+            Object id = claims.get("id");
+            log.info("Logout Member id = {}", id);
+            return Long.valueOf((Integer) id);
         } catch (SecurityException | MalformedJwtException e) {
             log.info("JWT Signature is wrong.");
         }  catch (UnsupportedJwtException e) {

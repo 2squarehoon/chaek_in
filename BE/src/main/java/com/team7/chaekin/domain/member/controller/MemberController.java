@@ -18,7 +18,7 @@ public class MemberController {
     //TODO: 로그인 로직 도입 후 삭제
     private static long memberId = 1;
 
-    @GetMapping
+    @GetMapping("/login")
     public ResponseEntity<MemberLoginResponse> login(MemberLoginRequest memberLoginRequest) {
         return ResponseEntity.ok(memberService.login(memberLoginRequest.getIdentifier()));
     }
