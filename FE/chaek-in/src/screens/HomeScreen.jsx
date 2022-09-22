@@ -23,6 +23,9 @@ function HomeScreen({ navigation }) {
       <View>
         <Button onPress={goToBookDetail} title='책 상세정보'></Button>
       </View>
+      <View>
+        <Button onPress={goToLogin} title='로그인'></Button>
+      </View>
     </View>
   );
 }

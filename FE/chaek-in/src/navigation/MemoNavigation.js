@@ -1,6 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import MemoCreateScreen from '../screens/Memo/MemoCreateScreen';
-import MemoListScreen from '../screens/Memo/MemoListScreen';
+import MemoCreateScreen from '../screens/memo/MemoCreateScreen';
+import MemoListScreen from '../screens/memo/MemoListScreen';
 import OCRScreen from '../screens/OCR/OCRScreen';
 
 const MemoStack = createStackNavigator();
