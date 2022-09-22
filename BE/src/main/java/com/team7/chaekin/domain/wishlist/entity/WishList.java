@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "wishlist")
 public class WishList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

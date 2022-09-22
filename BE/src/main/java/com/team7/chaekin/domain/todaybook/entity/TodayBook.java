@@ -1,9 +1,11 @@
 package com.team7.chaekin.domain.todaybook.entity;
 
-import com.team7.chaekin.domain.book.entity.Book;
+import com.team7.chaekin.domain.booklog.entity.BookLog;
 import com.team7.chaekin.domain.common.entity.BaseTimeEntity;
-import com.team7.chaekin.domain.member.entity.Member;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -15,13 +17,22 @@ public class TodayBook extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    member id
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "booklog_id")
+    private BookLog bookLog;
 
-//    book id
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id")
-    private Book book;
+    @Builder
+    public TodayBook(BookLog bookLog) {
+        this.bookLog = bookLog;
+        if (!bookLog.getTodayBooks().contains(this))
+            bookLog.addTodayBook(this);
+    }
+
+    public void delete() {
+        if (bookLog == null) return;
+        if (this.bookLog != null) {
+            this.bookLog.getTodayBooks().remove(this);
+        }
+    }
+
 }

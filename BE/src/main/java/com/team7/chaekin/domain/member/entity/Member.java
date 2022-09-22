@@ -1,7 +1,9 @@
 package com.team7.chaekin.domain.member.entity;
 
 import com.team7.chaekin.domain.common.entity.BaseTimeEntity;
+import com.team7.chaekin.domain.member.dto.MemberUpdateRequest;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +12,9 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"identifier"})
+})
 public class Member extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,4 +36,33 @@ public class Member extends BaseTimeEntity {
 
     private boolean isRemoved;
 
+    private String refreshToken;
+
+    @Builder
+    public Member(String identifier, String nickname, String job, int age, Gender gender) {
+        this.identifier = identifier;
+        this.nickname = nickname;
+        this.job = job;
+        this.age = age;
+        this.gender = gender;
+    }
+
+    public void updateInformation(MemberUpdateRequest memberUpdateRequest) {
+        nickname = memberUpdateRequest.getNickname();
+        job = memberUpdateRequest.getJob();
+        age = memberUpdateRequest.getAge();
+        gender = memberUpdateRequest.getGender();
+    }
+
+    public void deleteMember() {
+        isRemoved = true;
+    }
+
+    public void saveRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void removeRefreshToken() {
+        this.refreshToken = "";
+    }
 }

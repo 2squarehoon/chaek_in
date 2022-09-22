@@ -1,6 +1,9 @@
 package com.team7.chaekin.domain.category.entity;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -35,4 +38,13 @@ public class Category {
 
     @Column(length = 70)
     private String depth5;
+
+    //Test를 위해 만든 Builder, 이후 수정해도 괜찮음.
+    @Builder
+    public Category(String cid, String name, String mall, String depth1) {
+        this.cid = cid;
+        this.name = name;
+        this.mall = mall;
+        this.depth1 = depth1;
+    }
 }

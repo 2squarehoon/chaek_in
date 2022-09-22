@@ -2,8 +2,10 @@ package com.team7.chaekin.domain.meetingcomment.entity;
 
 import com.team7.chaekin.domain.common.entity.BaseTimeEntity;
 import com.team7.chaekin.domain.meeting.entity.Meeting;
+import com.team7.chaekin.domain.meetingcomment.dto.MeetingCommentUpdateRequest;
 import com.team7.chaekin.domain.member.entity.Member;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -38,4 +40,26 @@ public class MeetingComment extends BaseTimeEntity {
     private String content;
 
     private boolean isRemoved;
+
+    @Builder
+    public MeetingComment(Meeting meeting, Member member, String content) {
+        this.meeting = meeting;
+        this.member = member;
+        this.content = content;
+    }
+
+    public void addParent(MeetingComment parent) {
+        if (parent == null)
+            return;
+        this.parent = parent;
+        parent.getChildren().add(this);
+    }
+
+    public void update(String content) {
+        this.content = content;
+    }
+
+    public void delete() {
+        isRemoved = true;
+    }
 }

@@ -4,6 +4,7 @@ import com.team7.chaekin.domain.common.entity.BaseTimeEntity;
 import com.team7.chaekin.domain.meeting.entity.Meeting;
 import com.team7.chaekin.domain.member.entity.Member;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,4 +28,27 @@ public class Participant extends BaseTimeEntity {
     private boolean isLeader;
 
     private boolean isRemoved;
+
+    @Builder
+    public Participant(Member member, boolean isLeader) {
+        this.member = member;
+        this.isLeader = isLeader;
+    }
+
+    public Participant addMeeting(Meeting meeting) {
+        this.meeting = meeting;
+        meeting.getParticipants().add(this);
+        return this;
+    }
+
+    public static Participant makeParticipant(Meeting meeting, Member member, boolean isLeader) {
+        Participant participant = Participant.builder()
+                .member(member)
+                .isLeader(isLeader).build();
+        return participant.addMeeting(meeting);
+    }
+
+    public void leave() {
+        isRemoved = true;
+    }
 }

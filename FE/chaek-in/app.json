@@ -24,10 +24,12 @@
       "adaptiveIcon": {
         "foregroundImage": "",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.chaek_in"
     },
     "web": {
       "favicon": ""
-    }
+    },
+    "scheme": "chaek_in"
   }
 }
