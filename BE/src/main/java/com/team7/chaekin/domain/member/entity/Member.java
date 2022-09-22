@@ -12,6 +12,9 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"identifier"})
+})
 public class Member extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,6 +36,8 @@ public class Member extends BaseTimeEntity {
 
     private boolean isRemoved;
 
+    private String refreshToken;
+
     @Builder
     public Member(String identifier, String nickname, String job, int age, Gender gender) {
         this.identifier = identifier;
@@ -51,5 +56,13 @@ public class Member extends BaseTimeEntity {
 
     public void deleteMember() {
         isRemoved = true;
+    }
+
+    public void saveRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void removeRefreshToken() {
+        this.refreshToken = "";
     }
 }

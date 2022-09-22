@@ -53,7 +53,7 @@ public class TodayBookService {
 
         Member member = memberRepository.findById(todayBookSearchRequest.getMemberId()).orElseThrow(() -> new RuntimeException("message"));
 //        List<BookLog> bookLogs = bookLogRepository.findByMember(member).orElseThrow(() -> new RuntimeException("message"));
-        List<BookLog> bookLogs = bookLogRepository.findWithTodayBooksByMember(member).orElseThrow(() -> new RuntimeException("message"));
+        List<BookLog> bookLogs = bookLogRepository.findWithTodayBooksByMember(member);
 
         List<TodayBookListDto> todayBookListDtos = new ArrayList<>();
 

@@ -1,13 +1,13 @@
 package com.team7.chaekin.domain.member.controller;
 
-import com.team7.chaekin.domain.member.dto.MemberBooksResponse;
-import com.team7.chaekin.domain.member.dto.MemberCreateRequest;
-import com.team7.chaekin.domain.member.dto.MemberUpdateRequest;
+import com.team7.chaekin.domain.member.dto.*;
 import com.team7.chaekin.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/members")
 @RestController
@@ -18,7 +18,12 @@ public class MemberController {
     //TODO: 로그인 로직 도입 후 삭제
     private static long memberId = 1;
 
-    @GetMapping("/me/logout")
+    @GetMapping("/login")
+    public ResponseEntity<MemberLoginResponse> login(MemberLoginRequest memberLoginRequest) {
+        return ResponseEntity.ok(memberService.login(memberLoginRequest.getIdentifier()));
+    }
+
+    @GetMapping("/logout")
     public ResponseEntity<?> logout() {
         return ResponseEntity.ok().build();
     }

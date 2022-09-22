@@ -12,8 +12,8 @@ import java.util.Optional;
 public interface BookLogRepository extends JpaRepository<BookLog, Long> {
     Optional<BookLog> findByMemberAndBook(Member member, Book book);
 
-    Optional<List<BookLog>> findByMember(Member member);
+    List<BookLog> findByMember(Member member);
 
     @EntityGraph(attributePaths = {"todayBooks"})
-    Optional<List<BookLog>> findWithTodayBooksByMember(Member member);
+    List<BookLog> findWithTodayBooksByMember(Member member);
 }
