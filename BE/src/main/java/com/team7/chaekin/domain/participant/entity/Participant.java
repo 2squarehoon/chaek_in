@@ -47,4 +47,8 @@ public class Participant extends BaseTimeEntity {
                 .isLeader(isLeader).build();
         return participant.addMeeting(meeting);
     }
+
+    public void leave() {
+        isRemoved = true;
+    }
 }

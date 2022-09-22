@@ -24,18 +24,15 @@ public class TodayBook extends BaseTimeEntity {
     @Builder
     public TodayBook(BookLog bookLog) {
         this.bookLog = bookLog;
+        if (!bookLog.getTodayBooks().contains(this))
+            bookLog.addTodayBook(this);
     }
 
-    public void setBookLog(BookLog bookLog) {
-        if(this.bookLog != null){
+    public void delete() {
+        if (bookLog == null) return;
+        if (this.bookLog != null) {
             this.bookLog.getTodayBooks().remove(this);
         }
-        this.bookLog = bookLog;
-
-        if(bookLog==null)
-            return;
-        if(!bookLog.getTodayBooks().contains(this))
-            bookLog.addTodayBook(this);
     }
 
 }
