@@ -10,5 +10,5 @@ public class ParticipantListDto {
     private String name;
     private String gender;
     private int age;
-    private boolean isLeader;
+    private Boolean isLeader;
 }
