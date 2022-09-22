@@ -4,12 +4,11 @@ import com.team7.chaekin.domain.book.entity.Book;
 import com.team7.chaekin.domain.booklog.entity.BookLog;
 import com.team7.chaekin.domain.booklog.entity.ReadStatus;
 import com.team7.chaekin.domain.booklog.repository.BookLogRepository;
-import com.team7.chaekin.domain.member.dto.MemberBookListDto;
-import com.team7.chaekin.domain.member.dto.MemberBooksResponse;
-import com.team7.chaekin.domain.member.dto.MemberCreateRequest;
-import com.team7.chaekin.domain.member.dto.MemberUpdateRequest;
+import com.team7.chaekin.domain.member.dto.*;
 import com.team7.chaekin.domain.member.entity.Member;
 import com.team7.chaekin.domain.member.repository.MemberRepository;
+import com.team7.chaekin.global.oauth.token.TokenProperties;
+import com.team7.chaekin.global.oauth.token.TokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,13 +23,29 @@ import java.util.List;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final TokenProperties tokenProperties;
     private final BookLogRepository bookLogRepository;
+    private final TokenUtils tokenUtils;
+
+    @Transactional
+    public MemberLoginResponse login(String identifier) {
+        MemberLoginResponse memberLoginResponse = new MemberLoginResponse();
+
+        memberRepository.findByIdentifier(identifier).ifPresentOrElse(
+                member -> {
+                    TokenSet issueTokens = issueNewTokenSet(member);
+                    memberLoginResponse.setIsFirst(false);
+                    memberLoginResponse.setAccessToken(issueTokens.getAccess());
+                    memberLoginResponse.setRefreshToken(issueTokens.getRefresh());
+                },
+                () -> memberLoginResponse.setIsFirst(true));
+        return memberLoginResponse;
+    }
 
     @Transactional
     public MemberBooksResponse getMemberBooks(long memberId) {
         Member member = getMember(memberId);
-        //TODO: bookLogRepository에서 member를 가지고 있는 BookLog들 리스트 뽑기.
-        List<BookLog> bookLogList = new ArrayList();
+        List<BookLog> bookLogList = bookLogRepository.findByMember(member);
 
         List<MemberBookListDto> readingBooks = new ArrayList<>();
         List<MemberBookListDto> completeBooks = new ArrayList<>();
@@ -79,5 +94,15 @@ public class MemberService {
 
         return findMember;
     }
+
+    private TokenSet issueNewTokenSet(Member member) {
+        String accessToken = tokenUtils.createJwt(member.getId(), tokenProperties.getAccess().getName());
+        String refreshToken = tokenUtils.createJwt(member.getId(), tokenProperties.getRefresh().getName());
+        log.info("Issue New Token : Access-Token = {}, Refresh-Token = {}", accessToken, refreshToken);
+
+        member.saveRefreshToken(refreshToken);
+        return new TokenSet(accessToken, refreshToken);
+    }
+
 
 }

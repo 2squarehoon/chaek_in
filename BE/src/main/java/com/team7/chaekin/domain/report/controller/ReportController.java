@@ -5,9 +5,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping({"api/v1/reports", "api/v1/members"})
-@CrossOrigin(origins = "*")
+//@RestController
+//@RequestMapping({"api/v1/reports", "api/v1/members"})
+//@CrossOrigin(origins = "*")
 public class ReportController {
 
     @GetMapping("")
