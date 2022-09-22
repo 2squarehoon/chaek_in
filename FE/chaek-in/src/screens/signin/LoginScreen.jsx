@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import { Text, View, Button } from 'react-native';
+import { Text, View, Button, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GOOGLE_EXPO_CLIENT_ID, GOOGLE_ANDROID_CLIENT_ID, GOOGLE_WEB_CLIENT_ID } from '@env';
 import Axios from 'axios';
+import styled from 'styled-components/native';
 
 WebBrowser.maybeCompleteAuthSession();
 
-export default function LoginScreen() {
+function LoginScreen() {
   const [gUser, setGUser] = useState(''); // 구글로부터 받아온 유저데이터
   const [reqError, setReqError] = useState('');
-  const [isLoding, setIsLoding] = useState(false);
+  // const [isLoding, setIsLoding] = useState(false);
   const [userName, setUserName] = useState();
+  const [userEmail, setUserEmail] = useState();
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     expoClientId: GOOGLE_EXPO_CLIENT_ID,
@@ -39,7 +41,8 @@ export default function LoginScreen() {
 
       console.log(gUserReq.data);
       setGUser(gUserReq.data);
-      storageData();
+      // storageData();
+      setUserEmail(gUserReq.data.email);
     } catch (error) {
       console.log('GoogleUserReq error: ', error.response.data);
       setReqError(error.response.data);
@@ -70,47 +73,93 @@ export default function LoginScreen() {
   //     .finally(() => setIsLoding(false));
   // };
 
-  const storageData = async () => {
-    await AsyncStorage.setItem(
-      'User',
-      JSON.stringify({
-        id: gUser.id,
-        name: gUser.name,
-        email: gUser.email,
-        picture: gUser.picture,
-      }),
-      () => {
-        console.log('User Info Saved!');
-      },
-    );
-  };
-  const getUserName = async () => {
-    try {
-      AsyncStorage.getItem('User', (err, result) => {
-        const UserInfo = JSON.parse(result);
-        console.log(UserInfo);
-        setUserName(UserInfo.name);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const storageData = async () => {
+  //   await AsyncStorage.setItem(
+  //     'User',
+  //     JSON.stringify({
+  //       id: gUser.id,
+  //       name: gUser.name,
+  //       email: gUser.email,
+  //       picture: gUser.picture,
+  //     }),
+  //     () => {
+  //       console.log('User Info Saved!');
+  //     },
+  //   );
+  // };
+  // const getUserName = async () => {
+  //   try {
+  //     AsyncStorage.getItem('User', (err, result) => {
+  //       const UserInfo = JSON.parse(result);
+  //       console.log(UserInfo);
+  //       setUserName(UserInfo.email);
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   return (
-    <>
-      <Button
+    <LoginContainer>
+      <Image
+        source={require('../../../assets/image/logo.png')}
+        style={{ width: '80%', height: '50%', marginLeft: '10%' }}
+      />
+
+      <MiddleContainer>
+        <MiddleText>책으로</MiddleText>
+        <MiddleText>연결되는</MiddleText>
+        <MiddleText>우리,</MiddleText>
+        <MiddleText> </MiddleText>
+        <MiddleText>책크인</MiddleText>
+      </MiddleContainer>
+      <GoogleLogin
         disabled={!request}
         title='Login'
         onPress={() => {
           promptAsync();
         }}
-      />
-      <View>
+      >
+        <Text>Google로 로그인</Text>
+      </GoogleLogin>
+      {/* <View>
         <Text>이름 : {userName}</Text>
       </View>
       <View>
-        <Button onPress={getUserName} title='사용자이름'></Button>
+        <Button onPress={storageData} title='사용자정보저장'></Button>
       </View>
-    </>
+
+      <View>
+        <Button onPress={getUserName} title='사용자이름'></Button>
+      </View> */}
+    </LoginContainer>
   );
 }
+
+const LoginContainer = styled.View`
+  flex: 1;
+  background-color: #b1d8e8;
+  // justify-content: center;
+  // align-items: center;
+`;
+
+const GoogleLogin = styled.TouchableOpacity`
+  margin: 10% 20% 0;
+  background-color: white;
+  width: 60%;
+  height: 10%;
+  border-radius: 15px;
+  justify-content: space-around;
+  align-items: center;
+`;
+
+const MiddleContainer = styled.View`
+  margin-left: 20%
+  margin-right: auto
+`;
+
+const MiddleText = styled.Text`
+  font-size: 20rem;
+`;
+
+export default LoginScreen;
