@@ -45,4 +45,10 @@ public class Book {
     private double ratingScore;
 
     private int ratingCount;
+
+//    public Book(String isbn, String title, Category category) {
+//        this.isbn = isbn;
+//        this.title = title;
+//        this.category = category;
+//    }
 }
