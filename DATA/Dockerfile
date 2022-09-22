@@ -3,10 +3,10 @@ FROM python:3.9.13
 WORKDIR /app
 
 COPY ./requirements.txt .
- 
+
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-COPY ./app/* .
+COPY ./app/* ./
 
 EXPOSE 8000
 

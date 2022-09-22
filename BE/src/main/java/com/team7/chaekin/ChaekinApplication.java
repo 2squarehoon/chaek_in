@@ -35,7 +35,7 @@ public class ChaekinApplication {
 //						.gender(Gender.MALE)
 //						.age(23)
 //						.job("asd")
-//						.identifier("asd").build());
+//						.identifier("asd" + i).build());
 //			}
 //			Category category = Category.builder()
 //					.name("asd")
