@@ -59,7 +59,6 @@ public class BookLog extends BaseTimeEntity {
 
     public void addTodayBook(TodayBook todayBook) {
         this.todayBooks.add(todayBook);
-        if (todayBook.getBookLog() != this) todayBook.setBookLog(this);
     }
 
 }
