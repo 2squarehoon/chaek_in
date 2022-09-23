@@ -1,4 +1,4 @@
-package com.team7.chaekin.global.oauth.config;
+package com.team7.chaekin.global.webmvc.properties;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
