@@ -4,6 +4,7 @@ import com.team7.chaekin.domain.book.dto.BookDetailResponse;
 import com.team7.chaekin.domain.book.dto.BookListResponse;
 import com.team7.chaekin.domain.book.dto.BookSearchRequest;
 import com.team7.chaekin.domain.book.service.BookService;
+import com.team7.chaekin.global.oauth.config.LoginMemberId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +20,6 @@ public class BookController {
 
     private final BookService bookService;
 
-    //TODO: 로그인 로직 도입 후 삭제
-    private static long memberId = 1;
-
     @GetMapping
     public ResponseEntity<?> searchBook(@RequestBody BookSearchRequest bookSearchRequest,
                                         Pageable pageable){
@@ -36,7 +34,7 @@ public class BookController {
     }
 
     @PatchMapping("/{bookId}/complete")
-    public ResponseEntity<?> endReadBook(long memberId, @PathVariable long bookId){
+    public ResponseEntity<?> endReadBook(@LoginMemberId long memberId, @PathVariable long bookId){
         bookService.endRead(memberId, bookId);
         return ResponseEntity.ok().build();
     }

@@ -1,11 +1,7 @@
 package com.team7.chaekin.domain.review.service;
 
-import com.team7.chaekin.domain.book.entity.Book;
-import com.team7.chaekin.domain.book.repository.BookRepository;
 import com.team7.chaekin.domain.booklog.entity.BookLog;
 import com.team7.chaekin.domain.booklog.repository.BookLogRepository;
-import com.team7.chaekin.domain.member.entity.Member;
-import com.team7.chaekin.domain.member.repository.MemberRepository;
 import com.team7.chaekin.domain.review.dto.ReviewListDto;
 import com.team7.chaekin.domain.review.dto.ReviewListResponse;
 import com.team7.chaekin.domain.review.dto.ReviewRequest;
@@ -25,44 +21,32 @@ import java.util.stream.Collectors;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final BookRepository bookRepository;
     private final BookLogRepository bookLogRepository;
-    private final MemberRepository memberRepository;
 
     @Transactional
     public ReviewListResponse getReviewList(long bookId, long memberId, Pageable pageable) {
-        Book book = getBook(bookId);
-        Member member = getMember(memberId);
-        BookLog bookLog = getBookLog(book, member);
-
+        BookLog bookLog = getBookLog(bookId, memberId);
         Page<Review> reviewPages = reviewRepository.findByBookLog(bookLog, pageable);
 
         int totalPages = reviewPages.getTotalPages();
-        List<ReviewListDto> listDtos = reviewPages.toList().stream()
+        List<ReviewListDto> dtos = reviewPages.toList().stream()
                 .map(r -> ReviewListDto.builder()
                         .reviewId(r.getId())
                         .writer(r.getBookLog().getMember().getNickname())
                         .comment(r.getComment())
                         .score(r.getScore())
                         .build()).collect(Collectors.toList());
-        return new ReviewListResponse(totalPages, listDtos);
+        return new ReviewListResponse(totalPages, dtos);
     }
 
     @Transactional
     public long writeReview(long bookId, long memberId, ReviewRequest reviewRequest) {
-        Book book = getBook(bookId);
-        Member member = getMember(memberId);
-        BookLog bookLog = getBookLog(book, member);
+        BookLog bookLog = getBookLog(bookId, memberId);
 
         return reviewRepository.save(Review.builder()
                         .bookLog(bookLog)
                         .comment(reviewRequest.getComment())
                         .score(reviewRequest.getScore()).build()).getId();
-    }
-
-    private BookLog getBookLog(Book book, Member member) {
-        return bookLogRepository.findByMemberAndBook(member, book)
-                .orElseThrow(() -> new RuntimeException("책을 읽은 기록이 없습니다."));
     }
 
     @Transactional
@@ -94,12 +78,8 @@ public class ReviewService {
         reviewRepository.delete(review);
     }
 
-    private Member getMember(long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+    private BookLog getBookLog(long bookId, long memberId) {
+        return bookLogRepository.findBookLogByMemberIdAndBookId(memberId, bookId)
+                .orElseThrow(() -> new RuntimeException("책을 읽은 기록이 없습니다."));
     }
-
-    private Book getBook(long bookId) {
-        return bookRepository.findById(bookId).orElseThrow(RuntimeException::new);
-    }
-
 }

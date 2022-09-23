@@ -29,7 +29,7 @@ public class MeetingService {
 
     @Transactional
     public MeetingListResponse getMeetings(MeetingListRequest meetingListRequest, Pageable pageable) {
-        Page<Meeting> pageList = meetingRepository.findByTitleContaining(meetingListRequest.getKeyword(), pageable);
+        Page<Meeting> pageList = meetingRepository.findByTitleContainingAndIsRemovedIsFalse(meetingListRequest.getKeyword(), pageable);
 
         List<MeetingListDto> meetings = pageList.toList().stream()
                 .map(Meeting::toListDto)
@@ -66,6 +66,9 @@ public class MeetingService {
         Book book = bookRepository.findById(meetingUpdateRequest.getBookId())
                 .orElseThrow(() -> new RuntimeException("해당 책이 존재하지 않습니다."));
 
+        if (meetingUpdateRequest.getMaxCapacity() < meeting.getCurrentParticipants()) {
+            throw new RuntimeException("현재 인원이 최대 인원보다 많습니다.");
+        }
         meeting.update(book, meetingUpdateRequest);
     }
 
@@ -76,7 +79,7 @@ public class MeetingService {
     }
 
     private Meeting getMeeting(long meetingId) {
-        return meetingRepository.findById(meetingId)
+        return meetingRepository.findByIdAndIsRemovedIsFalse(meetingId)
                 .orElseThrow(() -> new RuntimeException("해당 모임이 존재하지 않습니다."));
     }
 

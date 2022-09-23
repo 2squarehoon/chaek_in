@@ -34,8 +34,6 @@ public class Member extends BaseTimeEntity {
     @Column(columnDefinition = "char(6) NOT NULL")
     private Gender gender;
 
-    private boolean isRemoved;
-
     @Column
     private String refreshToken;
 
@@ -53,10 +51,6 @@ public class Member extends BaseTimeEntity {
         job = memberUpdateRequest.getJob();
         age = memberUpdateRequest.getAge();
         gender = memberUpdateRequest.getGender();
-    }
-
-    public void deleteMember() {
-        isRemoved = true;
     }
 
     public void saveRefreshToken(String refreshToken) {

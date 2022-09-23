@@ -71,6 +71,8 @@ public class MemberService {
 
     @Transactional
     public MemberTokenResponse saveAdditionalInformation(MemberCreateRequest memberCreateRequest) {
+        memberRepository.findByIdentifier(memberCreateRequest.getIdentifier())
+                .ifPresent(m -> {throw new RuntimeException("이미 회원가입한 회원입니다.");});
         Member member = memberRepository.save(memberCreateRequest.toEntity());
 
         TokenSet issueTokens = issueNewTokenSet(member);
@@ -86,24 +88,17 @@ public class MemberService {
     @Transactional
     public void deleteMember(long memberId) {
         Member member = getMember(memberId);
-        member.deleteMember();
+        memberRepository.delete(member);
     }
 
     private Member getMember(long memberId) {
-        Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException());
-        if (findMember.isRemoved()) {
-            log.info("Deleted Member : memberId = {}", memberId);
-            throw new RuntimeException("해당 회원이 존재하지 않습니다.");
-        }
-
-        return findMember;
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
     }
 
     private TokenSet issueNewTokenSet(Member member) {
         String accessToken = tokenUtils.createJwt(member.getId(), tokenProperties.getAccess().getName());
         String refreshToken = tokenUtils.createJwt(member.getId(), tokenProperties.getRefresh().getName());
-        log.info("Issue New Token : Access-Token = {}, Refresh-Token = {}", accessToken, refreshToken);
 
         member.saveRefreshToken(refreshToken);
         return new TokenSet(accessToken, refreshToken);

@@ -29,7 +29,6 @@ public class MemoService {
 
     @Transactional
     public MemoListResponse getMemos(long bookId, long memberId) {
-        //TODO: 쿼리 테스트하고 잘 되면 나머지도 바꾸기
         BookLog bookLog = getBookLog(bookId, memberId);
         List<MemoListDto> list = memoRepository.findByBookLog(bookLog).stream()
                 .map(memo -> MemoListDto.builder()
