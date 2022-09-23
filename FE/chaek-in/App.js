@@ -1,20 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 // import { StatusBar } from 'expo-status-bar';
 // import { StyleSheet } from 'react-native';
 import 'react-native-gesture-handler';
 
-// import LoginPage from './src/components/Pages/Login/LoginPage';
+import * as SecureStore from 'expo-secure-store';
 import TabNavigation from './src/navigation/TabNavigation';
+import SigninNavigation from './src/navigation/SigninNavigation';
+import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 
-export default function App() {
+const Stack = createStackNavigator();
+
+export default function App({ navigation }) {
+  const [userToken, getUserToken] = useState(null);
+  useEffect(() => {
+    const getToken = async () => {
+      let token;
+      try {
+        token = await SecureStore.getItemAsync('accessToken');
+      } catch (e) {
+        console.log(e);
+      }
+      await getUserToken(token);
+    };
+    getToken();
+  }, []);
   return (
     // <View style={styles.container}>
     //   <LoginPage />
     //   <StatusBar style="auto" />
     // </View>
     <NavigationContainer>
-      <TabNavigation />
+      <Stack.Navigator>
+        {userToken == null ? (
+          <Stack.Screen
+            name='Login'
+            component={SigninNavigation}
+            options={{ headerShown: false }}
+          ></Stack.Screen>
+        ) : (
+          <Stack.Screen name='Home' component={TabNavigation} options={{ headerShown: false }}></Stack.Screen>
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

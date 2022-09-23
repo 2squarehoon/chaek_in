@@ -3,16 +3,19 @@ import React, { useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
 
 function HomeScreen({ navigation }) {
-  // const [nickname, getNickname] = useState('');
-  // useEffect(() => {
-  //   const result = SecureStore.getItemAsync('nickname');
-  //   console.log(SecureStore.getItemAsync('nickname'));
-  //   getNickname(result);
-  // }, []);
-
-  const getNickname = (e) => {
-    console.log(SecureStore.getItemAsync('nickname'));
-  };
+  const [nickname, getNickname] = useState(null);
+  useEffect(() => {
+    const getResult = async () => {
+      let name;
+      try {
+        name = await SecureStore.getItemAsync('nickname');
+      } catch (e) {
+        console.log(e);
+      }
+      await getNickname(name);
+    };
+    getResult();
+  }, []);
 
   const goToBookLog = (e) => {
     navigation.navigate('BookLogs');
@@ -27,7 +30,7 @@ function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View>
-        <Text>{}님의 서재</Text>
+        <Text>{nickname}님의 서재</Text>
       </View>
       <View>
         <Button onPress={goToBookLog} title='오늘의 책'></Button>
