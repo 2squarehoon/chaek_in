@@ -2,6 +2,7 @@ package com.team7.chaekin.domain.meeting.controller;
 
 import com.team7.chaekin.domain.meeting.dto.*;
 import com.team7.chaekin.domain.meeting.service.MeetingService;
+import com.team7.chaekin.global.oauth.config.LoginMemberId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -18,33 +19,30 @@ public class MeetingController {
     @GetMapping
     public ResponseEntity<MeetingListResponse> getMeetings(@PageableDefault(size=24) Pageable pageable,
                                                            MeetingListRequest meetingListRequest) {
-        MeetingListResponse response = meetingService.getMeetings(meetingListRequest, pageable);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(meetingService.getMeetings(meetingListRequest, pageable));
     }
 
     @GetMapping("/{meetingId}")
     public ResponseEntity<MeetingDetailResponse> getMeetingDetail(@PathVariable long meetingId) {
-        MeetingDetailResponse response = meetingService.getMeetingDetail(meetingId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(meetingService.getMeetingDetail(meetingId));
     }
 
     @PostMapping
-    public ResponseEntity<MeetingIdResponse> createMeeting(@RequestBody MeetingCreateRequest meetingCreateRequest) {
-        int memberId = 1;
-
+    public ResponseEntity<MeetingIdResponse> createMeeting(@RequestBody MeetingCreateRequest meetingCreateRequest,
+                                                           @LoginMemberId long memberId) {
         long meetingId = meetingService.createMeeting(memberId, meetingCreateRequest);
         return ResponseEntity.ok(new MeetingIdResponse(meetingId));
     }
 
     @PatchMapping("/{meetingId}")
-    public ResponseEntity<MeetingIdResponse> updateMeeting(@PathVariable long meetingId,
+    public ResponseEntity<MeetingIdResponse> updateMeeting(@PathVariable long meetingId, @LoginMemberId long memberId,
                                            @RequestBody MeetingUpdateRequest meetingUpdateRequest) {
         meetingService.updateMeeting(meetingId, meetingUpdateRequest);
         return ResponseEntity.ok(new MeetingIdResponse(meetingId));
     }
 
     @DeleteMapping("/{meetingId}")
-    public ResponseEntity<Void> deleteMeeting(@PathVariable long meetingId) {
+    public ResponseEntity<Void> deleteMeeting(@PathVariable long meetingId, @LoginMemberId long memberId) {
         meetingService.deleteMeeting(meetingId);
         return ResponseEntity.noContent().build();
     }

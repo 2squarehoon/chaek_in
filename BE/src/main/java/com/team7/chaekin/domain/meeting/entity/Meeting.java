@@ -84,7 +84,7 @@ public class Meeting extends BaseTimeEntity {
                 .build();
     }
 
-    private int getCurrentParticipants() {
+    public int getCurrentParticipants() {
         return (int) participants.stream()
                 .filter(p -> !p.isRemoved())
                 .count();

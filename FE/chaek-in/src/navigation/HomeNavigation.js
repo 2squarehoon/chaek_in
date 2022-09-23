@@ -13,7 +13,7 @@ function HomeNavigation() {
       <HomeStack.Screen name='Library' component={HomeScreen} options={{ title: '서재' }}></HomeStack.Screen>
       <HomeStack.Screen name='BookLogs' component={BookLogScreen}></HomeStack.Screen>
       <HomeStack.Screen name='BookDetail' component={BookDetailScreen}></HomeStack.Screen>
-      <HomeStack.Screen name='Login' component={LoginScreen}></HomeStack.Screen>
+      {/* <HomeStack.Screen name='Login' component={LoginScreen}></HomeStack.Screen> */}
     </HomeStack.Navigator>
   );
 }

@@ -5,6 +5,7 @@ import pymysql
 # SQLALCHEMY_DATABASE_URL = "chaekin.cvg3ycl5pbuo.ap-northeast-2.rds.amazonaws.com"
 # SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
 
+
 pymysql.install_as_MySQLdb()
 host = "chaekin.cvg3ycl5pbuo.ap-northeast-2.rds.amazonaws.com"
 user = "admin"

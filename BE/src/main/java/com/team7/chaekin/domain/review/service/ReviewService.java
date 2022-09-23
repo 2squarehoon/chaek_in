@@ -1,16 +1,13 @@
 package com.team7.chaekin.domain.review.service;
 
-import com.team7.chaekin.domain.book.entity.Book;
-import com.team7.chaekin.domain.book.repository.BookRepository;
 import com.team7.chaekin.domain.booklog.entity.BookLog;
 import com.team7.chaekin.domain.booklog.repository.BookLogRepository;
-import com.team7.chaekin.domain.member.entity.Member;
-import com.team7.chaekin.domain.member.repository.MemberRepository;
 import com.team7.chaekin.domain.review.dto.ReviewListDto;
 import com.team7.chaekin.domain.review.dto.ReviewListResponse;
 import com.team7.chaekin.domain.review.dto.ReviewRequest;
 import com.team7.chaekin.domain.review.entity.Review;
 import com.team7.chaekin.domain.review.repository.ReviewRepository;
+import com.team7.chaekin.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,39 +17,34 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.*;
+
 @RequiredArgsConstructor
 @Service
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final BookRepository bookRepository;
     private final BookLogRepository bookLogRepository;
-    private final MemberRepository memberRepository;
 
     @Transactional
     public ReviewListResponse getReviewList(long bookId, long memberId, Pageable pageable) {
-        Book book = getBook(bookId);
-        Member member = getMember(memberId);
-        BookLog bookLog = getBookLog(book, member);
-
+        BookLog bookLog = getBookLog(bookId, memberId);
         Page<Review> reviewPages = reviewRepository.findByBookLog(bookLog, pageable);
 
         int totalPages = reviewPages.getTotalPages();
-        List<ReviewListDto> listDtos = reviewPages.toList().stream()
+        List<ReviewListDto> dtos = reviewPages.toList().stream()
                 .map(r -> ReviewListDto.builder()
                         .reviewId(r.getId())
                         .writer(r.getBookLog().getMember().getNickname())
                         .comment(r.getComment())
                         .score(r.getScore())
                         .build()).collect(Collectors.toList());
-        return new ReviewListResponse(totalPages, listDtos);
+        return new ReviewListResponse(totalPages, dtos);
     }
 
     @Transactional
     public long writeReview(long bookId, long memberId, ReviewRequest reviewRequest) {
-        Book book = getBook(bookId);
-        Member member = getMember(memberId);
-        BookLog bookLog = getBookLog(book, member);
+        BookLog bookLog = getBookLog(bookId, memberId);
 
         return reviewRepository.save(Review.builder()
                         .bookLog(bookLog)
@@ -60,21 +52,15 @@ public class ReviewService {
                         .score(reviewRequest.getScore()).build()).getId();
     }
 
-    private BookLog getBookLog(Book book, Member member) {
-        return bookLogRepository.findByMemberAndBook(member, book)
-                .orElseThrow(() -> new RuntimeException("책을 읽은 기록이 없습니다."));
-    }
-
     @Transactional
     public void updateReview(Long bookId, Long reviewId, Long memberId, ReviewRequest reviewRequest) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("해당 리뷰가 존재하지 않습니다."));
+        Review review = getReview(reviewId);
         BookLog bookLog = review.getBookLog();
         if (!bookId.equals(bookLog.getBook().getId())) {
-            throw new RuntimeException("해당 리뷰의 도서가 아닙니다.");
+            throw new CustomException(INVALID_BOOK_ID);
         }
         if (!memberId.equals(bookLog.getMember().getId())) {
-            throw new RuntimeException("수정 권한이 없습니다");
+            throw new CustomException(DO_NOT_HAVE_AUTHORIZATION);
         }
 
         review.update(reviewRequest.getScore(), reviewRequest.getComment());
@@ -82,24 +68,24 @@ public class ReviewService {
 
     @Transactional
     public void deleteReview(Long bookId, Long reviewId, Long memberId) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("해당 리뷰가 존재하지 않습니다."));
+        Review review = getReview(reviewId);
         BookLog bookLog = review.getBookLog();
         if (!bookId.equals(bookLog.getBook().getId())) {
-            throw new RuntimeException("해당 리뷰의 도서가 아닙니다.");
+            throw new CustomException(INVALID_BOOK_ID);
         }
         if (!memberId.equals(bookLog.getMember().getId())) {
-            throw new RuntimeException("수정 권한이 없습니다");
+            throw new CustomException(DO_NOT_HAVE_AUTHORIZATION);
         }
         reviewRepository.delete(review);
     }
 
-    private Member getMember(long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+    private Review getReview(Long reviewId) {
+        return reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CustomException(REVIEW_IS_NOT_EXIST));
     }
 
-    private Book getBook(long bookId) {
-        return bookRepository.findById(bookId).orElseThrow(RuntimeException::new);
+    private BookLog getBookLog(long bookId, long memberId) {
+        return bookLogRepository.findBookLogByMemberIdAndBookId(memberId, bookId)
+                .orElseThrow(() -> new CustomException(BOOKLOG_IS_NOT_EXIST));
     }
-
 }

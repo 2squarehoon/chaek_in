@@ -3,6 +3,7 @@ package com.team7.chaekin.domain.wishlist.dto;
 import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 public class WishListDto {
     private long wishListId;
@@ -10,5 +11,5 @@ public class WishListDto {
     private String isbn;
     private String title;
     private String author;
-    private String image;
+    private String cover;
 }
