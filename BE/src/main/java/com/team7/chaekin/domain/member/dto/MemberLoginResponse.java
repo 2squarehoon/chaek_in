@@ -9,4 +9,5 @@ public class MemberLoginResponse {
     private Boolean isFirst;
     private String accessToken;
     private String refreshToken;
+    private String nickname;
 }
