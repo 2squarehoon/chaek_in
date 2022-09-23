@@ -58,7 +58,6 @@ public class MeetingCommentService {
                         comments.add(new MeetingCommentListDto(parent, children));
                     }
                 });
-
         return new MeetingCommentListResponse(totalPages, comments);
     }
 
@@ -107,7 +106,7 @@ public class MeetingCommentService {
     }
 
     private Meeting getMeeting(long meetingId) {
-        return meetingRepository.findById(meetingId)
+        return meetingRepository.findByIdAndIsRemovedIsFalse(meetingId)
                 .orElseThrow(() -> new RuntimeException("해당 모임이 존재하지 않습니다."));
     }
     private Member getMember(long memberId) {

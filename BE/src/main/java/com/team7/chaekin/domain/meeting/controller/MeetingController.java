@@ -19,14 +19,12 @@ public class MeetingController {
     @GetMapping
     public ResponseEntity<MeetingListResponse> getMeetings(@PageableDefault(size=24) Pageable pageable,
                                                            MeetingListRequest meetingListRequest) {
-        MeetingListResponse response = meetingService.getMeetings(meetingListRequest, pageable);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(meetingService.getMeetings(meetingListRequest, pageable));
     }
 
     @GetMapping("/{meetingId}")
     public ResponseEntity<MeetingDetailResponse> getMeetingDetail(@PathVariable long meetingId) {
-        MeetingDetailResponse response = meetingService.getMeetingDetail(meetingId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(meetingService.getMeetingDetail(meetingId));
     }
 
     @PostMapping

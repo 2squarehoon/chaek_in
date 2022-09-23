@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 public class BookService {
     private final BookRepository bookRepository;
 
-    private final MemberRepository memberRepository;
     private final BookLogRepository bookLogRepository;
 
     @Transactional(readOnly = true)
@@ -45,10 +44,8 @@ public class BookService {
 
     @Transactional
     public void endRead(long memberId, long bookId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 유저입니다."));
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new NoSuchElementException("해당 책이 존재하지 않습니다."));
-
-        BookLog bookLog = bookLogRepository.findByMemberAndBook(member, book).get();
+        BookLog bookLog = bookLogRepository.findBookLogByMemberIdAndBookId(memberId, bookId)
+                .orElseThrow(() -> new RuntimeException("책 읽은 기록이 없습니다."));
         bookLog.updateStatus();
     }
 }
