@@ -38,19 +38,22 @@
     "react-native": "0.69.5",
     "react-native-base64": "^0.2.1",
     "react-native-dotenv": "^3.3.1",
+    "react-native-encrypted-storage": "^4.0.2",
     "react-native-gesture-handler": "~2.5.0",
     "react-native-image-picker": "^4.10.0",
     "react-native-pager-view": "5.4.24",
     "react-native-reanimated": "^2.10.0",
     "react-native-safe-area-context": "4.3.1",
     "react-native-screens": "^3.17.0",
+    "react-native-select-dropdown": "^2.0.4",
     "react-native-tab-view": "^3.1.1",
     "react-native-tesseract-ocr": "^2.0.3",
     "react-native-web": "~0.18.7",
     "require": "^2.4.20",
     "rn-text-detector": "^0.0.8",
     "styled-components": "^5.3.5",
-    "xhr2": "^0.2.1"
+    "xhr2": "^0.2.1",
+    "expo-secure-store": "~11.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
