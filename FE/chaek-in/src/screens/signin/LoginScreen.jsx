@@ -9,7 +9,7 @@ import styled from 'styled-components/native';
 
 WebBrowser.maybeCompleteAuthSession();
 
-function LoginScreen() {
+function LoginScreen({ navigation }) {
   const [gUser, setGUser] = useState(''); // 구글로부터 받아온 유저데이터
   const [reqError, setReqError] = useState('');
   // const [isLoding, setIsLoding] = useState(false);
@@ -22,7 +22,7 @@ function LoginScreen() {
     webClientId: GOOGLE_WEB_CLIENT_ID,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (response?.type === 'success') {
       const { authentication } = response;
       console.log(authentication);
@@ -40,13 +40,17 @@ function LoginScreen() {
       });
 
       console.log(gUserReq.data);
-      setGUser(gUserReq.data);
+      // setGUser(gUserReq.data);
       // storageData();
       setUserEmail(gUserReq.data.email);
+      goToNickname();
     } catch (error) {
       console.log('GoogleUserReq error: ', error.response.data);
       setReqError(error.response.data);
     }
+  };
+  const goToNickname = (e) => {
+    navigation.navigate('Nickname', { email: userEmail });
   };
 
   // const giveGoogleUser = async (accessToken) => {
@@ -159,7 +163,7 @@ const MiddleContainer = styled.View`
 `;
 
 const MiddleText = styled.Text`
-  font-size: 20rem;
+  font-size: 20px;
 `;
 
 export default LoginScreen;
