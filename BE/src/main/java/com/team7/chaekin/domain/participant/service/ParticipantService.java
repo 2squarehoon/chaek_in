@@ -48,11 +48,14 @@ public class ParticipantService {
     }
 
     @Transactional
-    public void leaveMeeting(long meetingId, long participantId) {
+    public void leaveMeeting(long meetingId, long participantId, long memberId) {
         Meeting meeting = getMeeting(meetingId);
 
         Participant participant = participantRepository.findById(participantId)
                 .orElseThrow(() -> new RuntimeException("해당 참가자가 존재하지 않습니다."));
+        if (!participant.getMember().equals(memberId)) {
+            throw new RuntimeException("권한이 없습니다.");
+        }
         if (!participant.getMeeting().equals(meeting)) {
             throw new RuntimeException("미팅 참가자가 아닙니다.");
         }

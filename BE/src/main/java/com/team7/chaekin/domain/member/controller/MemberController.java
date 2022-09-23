@@ -17,8 +17,6 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    private static long memberId = 1;
-
     @GetMapping("/login")
     public ResponseEntity<MemberLoginResponse> login(MemberLoginRequest memberLoginRequest) {
         return ResponseEntity.ok(memberService.login(memberLoginRequest.getIdentifier()));
@@ -47,13 +45,14 @@ public class MemberController {
     }
 
     @PatchMapping("/me")
-    public ResponseEntity<?> updateAdditionalInformation(@RequestBody MemberUpdateRequest memberUpdateRequest) {
+    public ResponseEntity<?> updateAdditionalInformation(@RequestBody MemberUpdateRequest memberUpdateRequest,
+                                                         @LoginMemberId long memberId) {
         memberService.updateAdditionalInformation(memberId, memberUpdateRequest);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/me")
-    public ResponseEntity<?> deleteMember() {
+    public ResponseEntity<?> deleteMember(@LoginMemberId long memberId) {
         memberService.deleteMember(memberId);
 
         return ResponseEntity.noContent().build();
