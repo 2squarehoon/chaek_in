@@ -15,15 +15,27 @@ public class WishList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //    member id
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    //    book id
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
 
     private boolean isRemoved;
+
+    @Builder
+    public WishList(Member member, Book book) {
+        this.member = member;
+        this.book = book;
+    }
+
+    public void gotDibs() {
+        isRemoved = false;
+    }
+
+    public void delete() {
+        isRemoved = true;
+    }
 }
