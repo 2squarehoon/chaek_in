@@ -3,6 +3,7 @@ package com.team7.chaekin.global.oauth.config;
 import com.team7.chaekin.global.oauth.exception.RestAuthenticationEntryPoint;
 import com.team7.chaekin.global.oauth.filter.TokenAuthenticationFilter;
 import com.team7.chaekin.global.oauth.handler.CustomLogoutHandler;
+import com.team7.chaekin.global.webmvc.properties.CorsProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

@@ -2,7 +2,9 @@ package com.team7.chaekin.domain.review.entity;
 
 import com.team7.chaekin.domain.booklog.entity.BookLog;
 import com.team7.chaekin.domain.common.entity.BaseTimeEntity;
+import com.team7.chaekin.domain.review.dto.ReviewRequest;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,6 +29,15 @@ public class Review extends BaseTimeEntity {
     @Column(length = 1000)
     private String comment;
 
-    @Column
-    private boolean isRemoved;
+    @Builder
+    public Review(BookLog bookLog, double score, String comment) {
+        this.bookLog = bookLog;
+        this.score = score;
+        this.comment = comment;
+    }
+
+    public void update(double score, String comment) {
+        this.score = score;
+        this.comment = comment;
+    }
 }
