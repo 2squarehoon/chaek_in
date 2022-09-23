@@ -37,7 +37,8 @@
     "react-native-select-dropdown": "^2.0.4",
     "react-native-tab-view": "^3.1.1",
     "react-native-web": "~0.18.7",
-    "styled-components": "^5.3.5"
+    "styled-components": "^5.3.5",
+    "expo-secure-store": "~11.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
