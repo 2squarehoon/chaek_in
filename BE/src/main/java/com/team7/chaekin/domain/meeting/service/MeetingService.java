@@ -9,6 +9,8 @@ import com.team7.chaekin.domain.member.entity.Member;
 import com.team7.chaekin.domain.member.repository.MemberRepository;
 import com.team7.chaekin.domain.participant.entity.Participant;
 import com.team7.chaekin.domain.participant.repository.ParticipantRepository;
+import com.team7.chaekin.global.error.errorcode.DomainErrorCode;
+import com.team7.chaekin.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.BOOK_IS_NOT_EXIST;
+import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.MEMBER_IS_NOT_EXIST;
 
 @RequiredArgsConstructor
 @Service
@@ -46,9 +51,8 @@ public class MeetingService {
     @Transactional
     public long createMeeting(long memberId, MeetingCreateRequest meetingCreateRequest) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
-        Book book = bookRepository.findById(meetingCreateRequest.getBookId())
-                .orElseThrow(() -> new RuntimeException("해당 책이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
+        Book book = getBook(meetingCreateRequest.getBookId());
 
         Meeting meeting = meetingRepository.save(Meeting.builder()
                 .book(book)
@@ -63,11 +67,10 @@ public class MeetingService {
     @Transactional
     public void updateMeeting(long meetingId, MeetingUpdateRequest meetingUpdateRequest) {
         Meeting meeting = getMeeting(meetingId);
-        Book book = bookRepository.findById(meetingUpdateRequest.getBookId())
-                .orElseThrow(() -> new RuntimeException("해당 책이 존재하지 않습니다."));
+        Book book = getBook(meetingUpdateRequest.getBookId());
 
         if (meetingUpdateRequest.getMaxCapacity() < meeting.getCurrentParticipants()) {
-            throw new RuntimeException("현재 인원이 최대 인원보다 많습니다.");
+            throw new CustomException(DomainErrorCode.IMPOSSIBLE_CAPACITY_LESS_THAN_CURRENT_MEMBERS);
         }
         meeting.update(book, meetingUpdateRequest);
     }
@@ -78,9 +81,14 @@ public class MeetingService {
         meeting.delete();
     }
 
+    private Book getBook(long bookId) {
+        return bookRepository.findById(bookId)
+                .orElseThrow(() -> new CustomException(BOOK_IS_NOT_EXIST));
+    }
+
     private Meeting getMeeting(long meetingId) {
         return meetingRepository.findByIdAndIsRemovedIsFalse(meetingId)
-                .orElseThrow(() -> new RuntimeException("해당 모임이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(DomainErrorCode.MEETING_IS_NOT_EXIST));
     }
 
 }

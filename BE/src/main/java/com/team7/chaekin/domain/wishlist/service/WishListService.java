@@ -8,12 +8,16 @@ import com.team7.chaekin.domain.wishlist.dto.WishListDto;
 import com.team7.chaekin.domain.wishlist.dto.WishListResponse;
 import com.team7.chaekin.domain.wishlist.entity.WishList;
 import com.team7.chaekin.domain.wishlist.repository.WishListRepository;
+import com.team7.chaekin.global.error.errorcode.DomainErrorCode;
+import com.team7.chaekin.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -56,12 +60,12 @@ public class WishListService {
 
     private Book getBook(long bookId) {
         return bookRepository.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("해당 도서가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(BOOK_IS_NOT_EXIST));
     }
 
     private Member getMember(long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
     }
 
 }
