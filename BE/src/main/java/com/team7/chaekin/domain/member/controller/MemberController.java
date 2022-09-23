@@ -2,6 +2,7 @@ package com.team7.chaekin.domain.member.controller;
 
 import com.team7.chaekin.domain.member.dto.*;
 import com.team7.chaekin.domain.member.service.MemberService;
+import com.team7.chaekin.domain.memo.dto.MemberTokenResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,6 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    //TODO: 로그인 로직 도입 후 삭제
     private static long memberId = 1;
 
     @GetMapping("/login")
@@ -35,9 +35,9 @@ public class MemberController {
     }
 
     @PostMapping("/me")
-    public ResponseEntity<?> saveAdditionalInformation(@RequestBody MemberCreateRequest memberCreateRequest) {
-        memberService.saveAdditionalInformation(memberCreateRequest);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<MemberTokenResponse> saveAdditionalInformation(@RequestBody MemberCreateRequest memberCreateRequest) {
+        MemberTokenResponse memberTokenResponse = memberService.saveAdditionalInformation(memberCreateRequest);
+        return ResponseEntity.ok(memberTokenResponse);
     }
 
     @PatchMapping("/me")

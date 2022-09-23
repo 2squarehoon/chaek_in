@@ -1,5 +1,6 @@
 package com.team7.chaekin.domain.member.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
