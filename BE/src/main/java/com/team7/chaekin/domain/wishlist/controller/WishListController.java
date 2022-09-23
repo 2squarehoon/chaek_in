@@ -1,6 +1,5 @@
 package com.team7.chaekin.domain.wishlist.controller;
 
-import com.team7.chaekin.domain.wishlist.dto.WishListResponse;
 import com.team7.chaekin.domain.wishlist.service.WishListService;
 import com.team7.chaekin.global.oauth.config.LoginMemberId;
 import lombok.RequiredArgsConstructor;

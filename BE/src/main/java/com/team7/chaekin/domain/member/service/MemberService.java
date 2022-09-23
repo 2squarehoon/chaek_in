@@ -38,6 +38,7 @@ public class MemberService {
                     memberLoginResponse.setIsFirst(false);
                     memberLoginResponse.setAccessToken(issueTokens.getAccess());
                     memberLoginResponse.setRefreshToken(issueTokens.getRefresh());
+                    memberLoginResponse.setNickname(member.getNickname());
                 },
                 () -> memberLoginResponse.setIsFirst(true));
         return memberLoginResponse;
@@ -108,4 +109,12 @@ public class MemberService {
         return new TokenSet(accessToken, refreshToken);
     }
 
+    public MemberInfoResponse getMyInformation(long memberId) {
+        Member member = getMember(memberId);
+        return MemberInfoResponse.builder()
+                .nickname(member.getNickname())
+                .age(member.getAge())
+                .job(member.getJob())
+                .gender(member.getGender()).build();
+    }
 }

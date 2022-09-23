@@ -3,6 +3,7 @@ package com.team7.chaekin.domain.member.controller;
 import com.team7.chaekin.domain.member.dto.*;
 import com.team7.chaekin.domain.member.service.MemberService;
 import com.team7.chaekin.domain.memo.dto.MemberTokenResponse;
+import com.team7.chaekin.global.oauth.config.LoginMemberId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,11 @@ public class MemberController {
     public ResponseEntity<?> getMemberBooks(@PathVariable long memberId) {
         MemberBooksResponse memberBooksResponse = memberService.getMemberBooks(memberId);
         return ResponseEntity.ok(memberBooksResponse);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<MemberInfoResponse> getMyInformation(@LoginMemberId long memberId) {
+        return ResponseEntity.ok(memberService.getMyInformation(memberId));
     }
 
     @PostMapping("/me")
