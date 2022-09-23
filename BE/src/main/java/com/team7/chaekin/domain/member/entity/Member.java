@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"identifier"})
+        @UniqueConstraint(columnNames = {"identifier", "refreshToken"})
 })
 public class Member extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +36,7 @@ public class Member extends BaseTimeEntity {
 
     private boolean isRemoved;
 
+    @Column
     private String refreshToken;
 
     @Builder
