@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import { Text, View, Button, Image } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GOOGLE_EXPO_CLIENT_ID, GOOGLE_ANDROID_CLIENT_ID, GOOGLE_WEB_CLIENT_ID } from '@env';
 import Axios from 'axios';
 import styled from 'styled-components/native';
+import { HOST } from '@env';
+// import EncryptedStorage from 'react-native-encrypted-storage';
+import * as SecureStore from 'expo-secure-store';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -13,8 +15,11 @@ function LoginScreen({ navigation }) {
   const [gUser, setGUser] = useState(''); // 구글로부터 받아온 유저데이터
   const [reqError, setReqError] = useState('');
   // const [isLoding, setIsLoding] = useState(false);
-  const [userName, setUserName] = useState();
   const [userEmail, setUserEmail] = useState();
+  const [isFirst, setIsFirst] = useState('');
+  const [nname, setNickname] = useState('');
+  const [aToken, setAccessToken] = useState('');
+  const [rToken, setRefreshToken] = useState('');
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     expoClientId: GOOGLE_EXPO_CLIENT_ID,
@@ -25,7 +30,7 @@ function LoginScreen({ navigation }) {
   useEffect(() => {
     if (response?.type === 'success') {
       const { authentication } = response;
-      console.log(authentication);
+      // console.log(authentication);
       getGoogleUser(authentication.accessToken);
       // giveGoogleUser(authentication.accessToken);
     }
@@ -37,13 +42,38 @@ function LoginScreen({ navigation }) {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-      });
-
-      console.log(gUserReq.data);
+      })
+        .then(function (response) {
+          setUserEmail(response.data.email);
+          console.log(userEmail);
+        })
+        .then(function () {
+          Axios.get(`${HOST}/api/v1/members/login?identifier=${userEmail}`)
+            .then(function (response) {
+              console.log(response.data);
+              setIsFirst(response.data.isFirst);
+              setNickname(response.data.nickname);
+              setAccessToken(response.data.accessToken);
+              setRefreshToken(response.data.refreshToken);
+            })
+            .then(async function () {
+              if (isFirst === false) {
+                await SecureStore.setItemAsync('identifier', userEmail);
+                await SecureStore.setItemAsync('nickname', nname);
+                await SecureStore.setItemAsync('accessToken', aToken);
+                await SecureStore.setItemAsync('refreshToken', rToken);
+                console.log('SecureStore 저장됨');
+              } else {
+                goToNickname();
+              }
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        });
+      // console.log(gUserReq.data);
       // setGUser(gUserReq.data);
       // storageData();
-      setUserEmail(gUserReq.data.email);
-      goToNickname();
     } catch (error) {
       console.log('GoogleUserReq error: ', error.response.data);
       setReqError(error.response.data);
@@ -52,56 +82,10 @@ function LoginScreen({ navigation }) {
   const goToNickname = (e) => {
     navigation.navigate('Nickname', { email: userEmail });
   };
-
-  // const giveGoogleUser = async (accessToken) => {
-  //   const giveUser = await Axios.post('your-backDB-apiURL', {
-  //     //you can edit Data sturcture
-  //     accessToken: accessToken,
-  //     userInfo: {
-  //       id: JSON.stringify(gUser.id),
-  //       email: JSON.stringify(gUser.email),
-  //       verified_email: JSON.stringify(gUser.verified_email),
-  //       name: JSON.stringify(gUser.name),
-  //       given_name: JSON.stringify(gUser.given_name),
-  //       family_name: JSON.stringify(gUser.family_name),
-  //       picture: JSON.stringify(gUser.picture),
-  //       locale: JSON.stringify(gUser.locale),
-  //       hd: JSON.stringify(gUser.hd),
-  //     },
-  //   })
-  //     .then((response) => {
-  //       console.log(response.status); //To check
-  //       storageData(); //storageData to local DB
-  //     })
-  //     .catch(console.error)
-  //     .finally(() => setIsLoding(false));
-  // };
-
-  // const storageData = async () => {
-  //   await AsyncStorage.setItem(
-  //     'User',
-  //     JSON.stringify({
-  //       id: gUser.id,
-  //       name: gUser.name,
-  //       email: gUser.email,
-  //       picture: gUser.picture,
-  //     }),
-  //     () => {
-  //       console.log('User Info Saved!');
-  //     },
-  //   );
-  // };
-  // const getUserName = async () => {
-  //   try {
-  //     AsyncStorage.getItem('User', (err, result) => {
-  //       const UserInfo = JSON.parse(result);
-  //       console.log(UserInfo);
-  //       setUserName(UserInfo.email);
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const getNickname = async () => {
+    const getnick = await SecureStore.getItemAsync('identifier');
+    console.log(getnick);
+  };
 
   return (
     <LoginContainer>
@@ -126,6 +110,9 @@ function LoginScreen({ navigation }) {
       >
         <Text>Google로 로그인</Text>
       </GoogleLogin>
+      <View>
+        <Button onPress={getNickname} title='닉네임'></Button>
+      </View>
       {/* <View>
         <Text>이름 : {userName}</Text>
       </View>
