@@ -1,7 +1,19 @@
 import { StyleSheet, Text, View, Button } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import * as SecureStore from 'expo-secure-store';
 
 function HomeScreen({ navigation }) {
+  // const [nickname, getNickname] = useState('');
+  // useEffect(() => {
+  //   const result = SecureStore.getItemAsync('nickname');
+  //   console.log(SecureStore.getItemAsync('nickname'));
+  //   getNickname(result);
+  // }, []);
+
+  const getNickname = (e) => {
+    console.log(SecureStore.getItemAsync('nickname'));
+  };
+
   const goToBookLog = (e) => {
     navigation.navigate('BookLogs');
   };
@@ -15,7 +27,7 @@ function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View>
-        <Text>서재</Text>
+        <Text>{}님의 서재</Text>
       </View>
       <View>
         <Button onPress={goToBookLog} title='오늘의 책'></Button>
@@ -23,9 +35,9 @@ function HomeScreen({ navigation }) {
       <View>
         <Button onPress={goToBookDetail} title='책 상세정보'></Button>
       </View>
-      {/* <View>
-        <Button onPress={goToLogin} title='로그인'></Button>
-      </View> */}
+      <View>
+        <Button onPress={getNickname} title='닉네임'></Button>
+      </View>
     </View>
   );
 }
