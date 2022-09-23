@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TextInput, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import SelectDropdown from 'react-native-select-dropdown';
 import { HOST } from '@env';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 function GetGenderScreen({ navigation, route }) {
   const [gender, setGender] = useState('');
@@ -11,18 +12,28 @@ function GetGenderScreen({ navigation, route }) {
     { label: '남성', value: 'MALE' },
     { label: '여성', value: 'FEMALE' },
   ];
-
+  const nickname = route.params.nickname;
+  const email = route.params.email;
   async function Signin() {
     const response = await axios
       .post(`${HOST}/api/v1/members/me`, {
-        identifier: route.params.email,
-        nickname: route.params.nickname,
+        identifier: email,
+        nickname: nickname,
         job: route.params.job,
         age: route.params.age,
         gender: gender,
       })
       .then(function (response) {
         console.log(response.data);
+        EncryptedStorage.setItem(
+          'user_session',
+          JSON.stringify({
+            identifier: email,
+            nickname: nickname,
+            accessToken: response.data.accessToken,
+            refreshToken: response.data.refreshToken,
+          }),
+        );
         // navigation.navigate('Login'); // 사전평점조사페이지로 이동
       })
       .catch(function (error) {

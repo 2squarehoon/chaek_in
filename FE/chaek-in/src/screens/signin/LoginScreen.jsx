@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import { Text, View, Button, Image } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GOOGLE_EXPO_CLIENT_ID, GOOGLE_ANDROID_CLIENT_ID, GOOGLE_WEB_CLIENT_ID } from '@env';
 import Axios from 'axios';
 import styled from 'styled-components/native';
+import { HOST } from '@env';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -15,6 +16,7 @@ function LoginScreen({ navigation }) {
   // const [isLoding, setIsLoding] = useState(false);
   const [userName, setUserName] = useState();
   const [userEmail, setUserEmail] = useState();
+  const [isFirst, setIsFirst] = useState('');
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     expoClientId: GOOGLE_EXPO_CLIENT_ID,
@@ -25,7 +27,7 @@ function LoginScreen({ navigation }) {
   useEffect(() => {
     if (response?.type === 'success') {
       const { authentication } = response;
-      console.log(authentication);
+      // console.log(authentication);
       getGoogleUser(authentication.accessToken);
       // giveGoogleUser(authentication.accessToken);
     }
@@ -37,13 +39,34 @@ function LoginScreen({ navigation }) {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+      }).then(function (response) {
+        setUserEmail(response.data.email);
+        console.log(userEmail);
+        Axios.get(`${HOST}/api/v1/members/login?identifier=${userEmail}`)
+          .then(function (response) {
+            console.log(response.data);
+            setIsFirst(response.data.isFirst);
+            if (isFirst === false) {
+              EncryptedStorage.setItem(
+                'user_session',
+                JSON.stringify({
+                  identifier: userEmail,
+                  nickname: response.data.nickname,
+                  accessToken: response.data.accessToken,
+                  refreshToken: response.data.refreshToken,
+                }),
+              );
+            } else {
+              goToNickname();
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
       });
-
-      console.log(gUserReq.data);
+      // console.log(gUserReq.data);
       // setGUser(gUserReq.data);
       // storageData();
-      setUserEmail(gUserReq.data.email);
-      goToNickname();
     } catch (error) {
       console.log('GoogleUserReq error: ', error.response.data);
       setReqError(error.response.data);
