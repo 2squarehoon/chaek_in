@@ -11,6 +11,10 @@ function RecordScreen({ navigation }) {
     navigation.navigate('RecordDetail');
   };
 
+  const goToOCR = (e) => {
+    navigation.navigate('OCR');
+  };
+
   return (
     <View style={styles.container}>
       <TopContainer>
@@ -59,6 +63,9 @@ function RecordScreen({ navigation }) {
       <WriteButton onPress={goToRecordCreate} title='RecordCreate'>
         <Text>작성</Text>
       </WriteButton>
+      <OCRButton onPress={goToOCR} title='OCR'>
+        <Text>카메라</Text>
+      </OCRButton>
     </View>
   );
 }
@@ -103,6 +110,18 @@ const WriteButton = styled.TouchableOpacity`
   background-color: #b1d8e8;
   position: absolute;
   right: 10px;
+  bottom: 10px;
+  width: 50px;
+  height: 50px;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 15px;
+`;
+
+const OCRButton = styled.TouchableOpacity`
+  background-color: #b1d8e8;
+  position: absolute;
+  left: 10px;
   bottom: 10px;
   width: 50px;
   height: 50px;
