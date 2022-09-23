@@ -5,12 +5,19 @@ import com.team7.chaekin.domain.booklog.entity.BookLog;
 import com.team7.chaekin.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface BookLogRepository extends JpaRepository<BookLog, Long> {
     Optional<BookLog> findByMemberAndBook(Member member, Book book);
+
+    @Query("SELECT bl FROM BookLog bl " +
+            "WHERE bl.member.id = :memberId " +
+            "AND bl.book.id = :bookId")
+    Optional<BookLog> findBookLogByMemberIdAndBookId(@Param("memberId") long memberId, @Param("bookId") long bookId);
 
     List<BookLog> findByMember(Member member);
 
