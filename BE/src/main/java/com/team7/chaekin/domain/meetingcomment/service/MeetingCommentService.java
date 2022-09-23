@@ -7,6 +7,7 @@ import com.team7.chaekin.domain.meetingcomment.entity.MeetingComment;
 import com.team7.chaekin.domain.meetingcomment.repository.MeetingCommentRepository;
 import com.team7.chaekin.domain.member.entity.Member;
 import com.team7.chaekin.domain.member.repository.MemberRepository;
+import com.team7.chaekin.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -83,10 +86,10 @@ public class MeetingCommentService {
                                      long memberId, MeetingCommentUpdateRequest meetingCommentUpdateRequest) {
         MeetingComment meetingComment = getMeetingComment(meetingCommentId);
         if (!meetingComment.getMeeting().getId().equals(meetingId)) {
-            throw new RuntimeException("해당 미팅의 댓글이 아닙니다.");
+            throw new CustomException(WRONG_LOCATION_COMMENT);
         }
         if (!meetingComment.getMember().getId().equals(memberId)) {
-            throw new RuntimeException("해당 댓글의 작성자가 아닙니다.");
+            throw new CustomException(DO_NOT_HAVE_AUTHORIZATION);
         }
 
         meetingComment.update(meetingCommentUpdateRequest.getContent());
@@ -97,26 +100,26 @@ public class MeetingCommentService {
     public void deleteMeetingComment(long meetingId, long memberId, long meetingCommentId) {
         MeetingComment meetingComment = getMeetingComment(meetingCommentId);
         if (!meetingComment.getMeeting().getId().equals(meetingId)) {
-            throw new RuntimeException("해당 미팅의 댓글이 아닙니다.");
+            throw new CustomException(WRONG_LOCATION_COMMENT);
         }
         if (!meetingComment.getMember().getId().equals(memberId)) {
-            throw new RuntimeException("해당 댓글의 작성자가 아닙니다.");
+            throw new CustomException(DO_NOT_HAVE_AUTHORIZATION);
         }
         meetingComment.delete();
     }
 
     private Meeting getMeeting(long meetingId) {
         return meetingRepository.findByIdAndIsRemovedIsFalse(meetingId)
-                .orElseThrow(() -> new RuntimeException("해당 모임이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(MEETING_IS_NOT_EXIST));
     }
     private Member getMember(long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
     }
 
     private MeetingComment getMeetingComment(long meetingCommentId) {
         return meetingCommentRepository.findById(meetingCommentId)
-                .orElseThrow(() -> new RuntimeException("해당 댓글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(COMMENT_IS_NOT_EXIST));
     }
 
 }

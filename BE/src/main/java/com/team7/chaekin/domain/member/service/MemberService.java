@@ -8,6 +8,8 @@ import com.team7.chaekin.domain.member.dto.*;
 import com.team7.chaekin.domain.member.entity.Member;
 import com.team7.chaekin.domain.member.repository.MemberRepository;
 import com.team7.chaekin.domain.memo.dto.MemberTokenResponse;
+import com.team7.chaekin.global.error.errorcode.DomainErrorCode;
+import com.team7.chaekin.global.error.exception.CustomException;
 import com.team7.chaekin.global.oauth.token.TokenProperties;
 import com.team7.chaekin.global.oauth.token.TokenUtils;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -72,7 +76,7 @@ public class MemberService {
     @Transactional
     public MemberTokenResponse saveAdditionalInformation(MemberCreateRequest memberCreateRequest) {
         memberRepository.findByIdentifier(memberCreateRequest.getIdentifier())
-                .ifPresent(m -> {throw new RuntimeException("이미 회원가입한 회원입니다.");});
+                .ifPresent(m -> { throw new CustomException(DomainErrorCode.ALREADY_REGIST_MEMBER); });
         Member member = memberRepository.save(memberCreateRequest.toEntity());
 
         TokenSet issueTokens = issueNewTokenSet(member);
@@ -93,7 +97,7 @@ public class MemberService {
 
     private Member getMember(long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
     }
 
     private TokenSet issueNewTokenSet(Member member) {

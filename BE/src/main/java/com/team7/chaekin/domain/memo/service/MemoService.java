@@ -1,16 +1,13 @@
 package com.team7.chaekin.domain.memo.service;
 
-import com.team7.chaekin.domain.book.entity.Book;
-import com.team7.chaekin.domain.book.repository.BookRepository;
 import com.team7.chaekin.domain.booklog.entity.BookLog;
 import com.team7.chaekin.domain.booklog.repository.BookLogRepository;
-import com.team7.chaekin.domain.member.entity.Member;
-import com.team7.chaekin.domain.member.repository.MemberRepository;
 import com.team7.chaekin.domain.memo.dto.MemoListDto;
 import com.team7.chaekin.domain.memo.dto.MemoListResponse;
 import com.team7.chaekin.domain.memo.dto.MemoRequest;
 import com.team7.chaekin.domain.memo.entity.Memo;
 import com.team7.chaekin.domain.memo.repository.MemoRepository;
+import com.team7.chaekin.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +15,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -69,17 +68,17 @@ public class MemoService {
 
     private void checkMemoIsMine(BookLog bookLog, Memo memo) {
         if (!bookLog.getId().equals(memo.getBookLog().getId())) {
-            throw new RuntimeException("권한이 없습니다.");
+            throw new CustomException(DO_NOT_HAVE_AUTHORIZATION);
         }
     }
 
     private Memo getMemo(long memoId) {
         return memoRepository.findById(memoId)
-                .orElseThrow(() -> new RuntimeException("해당 메모가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(MEMO_IS_NOT_EXIST));
     }
 
     private BookLog getBookLog(long bookId, long memberId) {
         return bookLogRepository.findBookLogByMemberIdAndBookId(memberId, bookId)
-                .orElseThrow(() -> new RuntimeException("책을 읽은 기록이 없습니다."));
+                .orElseThrow(() -> new CustomException(BOOKLOG_IS_NOT_EXIST));
     }
 }
