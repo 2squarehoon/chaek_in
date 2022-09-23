@@ -7,6 +7,7 @@ import com.team7.chaekin.domain.booklog.repository.BookLogRepository;
 import com.team7.chaekin.domain.member.dto.*;
 import com.team7.chaekin.domain.member.entity.Member;
 import com.team7.chaekin.domain.member.repository.MemberRepository;
+import com.team7.chaekin.domain.memo.dto.MemberTokenResponse;
 import com.team7.chaekin.global.oauth.token.TokenProperties;
 import com.team7.chaekin.global.oauth.token.TokenUtils;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class MemberService {
                     memberLoginResponse.setIsFirst(false);
                     memberLoginResponse.setAccessToken(issueTokens.getAccess());
                     memberLoginResponse.setRefreshToken(issueTokens.getRefresh());
+                    memberLoginResponse.setNickname(member.getNickname());
                 },
                 () -> memberLoginResponse.setIsFirst(true));
         return memberLoginResponse;
@@ -68,8 +70,11 @@ public class MemberService {
     }
 
     @Transactional
-    public void saveAdditionalInformation(MemberCreateRequest memberCreateRequest) {
-        memberRepository.save(memberCreateRequest.toEntity());
+    public MemberTokenResponse saveAdditionalInformation(MemberCreateRequest memberCreateRequest) {
+        Member member = memberRepository.save(memberCreateRequest.toEntity());
+
+        TokenSet issueTokens = issueNewTokenSet(member);
+        return new MemberTokenResponse(issueTokens.getAccess(), issueTokens.getRefresh());
     }
 
     @Transactional
@@ -104,5 +109,12 @@ public class MemberService {
         return new TokenSet(accessToken, refreshToken);
     }
 
-
+    public MemberInfoResponse getMyInformation(long memberId) {
+        Member member = getMember(memberId);
+        return MemberInfoResponse.builder()
+                .nickname(member.getNickname())
+                .age(member.getAge())
+                .job(member.getJob())
+                .gender(member.getGender()).build();
+    }
 }

@@ -3,6 +3,7 @@ package com.team7.chaekin.domain.memo.entity;
 import com.team7.chaekin.domain.booklog.entity.BookLog;
 import com.team7.chaekin.domain.common.entity.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,4 +30,16 @@ public class Memo extends BaseTimeEntity {
 
     @Column
     private boolean isRemoved;
+
+    @Builder
+    public Memo(BookLog bookLog, String color, String content) {
+        this.bookLog = bookLog;
+        this.color = color;
+        this.content = content;
+    }
+
+    public void update(String color, String content) {
+        this.color = color;
+        this.content = content;
+    }
 }
