@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import { Text, View, Button, Image } from 'react-native';
@@ -14,7 +14,7 @@ WebBrowser.maybeCompleteAuthSession();
 function LoginScreen({ navigation }) {
   const [reqError, setReqError] = useState('');
   const [userEmail, setUserEmail] = useState();
-  const [isFirst, setIsFirst] = useState('2');
+  const [isFirst, setIsFirst] = useState('');
   const [nname, setNickname] = useState('');
   const [aToken, setAccessToken] = useState('');
   const [rToken, setRefreshToken] = useState('');
@@ -35,15 +35,20 @@ function LoginScreen({ navigation }) {
   }, [response]);
 
   // 이메일 값이 갱신되면 백에 요청
+  const mountedEmail = useRef(false);
   useEffect(() => {
-    requireBack(userEmail);
+    if (!mountedEmail.current) {
+      mountedEmail.current = true;
+    } else {
+      requireBack(userEmail);
+    }
   }, [userEmail]);
 
   // isFirst 값이 갱신되면 실행, 처음 로그인이면 추가정보입력으로 이동, 아닐 시 SecureStore에 토큰, 정보들 저장
   useEffect(() => {
-    if (isFirst === 1) {
+    if (isFirst) {
       navigation.navigate('Nickname', { email: userEmail });
-    } else if (isFirst === 0) {
+    } else if (isFirst === false) {
       SecureStore.setItemAsync('identifier', userEmail);
       SecureStore.setItemAsync('nickname', nname);
       SecureStore.setItemAsync('accessToken', aToken);
