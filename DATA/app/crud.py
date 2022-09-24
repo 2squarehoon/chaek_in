@@ -1,8 +1,6 @@
 from sqlalchemy.orm import Session
 import models, schemas
 from database import engine
-import mariadb
-
 
 import pandas as pd
 import itertools
