@@ -9,6 +9,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/meetings")
 @RestController
@@ -28,7 +30,7 @@ public class MeetingController {
     }
 
     @PostMapping
-    public ResponseEntity<MeetingIdResponse> createMeeting(@RequestBody MeetingCreateRequest meetingCreateRequest,
+    public ResponseEntity<MeetingIdResponse> createMeeting(@RequestBody @Valid MeetingCreateRequest meetingCreateRequest,
                                                            @LoginMemberId long memberId) {
         long meetingId = meetingService.createMeeting(memberId, meetingCreateRequest);
         return ResponseEntity.ok(new MeetingIdResponse(meetingId));
@@ -36,7 +38,7 @@ public class MeetingController {
 
     @PatchMapping("/{meetingId}")
     public ResponseEntity<MeetingIdResponse> updateMeeting(@PathVariable long meetingId, @LoginMemberId long memberId,
-                                           @RequestBody MeetingUpdateRequest meetingUpdateRequest) {
+                                           @RequestBody @Valid MeetingUpdateRequest meetingUpdateRequest) {
         meetingService.updateMeeting(meetingId, meetingUpdateRequest);
         return ResponseEntity.ok(new MeetingIdResponse(meetingId));
     }
