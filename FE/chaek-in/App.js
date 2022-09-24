@@ -32,7 +32,15 @@ export default function App({ navigation }) {
     // </View>
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name='Home' component={TabNavigation} options={{ headerShown: false }}></Stack.Screen>
+        {userToken == null ? (
+          <Stack.Screen
+            name='Signin'
+            component={SigninNavigation}
+            options={{ headerShown: false }}
+          ></Stack.Screen>
+        ) : (
+          <Stack.Screen name='Home' component={TabNavigation} options={{ headerShown: false }}></Stack.Screen>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

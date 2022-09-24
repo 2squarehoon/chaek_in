@@ -12,11 +12,9 @@ import * as SecureStore from 'expo-secure-store';
 WebBrowser.maybeCompleteAuthSession();
 
 function LoginScreen({ navigation }) {
-  const [gUser, setGUser] = useState(''); // 구글로부터 받아온 유저데이터
   const [reqError, setReqError] = useState('');
-  // const [isLoding, setIsLoding] = useState(false);
   const [userEmail, setUserEmail] = useState();
-  const [isFirst, setIsFirst] = useState('');
+  const [isFirst, setIsFirst] = useState('2');
   const [nname, setNickname] = useState('');
   const [aToken, setAccessToken] = useState('');
   const [rToken, setRefreshToken] = useState('');
@@ -36,40 +34,37 @@ function LoginScreen({ navigation }) {
     }
   }, [response]);
 
+  // 이메일 값이 갱신되면 백에 요청
+  useEffect(() => {
+    requireBack(userEmail);
+  }, [userEmail]);
+
+  // isFirst 값이 갱신되면 실행, 처음 로그인이면 추가정보입력으로 이동, 아닐 시 SecureStore에 토큰, 정보들 저장
+  useEffect(() => {
+    if (isFirst === 1) {
+      navigation.navigate('Nickname', { email: userEmail });
+    } else if (isFirst === 0) {
+      SecureStore.setItemAsync('identifier', userEmail);
+      SecureStore.setItemAsync('nickname', nname);
+      SecureStore.setItemAsync('accessToken', aToken);
+      SecureStore.setItemAsync('refreshToken', rToken);
+      console.log('SecureStore 저장됨');
+    }
+  }, [isFirst]);
+
+  // 구글에 요청해서 email만 받아와서 state에 저장
   const getGoogleUser = async (accessToken) => {
     try {
-      let gUserReq = await Axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+      await Axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       })
         .then(function (response) {
           setUserEmail(response.data.email);
-          console.log(userEmail);
         })
-        .then(function () {
-          Axios.get(`${HOST}/api/v1/members/login?identifier=${userEmail}`)
-            .then(function (response) {
-              console.log(response.data);
-              setIsFirst(response.data.isFirst);
-              setNickname(response.data.nickname);
-              setAccessToken(response.data.accessToken);
-              setRefreshToken(response.data.refreshToken);
-            })
-            .then(async function () {
-              if (isFirst === false) {
-                await SecureStore.setItemAsync('identifier', userEmail);
-                await SecureStore.setItemAsync('nickname', nname);
-                await SecureStore.setItemAsync('accessToken', aToken);
-                await SecureStore.setItemAsync('refreshToken', rToken);
-                console.log('SecureStore 저장됨');
-              } else {
-                goToNickname();
-              }
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
+        .catch(function (error) {
+          console.log(error);
         });
       // console.log(gUserReq.data);
       // setGUser(gUserReq.data);
@@ -79,14 +74,20 @@ function LoginScreen({ navigation }) {
       setReqError(error.response.data);
     }
   };
-  const goToNickname = (e) => {
-    navigation.navigate('Nickname', { email: userEmail });
+  // state에 저장된 email을 identifier로 써서 백에 데이터 조회
+  const requireBack = async (mail) => {
+    await Axios.get(`${HOST}/api/v1/members/login?identifier=${mail}`)
+      .then(function (response) {
+        console.log(response.data);
+        setIsFirst(response.data.isFirst);
+        setNickname(response.data.nickname);
+        setAccessToken(response.data.accessToken);
+        setRefreshToken(response.data.refreshToken);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
-  const getNickname = async () => {
-    const getnick = await SecureStore.getItemAsync('identifier');
-    console.log(getnick);
-  };
-
   return (
     <LoginContainer>
       <Image
@@ -110,19 +111,6 @@ function LoginScreen({ navigation }) {
       >
         <Text>Google로 로그인</Text>
       </GoogleLogin>
-      <View>
-        <Button onPress={getNickname} title='닉네임'></Button>
-      </View>
-      {/* <View>
-        <Text>이름 : {userName}</Text>
-      </View>
-      <View>
-        <Button onPress={storageData} title='사용자정보저장'></Button>
-      </View>
-
-      <View>
-        <Button onPress={getUserName} title='사용자이름'></Button>
-      </View> */}
     </LoginContainer>
   );
 }
