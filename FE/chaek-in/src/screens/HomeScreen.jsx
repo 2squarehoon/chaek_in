@@ -23,9 +23,12 @@ function HomeScreen({ navigation }) {
   const goToBookDetail = (e) => {
     navigation.navigate('BookDetail');
   };
-  // const goToLogin = (e) => {
-  //   navigation.navigate('Login');
-  // };
+  const Logout = async () => {
+    await SecureStore.deleteItemAsync('identifier');
+    await SecureStore.deleteItemAsync('nickname');
+    await SecureStore.deleteItemAsync('accessToken');
+    await SecureStore.deleteItemAsync('refreshToken');
+  };
 
   return (
     <View style={styles.container}>
@@ -39,7 +42,7 @@ function HomeScreen({ navigation }) {
         <Button onPress={goToBookDetail} title='책 상세정보'></Button>
       </View>
       <View>
-        <Button onPress={getNickname} title='닉네임'></Button>
+        <Button onPress={Logout} title='로그아웃'></Button>
       </View>
     </View>
   );

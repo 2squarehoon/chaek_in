@@ -9,10 +9,6 @@ import * as SecureStore from 'expo-secure-store';
 
 function GetGenderScreen({ navigation, route }) {
   const [gender, setGender] = useState('');
-  const genders = [
-    { label: '남성', value: 'MALE' },
-    { label: '여성', value: 'FEMALE' },
-  ];
   const nickname = route.params.nickname;
   const email = route.params.email;
   function Signin() {
@@ -45,6 +41,7 @@ function GetGenderScreen({ navigation, route }) {
       .catch(function (error) {
         if (error.response) {
           // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
+          console.log(email);
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
