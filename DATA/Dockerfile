@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY ./requirements.txt .
 
+RUN /usr/local/bin/python -m pip install --upgrade pip
+
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 COPY ./app/* ./
