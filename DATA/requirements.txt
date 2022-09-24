@@ -7,7 +7,6 @@ h11==0.13.0
 httptools==0.5.0
 idna==3.4
 joblib==1.2.0
-mariadb==1.1.4
 numpy==1.23.3
 pandas==1.5.0
 pydantic==1.10.2
