@@ -1,9 +1,9 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import RecordScreen from '../screens/Record/RecordScreen';
-import RecordCreateScreen from '../screens/Record/RecordCreateScreen';
-import RecordDetailScreen from '../screens/Record/RecordDetailScreen';
-import OCRScreen from '../screens/Record/OCRScreen';
+import RecordScreen from '../screens/record/RecordScreen';
+import RecordCreateScreen from '../screens/record/RecordCreateScreen';
+import RecordDetailScreen from '../screens/record/RecordDetailScreen';
+import OCRScreen from '../screens/record/OCRScreen';
 
 const RecordStack = createStackNavigator();
 
