@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @CrossOrigin
 @RequestMapping("/api/v1/books")
 @RestController
@@ -24,14 +26,14 @@ public class MemoController {
 
     @PostMapping("/{bookId}/memos")
     public ResponseEntity<?> createMemo(@PathVariable long bookId, @LoginMemberId long memberId,
-                                        @RequestBody MemoRequest memoRequest) {
+                                        @RequestBody @Valid MemoRequest memoRequest) {
         memoService.createMemo(bookId, memberId, memoRequest);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{bookId}/memos/{memoId}")
     public ResponseEntity<?> updateMemo(@PathVariable long bookId, @PathVariable long memoId,
-                                        @LoginMemberId long memberId, @RequestBody MemoRequest memoRequest) {
+                                        @LoginMemberId long memberId, @RequestBody @Valid MemoRequest memoRequest) {
         memoService.updateMemo(bookId, memoId, memberId, memoRequest);
         return ResponseEntity.ok().build();
     }
