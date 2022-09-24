@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/books")
@@ -25,7 +27,7 @@ public class ReviewController {
     }
 
     @PostMapping("/{bookId}/reviews")
-    public ResponseEntity<?> writeReview(@PathVariable long bookId, @RequestBody ReviewRequest reviewRequest,
+    public ResponseEntity<?> writeReview(@PathVariable long bookId, @RequestBody @Valid ReviewRequest reviewRequest,
                                          @LoginMemberId long memberId) {
         long reviewId = reviewService.writeReview(bookId, memberId, reviewRequest);
         return ResponseEntity.ok(new ReviewIdResponse(reviewId));
@@ -33,7 +35,7 @@ public class ReviewController {
 
     @PatchMapping("/{bookId}/reviews/{reviewId}")
     public ResponseEntity<?> updateReview(@PathVariable long bookId, @PathVariable long reviewId,
-                                          @RequestBody ReviewRequest reviewRequest,
+                                          @RequestBody @Valid ReviewRequest reviewRequest,
                                           @LoginMemberId long memberId) {
         reviewService.updateReview(bookId, reviewId, memberId, reviewRequest);
         return ResponseEntity.ok(new ReviewIdResponse(reviewId));

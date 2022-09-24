@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/members")
@@ -18,7 +20,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/login")
-    public ResponseEntity<MemberLoginResponse> login(MemberLoginRequest memberLoginRequest) {
+    public ResponseEntity<MemberLoginResponse> login(@Valid MemberLoginRequest memberLoginRequest) {
         return ResponseEntity.ok(memberService.login(memberLoginRequest.getIdentifier()));
     }
 
@@ -39,13 +41,13 @@ public class MemberController {
     }
 
     @PostMapping("/me")
-    public ResponseEntity<MemberTokenResponse> saveAdditionalInformation(@RequestBody MemberCreateRequest memberCreateRequest) {
+    public ResponseEntity<MemberTokenResponse> saveAdditionalInformation(@RequestBody @Valid MemberCreateRequest memberCreateRequest) {
         MemberTokenResponse memberTokenResponse = memberService.saveAdditionalInformation(memberCreateRequest);
         return ResponseEntity.ok(memberTokenResponse);
     }
 
     @PatchMapping("/me")
-    public ResponseEntity<?> updateAdditionalInformation(@RequestBody MemberUpdateRequest memberUpdateRequest,
+    public ResponseEntity<?> updateAdditionalInformation(@RequestBody @Valid MemberUpdateRequest memberUpdateRequest,
                                                          @LoginMemberId long memberId) {
         memberService.updateAdditionalInformation(memberId, memberUpdateRequest);
         return ResponseEntity.ok().build();

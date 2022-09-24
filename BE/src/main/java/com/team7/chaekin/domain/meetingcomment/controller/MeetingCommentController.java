@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/meetings")
 @RestController
@@ -25,14 +27,14 @@ public class MeetingCommentController {
 
     @PostMapping("/{meetingId}/comments")
     public ResponseEntity<MeetingCommentIdResponse> createMeetingComment(@PathVariable long meetingId, @LoginMemberId long memberId,
-                                                @RequestBody MeetingCommentCreateRequest meetingCommentCreateRequest) {
+                                                @RequestBody @Valid MeetingCommentCreateRequest meetingCommentCreateRequest) {
         long meetingCommentId = meetingCommentService.createComment(meetingId, memberId, meetingCommentCreateRequest);
         return ResponseEntity.ok(new MeetingCommentIdResponse(meetingCommentId));
     }
 
     @PatchMapping("/{meetingId}/comments/{meetingCommentId}")
     public ResponseEntity<MeetingCommentIdResponse> updateMeetingComment(@PathVariable long meetingId, @PathVariable long meetingCommentId,
-                                                                         @LoginMemberId long memberId, @RequestBody MeetingCommentUpdateRequest meetingCommentUpdateRequest) {
+                                                                         @LoginMemberId long memberId, @RequestBody @Valid MeetingCommentUpdateRequest meetingCommentUpdateRequest) {
         long id = meetingCommentService.updateMeetingComment(meetingId, meetingCommentId, memberId, meetingCommentUpdateRequest);
         return ResponseEntity.ok(new MeetingCommentIdResponse(id));
     }
