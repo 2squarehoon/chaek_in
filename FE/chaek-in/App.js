@@ -34,7 +34,7 @@ export default function App({ navigation }) {
       <Stack.Navigator>
         {userToken == null ? (
           <Stack.Screen
-            name='Login'
+            name='Signin'
             component={SigninNavigation}
             options={{ headerShown: false }}
           ></Stack.Screen>
