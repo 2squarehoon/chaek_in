@@ -1,8 +1,14 @@
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Form
 from sqlalchemy.orm import Session
 import crud, models, schemas
 from database import SessionLocal, engine
 
+from fastapi.responses import JSONResponse
+
+import pandas as pd
+
+import math
+import time
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -17,72 +23,31 @@ def get_db():
     finally:
         db.close()
 
-
-# @app.post("/users/", response_model=schemas.User)
-# def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-#     db_user = crud.get_user_by_email(db, email=user.email)
-#     if db_user:
-#         raise HTTPException(status_code=400, detail="Email already registered")
-#     return crud.create_user(db=db, user=user)
-
-
-# @app.get("/users/", response_model=list[schemas.User])
-# def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-#     users = crud.get_users(db, skip=skip, limit=limit)
-#     return users
-
-
-# @app.get("/users/{user_id}", response_model=schemas.User)
-# def read_user(user_id: int, db: Session = Depends(get_db)):
-#     db_user = crud.get_user(db, user_id=user_id)
-#     if db_user is None:
-#         raise HTTPException(status_code=404, detail="User not found")
-#     return db_user
-
-
-# @app.post("/users/{user_id}/items/", response_model=schemas.Item)
-# def create_item_for_user(
-#     user_id: int, item: schemas.ItemCreate, db: Session = Depends(get_db)
-# ):
-#     return crud.create_user_item(db=db, item=item, user_id=user_id)
-
-
-@app.get("/books/", response_model=list[schemas.Book])
+@app.get("/books/")
 def read_books(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    items = crud.get_books(db, skip=skip, limit=limit)
-    return items
+    select_sql = 'SELECT * FROM book'
+    # items = crud.get_books(db, skip=skip, limit=limit)
+    df = pd.read_sql(select_sql, engine)
+    print(df.loc[0]['cover'])
+    return df.to_json(orient='columns')
 
-# from dataclasses import asdict
-# from typing import Optional
+@app.get('/')
+def read_df():
+    df, cat_sim_sorted_ind = crud.clean_df()
+    print('위에는 된거?')
+    return 1
 
-# import uvicorn
-# from fastapi import FastAPI
-# from app.database.conn import db
-# from app.common.config import conf
-# from app.routes import index, auth
+@app.get('/recommended/')
+def get_recommended(title: str = '오베라는 남자'):
+    start = time.time()
+    df, cat_sim_sorted_ind = crud.clean_df()
+    sim_books = crud.find_sim_book(df, cat_sim_sorted_ind, title, 20)
+    
+    end = time.time()
+    print(f"{end - start:.5f} sec")
+    
+    return sim_books['cover']
 
-
-# def create_app():
-#     """
-#     앱 함수 실행
-#     :return:
-#     """
-#     c = conf()
-#     app = FastAPI()
-#     conf_dict = asdict(c)
-#     db.init_app(app, **conf_dict)
-#     # 데이터 베이스 이니셜라이즈
-
-#     # 레디스 이니셜라이즈
-
-#     # 미들웨어 정의
-
-#     # 라우터 정의
-#     app.include_router(index.router)
-#     return app
-
-
-# app = create_app()
-
-# if __name__ == "__main__":
-#     uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=True)
+@app.post("/read_books/")
+async def input_book(title: str = Form()):
+    return {"title": title}
