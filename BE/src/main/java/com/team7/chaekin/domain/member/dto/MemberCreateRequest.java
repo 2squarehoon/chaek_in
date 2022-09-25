@@ -18,7 +18,7 @@ public class MemberCreateRequest {
     private String job;
     @Min(1)
     private int age;
-    @NotBlank
+    @NotNull
     private Gender gender;
 
     public Member toEntity() {
