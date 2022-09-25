@@ -1,3 +1,4 @@
+import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import MemoCreateScreen from '../screens/memo/MemoCreateScreen';
 import MemoListScreen from '../screens/memo/MemoListScreen';
