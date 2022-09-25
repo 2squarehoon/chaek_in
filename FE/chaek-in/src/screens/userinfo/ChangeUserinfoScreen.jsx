@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 
-function UserInfoScreen() {
+function ChangeUserinfoScreen() {
   return (
     <View style={styles.container}>
-      <Text>사용자 정보</Text>
+      <Text>사용자 추가 정보</Text>
     </View>
   );
 }
@@ -17,4 +17,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserInfoScreen;
+export default ChangeUserinfoScreen;
