@@ -1,7 +1,7 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, Date
 from sqlalchemy.orm import relationship
-
-
+from pydantic import BaseModel
+from typing import Union
 from database import Base
 
 class Book(Base):
@@ -11,14 +11,21 @@ class Book(Base):
     isbn = Column(String, unique=True, index=True)
     title = Column(String)
     author = Column(String)
-    publish_date = Column(String)
+    publish_date = Column(Date)
     description = Column(String)
     cover = Column(String)
-    category_id = Column(String)
+    category_id = Column(Integer)
     publisher = Column(String)
-    page = Column(String)
-    rating_score = Column(String)
+    page = Column(Integer)
+    rating_score = Column(Float)
     rating_count = Column(Integer)
+
+class Item(BaseModel):
+    name: Union[str, None] = None
+    description: Union[str, None] = None
+    price: Union[float, None] = None
+    tax: float = 10.5
+    tags: list[str] = []
 # class User(Base):
 #     __tablename__ = "users"
 
