@@ -27,9 +27,7 @@ function GetNicknameScreen({ navigation, route }) {
 }
 
 const FormContainer = styled.View`
-  // margin-top: 50%;
   width: 100%;
-  // flex: 2;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
