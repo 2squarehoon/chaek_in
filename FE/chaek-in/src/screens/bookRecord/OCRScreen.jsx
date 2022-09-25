@@ -55,11 +55,10 @@ export default function OCRScreen({ navigation }) {
         .then((res) => res.json())
         .then((res) => {
           setResponse(res.responses[0].textAnnotations[0]);
-          // console.log(res.responses[0].textAnnotations[0]);
         });
     } catch (e) {
       console.log(e);
-      setLoadMessage('Google couldnt process the image');
+      setLoadMessage('Cloud Vision API에서 오류가 발생했어요');
     }
   };
 
@@ -130,8 +129,7 @@ export default function OCRScreen({ navigation }) {
           {(response && <Text style={styles.nameText}>OCR 처리 완료: {response.description}</Text>) || (
             <Text style={styles.loadingText}>{loadMessage}</Text>
           )}
-
-          <Button text='갤러리에서 선택' style={styles.button} onPress={handleClick} />
+          <Button text='갤러리' style={styles.button} onPress={handleClick} />
           <Button text='사진 찍기' style={styles.button} onPress={takePicture} />
         </View>
       </View>

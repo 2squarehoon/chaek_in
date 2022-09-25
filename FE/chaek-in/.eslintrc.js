@@ -27,14 +27,12 @@ module.exports = {
   plugins: ['react', 'react-hooks'],
   rules: {
     'no-unused-vars': 'off',
-    // indent: ['error', 2, { SwitchCase: 1 }],
+    indent: ['error', 2, { SwitchCase: 1 }],
     quotes: ['error', 'single', { avoidEscape: true }],
     'no-empty-function': 'off',
     // '@typescript-eslint/no-empty-function': 'off',
     'react/display-name': 'off',
     'react/prop-types': 'off',
-    // suppress errors for missing 'import React' in files
-    'react/react-in-jsx-scope': 'off',
   },
   settings: {
     react: {
