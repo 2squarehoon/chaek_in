@@ -40,6 +40,7 @@ function LoginScreen({ navigation }) {
     if (!mountedEmail.current) {
       mountedEmail.current = true;
     } else {
+      console.log(userEmail);
       requireBack(userEmail);
     }
   }, [userEmail]);
@@ -83,6 +84,7 @@ function LoginScreen({ navigation }) {
   const requireBack = async (mail) => {
     await Axios.get(`${HOST}/api/v1/members/login?identifier=${mail}`)
       .then(function (response) {
+        console.log(response);
         console.log(response.data);
         setIsFirst(response.data.isFirst);
         setNickname(response.data.nickname);
