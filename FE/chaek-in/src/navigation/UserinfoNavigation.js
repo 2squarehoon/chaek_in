@@ -7,13 +7,17 @@ const UserinfoStack = createStackNavigator();
 
 function UserinfoNavigation() {
   return (
-    <UserinfoStack.Navigator>
+    <UserinfoStack.Navigator initialRouteName='UserinfoMain'>
       <UserinfoStack.Screen
         name='UserinfoMain'
         component={UserInfoScreen}
         options={{ title: '사용자 정보' }}
       ></UserinfoStack.Screen>
-      <UserinfoStack.Screen name='ChangeUserinfo' component={ChangeUserinfoScreen}></UserinfoStack.Screen>
+      <UserinfoStack.Screen
+        name='ChangeUserinfo'
+        component={ChangeUserinfoScreen}
+        options={{ title: '사용자 정보 수정' }}
+      ></UserinfoStack.Screen>
     </UserinfoStack.Navigator>
   );
 }

@@ -4,7 +4,7 @@ import Axios from 'axios';
 import { HOST } from '@env';
 import * as SecureStore from 'expo-secure-store';
 
-function UserInfoScreen() {
+function UserInfoScreen(navigation) {
   const [nickname, setNickname] = useState('');
   const [job, setJob] = useState('');
   const [age, setAge] = useState('');
@@ -50,6 +50,10 @@ function UserInfoScreen() {
       });
   };
 
+  const changePress = () => {
+    navigation.navigate('ChangeUserinfo', { nickname: nickname, job: job, age: age, gender: gender });
+  };
+
   const logoutPress = () => {
     Alert.alert('로그아웃하시겠습니까?', [
       { text: '아니오', style: 'cancel' },
@@ -71,7 +75,7 @@ function UserInfoScreen() {
       <Text>나이 : {age}</Text>
       <Text>성별 : {gender}</Text>
       <View>
-        <Button onPress={Logout} title='회원정보수정'></Button>
+        <Button onPress={changePress} title='회원정보수정'></Button>
       </View>
       <View>
         <Button onPress={logoutPress} title='로그아웃'></Button>
