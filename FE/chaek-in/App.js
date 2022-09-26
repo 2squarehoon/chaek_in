@@ -20,37 +20,37 @@ function AppInner({ navigation }) {
   // useEffect(() => {
   //   console.log(accessToken);
   // }, []);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  useEffect(() => {
-    const getToken = async () => {
-      let nname;
-      let userEmail;
-      let rToken;
-      let aToken;
-      try {
-        nname = await SecureStore.getItemAsync('nickname');
-        userEmail = await SecureStore.getItemAsync('email');
-        rToken = await SecureStore.getItemAsync('refreshToken');
-        aToken = await SecureStore.getItemAsync('accessToken');
-      } catch (e) {
-        console.log(e);
-      }
-      if (aToken) {
-        dispatch(setNickname(nname));
-      }
-      if (userEmail) {
-        dispatch(setEmail(userEmail));
-      }
-      if (rToken) {
-        dispatch(setRefreshToken(rToken));
-      }
-      if (aToken) {
-        dispatch(setAccessToken(aToken));
-      }
-    };
-    getToken();
-  }, []);
+  // useEffect(() => {
+  //   const getToken = async () => {
+  //     let nname;
+  //     let userEmail;
+  //     let rToken;
+  //     let aToken;
+  //     try {
+  //       nname = await SecureStore.getItemAsync('nickname');
+  //       userEmail = await SecureStore.getItemAsync('email');
+  //       rToken = await SecureStore.getItemAsync('refreshToken');
+  //       aToken = await SecureStore.getItemAsync('accessToken');
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //     if (aToken) {
+  //       dispatch(setNickname(nname));
+  //     }
+  //     if (userEmail) {
+  //       dispatch(setEmail(userEmail));
+  //     }
+  //     if (rToken) {
+  //       dispatch(setRefreshToken(rToken));
+  //     }
+  //     if (aToken) {
+  //       dispatch(setAccessToken(aToken));
+  //     }
+  //   };
+  //   getToken();
+  // }, [accessToken]);
 
   return (
     <NavigationContainer>

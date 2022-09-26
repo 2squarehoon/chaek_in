@@ -5,11 +5,14 @@ import styled from 'styled-components/native';
 import SelectDropdown from 'react-native-select-dropdown';
 import { HOST } from '@env';
 import * as SecureStore from 'expo-secure-store';
+import { useDispatch } from 'react-redux';
+import { setAccessToken, setEmail, setNickname, setRefreshToken } from '../../redux/actions';
 
 function GetGenderScreen({ navigation, route }) {
   const [gender, setGender] = useState('');
   const nickname = route.params.nickname;
   const email = route.params.email;
+  const dispatch = useDispatch();
   function Signin() {
     axios
       .post(`${HOST}/api/v1/members/me`, {
@@ -21,10 +24,15 @@ function GetGenderScreen({ navigation, route }) {
       })
       .then(async function (response) {
         console.log(response.data);
-        await SecureStore.setItemAsync('identifier', email);
-        await SecureStore.setItemAsync('nickname', nickname);
-        await SecureStore.setItemAsync('accessToken', response.data.accessToken);
-        await SecureStore.setItemAsync('refreshToken', response.data.refreshToken);
+        dispatch(setEmail(email));
+        dispatch(setNickname(nickname));
+        dispatch(setRefreshToken(response.data.refreshToken));
+        dispatch(setAccessToken(response.data.accessToken));
+
+        // await SecureStore.setItemAsync('identifier', email);
+        // await SecureStore.setItemAsync('nickname', nickname);
+        // await SecureStore.setItemAsync('accessToken', response.data.accessToken);
+        // await SecureStore.setItemAsync('refreshToken', response.data.refreshToken);
         console.log('SecureStore 저장됨');
       })
       .catch(function (error) {

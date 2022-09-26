@@ -5,11 +5,11 @@ import userReducer from './reducer';
 import createSecureStore from 'redux-persist-expo-securestore';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const secureStorage = createSecureStore();
+const secureStore = createSecureStore();
 
 const securePersistconfig = {
-  key: 'root',
-  storage: secureStorage,
+  key: 'main',
+  storage: secureStore,
 };
 
 // const mainPersistConfig = {
