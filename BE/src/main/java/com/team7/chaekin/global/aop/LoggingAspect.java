@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoggingAspect {
 
-    @Pointcut("within(com.dongpop.urin..controller..*)")
+    @Pointcut("within(com.team7.chaekin..controller..*)")
     public void onRequest() { }
 
     @Around("onRequest()")
