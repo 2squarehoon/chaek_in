@@ -55,17 +55,23 @@ function UserInfoScreen({ navigation }) {
   };
 
   const quit = () => {
-    Axios.delete(`${HOST}/api/v1/members/me`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-      .then(function () {
-        Alert.alert('탈퇴되었습니다.');
+    if (accessToken) {
+      Axios.delete(`${HOST}/api/v1/members/me`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       })
-      .catch(function (error) {
-        console.log(error);
-      });
+        .then(async function () {
+          await SecureStore.deleteItemAsync('identifier');
+          await SecureStore.deleteItemAsync('nickname');
+          await SecureStore.deleteItemAsync('accessToken');
+          await SecureStore.deleteItemAsync('refreshToken');
+          Alert.alert('탈퇴되었습니다.');
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
   };
 
   const changePress = () => {
@@ -73,13 +79,13 @@ function UserInfoScreen({ navigation }) {
   };
 
   const logoutPress = () => {
-    Alert.alert('로그아웃하시겠습니까?', [
+    Alert.alert('로그아웃하시겠습니까?', '', [
       { text: '아니오', style: 'cancel' },
       { text: '네', onPress: Logout },
     ]);
   };
   const quitPress = () => {
-    Alert.alert('탈퇴하시겠습니까?', [
+    Alert.alert('탈퇴하시겠습니까?', '', [
       { text: '아니오', style: 'cancel' },
       { text: '네', onPress: quit },
     ]);
