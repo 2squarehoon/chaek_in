@@ -1,25 +1,29 @@
 import { StyleSheet, Text, View, Button } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
+import { useSelector, useDispatch } from 'react-redux';
+import { setAccessToken, setEmail, setNickname, setRefreshToken } from '../redux/actions';
 
 function HomeScreen({ navigation }) {
-  const [nickname, getNickname] = useState(null);
-  const [accessToken, getToken] = useState(null);
-  useEffect(() => {
-    const getResult = async () => {
-      let name;
-      let token;
-      try {
-        name = await SecureStore.getItemAsync('nickname');
-        token = await SecureStore.getItemAsync('accessToken');
-      } catch (e) {
-        console.log(e);
-      }
-      await getNickname(name);
-      await getToken(token);
-    };
-    getResult();
-  }, []);
+  const { accessToken, nickname } = useSelector((state) => state.main);
+  const dispatch = useDispatch();
+  // const [nickname, getNickname] = useState(null);
+  // const [accessToken, getToken] = useState(null);
+  // useEffect(() => {
+  //   const getResult = async () => {
+  //     let name;
+  //     let token;
+  //     try {
+  //       name = await SecureStore.getItemAsync('nickname');
+  //       token = await SecureStore.getItemAsync('accessToken');
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //     await getNickname(name);
+  //     await getToken(token);
+  //   };
+  //   getResult();
+  // }, []);
 
   const goToBookLog = (e) => {
     navigation.navigate('BookLogs');
@@ -28,10 +32,14 @@ function HomeScreen({ navigation }) {
     navigation.navigate('BookDetail');
   };
   const Logout = async () => {
-    await SecureStore.deleteItemAsync('identifier');
-    await SecureStore.deleteItemAsync('nickname');
-    await SecureStore.deleteItemAsync('accessToken');
-    await SecureStore.deleteItemAsync('refreshToken');
+    // await SecureStore.deleteItemAsync('identifier');
+    // await SecureStore.deleteItemAsync('nickname');
+    // await SecureStore.deleteItemAsync('accessToken');
+    // await SecureStore.deleteItemAsync('refreshToken');
+    dispatch(setNickname(''));
+    dispatch(setEmail(''));
+    dispatch(setRefreshToken(''));
+    dispatch(setAccessToken(''));
   };
 
   return (

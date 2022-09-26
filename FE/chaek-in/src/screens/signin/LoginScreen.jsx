@@ -21,7 +21,7 @@ function LoginScreen({ navigation }) {
   const [aToken, setAToken] = useState('');
   const [rToken, setRToken] = useState('');
 
-  const { nickname, email, accessToken, refreshToken } = useSelector((state) => state.userReducer);
+  const { nickname, email, accessToken, refreshToken } = useSelector((state) => state.main);
   const dispatch = useDispatch();
 
   const [request, response, promptAsync] = Google.useAuthRequest({
@@ -52,14 +52,14 @@ function LoginScreen({ navigation }) {
   async function save(key, value) {
     await SecureStore.setItemAsync(key, value, {});
   }
-
-  const saveStore = async () => {
-    save('accessToken', aToken);
-    save('identifier', userEmail);
-    save('nickname', nname);
-    save('refreshToken', rToken);
-    await console.log('SecureStore 저장됨');
-  };
+  // // secureStore에 직접 저장하는 코드, but 이젠 필요없음
+  // const saveStore = async () => {
+  //   save('accessToken', aToken);
+  //   save('identifier', userEmail);
+  //   save('nickname', nname);
+  //   save('refreshToken', rToken);
+  //   await console.log('SecureStore 저장됨');
+  // };
 
   // redux state에 저장
   const saveReduxState = () => {
@@ -68,12 +68,12 @@ function LoginScreen({ navigation }) {
     dispatch(setRefreshToken(rToken));
     dispatch(setAccessToken(aToken));
   };
-  // isFirst 값이 갱신되면 실행, 처음 로그인이면 추가정보입력으로 이동, 아닐 시 SecureStore에 토큰, 정보들 저장
+  // isFirst 값이 갱신되면 실행, 처음 로그인이면 추가정보입력으로 이동, 아닐 시 redux-secureStore에 토큰, 정보들 저장
   useEffect(() => {
     if (isFirst) {
       navigation.navigate('Nickname', { email: userEmail });
     } else if (isFirst === false) {
-      saveStore();
+      // saveStore();
       saveReduxState();
     }
   }, [isFirst]);

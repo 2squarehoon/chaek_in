@@ -3,30 +3,30 @@ export const SET_USER_EMAIL = 'SET_USER_EMAIL';
 export const SET_USER_ACCESSTOKEN = 'SET_USER_ACCESSTOKEN';
 export const SET_USER_REFRESHTOKEN = 'SET_USER_REFRESHTOKEN';
 
-export const setNickname = (nickname) => (dispatch) => {
+export const setNickname = (userNickname) => (dispatch) => {
   dispatch({
     type: SET_USER_NICKNAME,
-    payload: nickname,
+    payload: userNickname,
   });
 };
 
-export const setEmail = (email) => (dispatch) => {
+export const setEmail = (userEmail) => (dispatch) => {
   dispatch({
-    type: SET_USER_NICKNAME,
-    payload: email,
+    type: SET_USER_EMAIL,
+    payload: userEmail,
   });
 };
 
-export const setAccessToken = (accessToken) => (dispatch) => {
+export const setAccessToken = (aToken) => (dispatch) => {
   dispatch({
-    type: SET_USER_NICKNAME,
-    payload: accessToken,
+    type: SET_USER_ACCESSTOKEN,
+    payload: aToken,
   });
 };
 
-export const setRefreshToken = (refreshToken) => (dispatch) => {
+export const setRefreshToken = (rToken) => (dispatch) => {
   dispatch({
-    type: SET_USER_NICKNAME,
-    payload: refreshToken,
+    type: SET_USER_REFRESHTOKEN,
+    payload: rToken,
   });
 };
