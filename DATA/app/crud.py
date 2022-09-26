@@ -46,7 +46,6 @@ def clean_df(book_df, category_df):
 
 
     # CountVectorizer를 적용하기 위해 공백문자로 word 단위가 구분되는 문자열로 반환
-    df.to_csv('df.csv')
     return df
 def count_sim(df):
 
