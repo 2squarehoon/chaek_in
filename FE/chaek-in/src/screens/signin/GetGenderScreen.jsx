@@ -21,7 +21,7 @@ function GetGenderScreen({ navigation, route }) {
         age: route.params.age,
         gender: gender,
       })
-      .then(async function (response) {
+      .then(function (response) {
         console.log(response.data);
         dispatch(setEmail(email));
         dispatch(setNickname(nickname));

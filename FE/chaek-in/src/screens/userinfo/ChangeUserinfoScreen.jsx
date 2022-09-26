@@ -16,7 +16,7 @@ function ChangeUserinfoScreen({ navigation, route }) {
   const [changeAge, setChangeAge] = useState(route.params.age);
   const [changeGender, setChangeGender] = useState(route.params.gender);
 
-  const submitUserinfo = async () => {
+  const submitUserinfo = () => {
     if (accessToken) {
       const header = {
         Authorization: `Bearer ${accessToken}`,

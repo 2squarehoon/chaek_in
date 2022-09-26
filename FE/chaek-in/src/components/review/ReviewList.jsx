@@ -25,7 +25,7 @@ function ReviewList({ bookId }) {
   }, []);
   return (
     <View style={{ marginTop: 5 }}>
-      <ReviewForm />
+      <ReviewForm bookId={bookId} />
       {/* {reviews.map((review) => (
         <ReviewItem key={review.reviewId} item={review} bookId={bookId} />
       ))} */}
