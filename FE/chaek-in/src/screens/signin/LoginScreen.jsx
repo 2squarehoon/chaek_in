@@ -112,6 +112,7 @@ function LoginScreen({ navigation }) {
         <MiddleText> </MiddleText>
         <MiddleText>책크인</MiddleText>
       </MiddleContainer>
+
       <GoogleLogin
         disabled={!request}
         title='Login'
@@ -119,7 +120,8 @@ function LoginScreen({ navigation }) {
           promptAsync();
         }}
       >
-        <Text>Google로 로그인</Text>
+        <Image source={require('../../../assets/image/google.png')} style={{ width: '10%', height: '40%' }} />
+        <ButtonText>Google로 로그인</ButtonText>
       </GoogleLogin>
     </LoginContainer>
   );
@@ -138,6 +140,8 @@ const GoogleLogin = styled.TouchableOpacity`
   border-radius: 15px;
   justify-content: space-around;
   align-items: center;
+  flex-direction: row;
+  border: 1px solid #000;
 `;
 
 const MiddleContainer = styled.View`
@@ -146,6 +150,10 @@ const MiddleContainer = styled.View`
 `;
 
 const MiddleText = styled.Text`
+  font-size: 20px;
+`;
+
+const ButtonText = styled.Text`
   font-size: 20px;
 `;
 

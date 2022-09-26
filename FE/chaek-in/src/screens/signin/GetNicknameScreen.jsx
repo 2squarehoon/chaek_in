@@ -1,51 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput } from 'react-native';
+import React, { useState } from 'react';
+import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 function GetNicknameScreen({ navigation, route }) {
   const [text, onChangeText] = useState('');
-  const mail = route.params.email;
-  const goToJob = (e) => {
+  const goToJob = () => {
     navigation.navigate('Job', { email: route.params.email, nickname: text });
   };
 
   return (
-    <View>
-      <Text>책크인에서 사용하실 닉네임을 정해주세요</Text>
-      <FormContainer>
-        <UserinfoForm onChangeText={onChangeText} placeholder='닉네임을 입력하세요' />
-        <UserinfoSubmit onPress={goToJob}>
-          <Text>입력</Text>
-        </UserinfoSubmit>
-      </FormContainer>
-    </View>
+    <EntireContainer>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <TitleContainer>
+          <TitleText>책크인에서 사용하실 닉네임을 정해주세요</TitleText>
+        </TitleContainer>
+        <FormContainer>
+          <UserinfoForm
+            value={text}
+            onChangeText={onChangeText}
+            placeholder='닉네임을 입력하세요'
+            returnKeyType='next'
+            onSubmitEditing={goToJob}
+            // maxLength='10'
+          />
+        </FormContainer>
+      </TouchableWithoutFeedback>
+    </EntireContainer>
   );
 }
 
+const EntireContainer = styled.View`
+  background-color: #fcf9f0;
+`;
+
+const TitleContainer = styled.View`
+  margin: 20% 5% 20%;
+`;
+
+const TitleText = styled.Text`
+  font-size: 40px;
+`;
+
 const FormContainer = styled.View`
-  width: 100%;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
+  border: 1px solid #000;
+  width: 90%;
+  height: 60%
+  border-radius: 15px;
+  margin-left:5%
+  background-color: #ffffff;
 `;
 
 const UserinfoForm = styled.TextInput`
   width: 60%;
-  height: 100%;
-  border: 1px solid #000;
-  border-radius: 5px;
-  margin-left: 5%;
-`;
-
-const UserinfoSubmit = styled.TouchableOpacity`
-  background-color: #b1d8e8;
-  width: 20%;
-  border-radius: 15px;
-  padding: 15px;
-  margin-right: 5%;
-  justify-content: center;
-  align-items: center;
-  color: navy;
+  height: 10%;
+  margin-top: 10%;
+  margin-left: 10%;
+  border-bottom-color: #000000;
+  border-bottom-width: 1px;
+  font-size: 20px;
 `;
 
 export default GetNicknameScreen;

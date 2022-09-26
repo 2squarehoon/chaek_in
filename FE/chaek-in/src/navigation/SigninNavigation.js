@@ -14,12 +14,12 @@ function SigninNavigation() {
       <UserInfoStack.Screen
         name='Login'
         component={LoginScreen}
-        screenOptions={{ headerShown: false }}
+        options={{ headerShown: false }}
       ></UserInfoStack.Screen>
       <UserInfoStack.Screen
         name='Nickname'
         component={GetNicknameScreen}
-        screenOptions={{ headerShown: false }}
+        options={{ headerShown: false }}
       ></UserInfoStack.Screen>
       <UserInfoStack.Screen
         name='Job'
