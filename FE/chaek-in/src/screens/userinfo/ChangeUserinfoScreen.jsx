@@ -5,28 +5,33 @@ import { HOST } from '@env';
 import * as SecureStore from 'expo-secure-store';
 import SelectDropdown from 'react-native-select-dropdown';
 import styled from 'styled-components/native';
+import { useSelector, useDispatch } from 'react-redux';
+import { setNickname } from '../../redux/actions';
 
 function ChangeUserinfoScreen({ navigation, route }) {
-  const [changeNickname, setChangeNickname] = useState(route.params.nickname);
+  const { accessToken, nickname } = useSelector((state) => state.main);
+  const dispatch = useDispatch();
+
+  const [changeNickname, setChangeNickname] = useState(nickname);
   const [changeJob, setChangeJob] = useState(route.params.job);
   const [changeAge, setChangeAge] = useState(route.params.age);
   const [changeGender, setChangeGender] = useState(route.params.gender);
 
-  // 여기부터 토큰 불러오는 코드
-  const [accessToken, getUserToken] = useState(null);
-  useEffect(() => {
-    const getToken = async () => {
-      let token;
-      try {
-        token = await SecureStore.getItemAsync('accessToken');
-      } catch (e) {
-        console.log(e);
-      }
-      await getUserToken(token);
-    };
-    getToken();
-  }, []);
-  // Redux 적용되기 전까진 이 코드 무지성 복붙해서 accessToken 쓸 것
+  // // 여기부터 토큰 불러오는 코드
+  // const [accessToken, getUserToken] = useState(null);
+  // useEffect(() => {
+  //   const getToken = async () => {
+  //     let token;
+  //     try {
+  //       token = await SecureStore.getItemAsync('accessToken');
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //     await getUserToken(token);
+  //   };
+  //   getToken();
+  // }, []);
+  // // Redux 적용되기 전까진 이 코드 무지성 복붙해서 accessToken 쓸 것
 
   const submitUserinfo = async () => {
     if (accessToken) {
@@ -46,6 +51,7 @@ function ChangeUserinfoScreen({ navigation, route }) {
         },
       )
         .then(function (response) {
+          dispatch(setNickname(changeNickname));
           console.log(response);
           Alert.alert('변경되었습니다.');
         })
