@@ -2,7 +2,6 @@ import { StyleSheet, Text, View, Alert, TextInput, Button } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import { HOST } from '@env';
-import * as SecureStore from 'expo-secure-store';
 import SelectDropdown from 'react-native-select-dropdown';
 import styled from 'styled-components/native';
 import { useSelector, useDispatch } from 'react-redux';
@@ -17,23 +16,7 @@ function ChangeUserinfoScreen({ navigation, route }) {
   const [changeAge, setChangeAge] = useState(route.params.age);
   const [changeGender, setChangeGender] = useState(route.params.gender);
 
-  // // 여기부터 토큰 불러오는 코드
-  // const [accessToken, getUserToken] = useState(null);
-  // useEffect(() => {
-  //   const getToken = async () => {
-  //     let token;
-  //     try {
-  //       token = await SecureStore.getItemAsync('accessToken');
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //     await getUserToken(token);
-  //   };
-  //   getToken();
-  // }, []);
-  // // Redux 적용되기 전까진 이 코드 무지성 복붙해서 accessToken 쓸 것
-
-  const submitUserinfo = async () => {
+  const submitUserinfo = () => {
     if (accessToken) {
       const header = {
         Authorization: `Bearer ${accessToken}`,

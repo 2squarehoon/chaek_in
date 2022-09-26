@@ -1,9 +1,40 @@
 import { StyleSheet, Text, View, Image } from 'react-native';
 import styled from 'styled-components/native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import Axios from 'axios';
+import { HOST } from '@env';
 import ReviewList from '../components/review/ReviewList';
+import { useSelector } from 'react-redux';
 
-function BookDetailScreen() {
+function BookDetailScreen({ route }) {
+  const { accessToken } = useSelector((state) => state.main);
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
+  const [score, setScore] = useState(0);
+  const [cover, setCover] = useState('');
+  const [index, setIndex] = useState('');
+  const [description, setDescription] = useState('');
+  const bookId = route.params.bookId;
+  useEffect(() => {
+    Axios.get(`${HOST}/api/v1/books/${route.params.bookId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then(function (response) {
+        console.log(response.data);
+        setTitle(response.data.title);
+        setAuthor(response.data.author);
+        setScore(response.data.ratingScore);
+        setCover(response.data.cover);
+        setIndex(response.data.index);
+        setDescription(response.data.description);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
+
   return (
     <>
       <ScrollViewContainer>
@@ -31,13 +62,11 @@ function BookDetailScreen() {
             <ButtonText>독후감 보기</ButtonText>
           </ButtonContainer>
         </AfterContainer>
-        <ImageContainer
-          source={{ uri: 'https://image.yes24.com/goods/21508428/XL' }}
-          style={{ width: 240, height: 360 }}
-        />
+        <ImageContainer source={{ uri: cover }} style={{ width: 240, height: 360 }} />
         <MiddleContainer>
-          <BookTitle>스티브 잡스</BookTitle>
-          <Author>재레드 다이아몬드 지음</Author>
+          <BookTitle>{title}</BookTitle>
+          <Author>{author} 지음</Author>
+          <Author>평점 : {score}</Author>
           <StartTime>독서시작 : 2022.09.21 12:01</StartTime>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
@@ -47,13 +76,7 @@ function BookDetailScreen() {
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
           </View>
           <Intro>
-            <Text>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-              labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-              laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-              voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-              non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </Text>
+            <Text>{index}</Text>
           </Intro>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
@@ -63,13 +86,7 @@ function BookDetailScreen() {
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
           </View>
           <Intro>
-            <Text>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-              labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-              laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-              voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-              non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </Text>
+            <Text>{description}</Text>
           </Intro>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
@@ -79,7 +96,7 @@ function BookDetailScreen() {
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
           </View>
         </MiddleContainer>
-        <ReviewList />
+        <ReviewList bookId={bookId} />
       </ScrollViewContainer>
     </>
   );
