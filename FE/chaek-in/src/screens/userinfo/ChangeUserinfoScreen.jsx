@@ -30,17 +30,22 @@ function ChangeUserinfoScreen({ navigation, route }) {
 
   const submitUserinfo = async () => {
     if (accessToken) {
-      Axios.patch(`${HOST}/api/v1/members/me`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({
+      console.log('accessToken: ' + accessToken);
+      const header = {
+        Authorization: `Bearer ${accessToken}`,
+      };
+      Axios.patch(
+        `${HOST}/api/v1/members/me`,
+        {
           nickname: changeNickname,
           job: changeJob,
           age: changeAge,
           gender: changeGender,
-        }),
-      })
+        },
+        {
+          headers: header,
+        },
+      )
         .then(function (response) {
           console.log(response);
           Alert.alert('변경되었습니다.');
