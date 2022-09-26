@@ -4,28 +4,46 @@ import Axios from 'axios';
 import { HOST } from '@env';
 import * as SecureStore from 'expo-secure-store';
 
-function UserInfoScreen(navigation) {
+function UserInfoScreen({ navigation }) {
   const [nickname, setNickname] = useState('');
   const [job, setJob] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
-  const accessToken = SecureStore.getItemAsync('accessToken');
+
+  // 여기부터 토큰 불러오는 코드
+  const [accessToken, getUserToken] = useState(null);
+  useEffect(() => {
+    const getToken = async () => {
+      let token;
+      try {
+        token = await SecureStore.getItemAsync('accessToken');
+      } catch (e) {
+        console.log(e);
+      }
+      await getUserToken(token);
+    };
+    getToken();
+  }, []);
+  // Redux 적용되기 전까진 이 코드 무지성 복붙해서 accessToken 쓸 것
 
   useEffect(() => {
-    Axios.get(`${HOST}/api/v1/members/me`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-      .then(function (response) {
-        setNickname(response.data.nickname);
-        setJob(response.data.job);
-        setAge(response.data.age);
-        setGender(response.data.gender);
+    if (accessToken) {
+      console.log('accessToken: ' + accessToken);
+      Axios.get(`${HOST}/api/v1/members/me`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       })
-      .catch(function (error) {
-        console.log(error);
-      });
+        .then(function (response) {
+          setNickname(response.data.nickname);
+          setJob(response.data.job);
+          setAge(response.data.age);
+          setGender(response.data.gender);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
   }, [accessToken]);
 
   const Logout = async () => {
@@ -33,7 +51,7 @@ function UserInfoScreen(navigation) {
     await SecureStore.deleteItemAsync('nickname');
     await SecureStore.deleteItemAsync('accessToken');
     await SecureStore.deleteItemAsync('refreshToken');
-    await Alert.alert('로그아웃되었습니다.');
+    Alert.alert('로그아웃되었습니다.');
   };
 
   const quit = () => {
