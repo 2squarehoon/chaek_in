@@ -1,3 +1,4 @@
+import { StyleSheet, Text, View, Alert, TextInput, Button } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import 'react-native-gesture-handler';
 import TabNavigation from './src/navigation/TabNavigation';
@@ -7,6 +8,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { Store, Persistor } from './src/redux/store';
 import { useSelector, Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import styled from 'styled-components/native';
 
 const Stack = createStackNavigator();
 

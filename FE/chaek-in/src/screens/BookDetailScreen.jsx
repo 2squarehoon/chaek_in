@@ -14,6 +14,7 @@ function BookDetailScreen({ route }) {
   const [cover, setCover] = useState('');
   const [index, setIndex] = useState('');
   const [description, setDescription] = useState('');
+  const bookId = route.params.bookId;
   useEffect(() => {
     Axios.get(`${HOST}/api/v1/books/${route.params.bookId}`, {
       headers: {
@@ -65,6 +66,7 @@ function BookDetailScreen({ route }) {
         <MiddleContainer>
           <BookTitle>{title}</BookTitle>
           <Author>{author} 지음</Author>
+          <Author>평점 : {score}</Author>
           <StartTime>독서시작 : 2022.09.21 12:01</StartTime>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
@@ -94,7 +96,7 @@ function BookDetailScreen({ route }) {
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
           </View>
         </MiddleContainer>
-        <ReviewList />
+        <ReviewList bookId={bookId} />
       </ScrollViewContainer>
     </>
   );

@@ -1,13 +1,11 @@
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
-import { useSelector, useDispatch } from 'react-redux';
-import { setAccessToken, setEmail, setNickname, setRefreshToken } from '../redux/actions';
+import { useSelector } from 'react-redux';
 
 function HomeScreen({ navigation }) {
   const { accessToken, nickname } = useSelector((state) => state.main);
   const [bookNumber, changeBookNumber] = useState('');
-  const dispatch = useDispatch();
 
   const goToBookLog = (e) => {
     navigation.navigate('BookLogs');
@@ -19,7 +17,6 @@ function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <View>
         <Text>{nickname}님의 서재</Text>
-        <Text>토큰 : {accessToken}</Text>
       </View>
       <View>
         <Button onPress={goToBookLog} title='오늘의 책'></Button>

@@ -2,15 +2,18 @@ import React from 'react';
 import { Text, View, Button, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 
-function ReviewItem() {
+function ReviewItem({ item, bookId }) {
   return (
     <>
       <ReviewItemContainer>
         <ReviewStarContainer>
-          <Text>★★★★☆</Text>
+          <Text>{item.score} 점</Text>
         </ReviewStarContainer>
         <ReviewTextContainer>
-          <Text>리뷰리뷰리뷰리뷰리뷰</Text>
+          <Text>작성자 : {item.writer}</Text>
+        </ReviewTextContainer>
+        <ReviewTextContainer>
+          <Text>{item.comment}</Text>
         </ReviewTextContainer>
         <ReviewControlContainer>
           <TouchableOpacity>

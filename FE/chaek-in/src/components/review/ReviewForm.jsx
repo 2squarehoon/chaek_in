@@ -21,9 +21,6 @@ const ReviewInput = styled.TextInput`
   border: 1px solid #000;
   border-radius: 5px;
   margin-left: 5%;
-  // padding: 0 10px;
-  // position: absolute;
-  // top: 10px;
 `;
 
 const ReviewInputContainer = styled.View`
