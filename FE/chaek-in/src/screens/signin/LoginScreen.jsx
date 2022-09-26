@@ -45,16 +45,34 @@ function LoginScreen({ navigation }) {
     }
   }, [userEmail]);
 
+  async function save(key, value) {
+    await SecureStore.setItemAsync(key, value, {});
+  }
+
+  const saveStore = async () => {
+    // await SecureStore.setItemAsync('identifier', userEmail);
+    // await SecureStore.setItemAsync('nickname', nname);
+    // await SecureStore.setItemAsync('accessToken', aToken);
+    console.log('1' + SecureStore.isAvailableAsync());
+    await console.log('2' + SecureStore.getItemAsync('accessToken'));
+    save('accessToken', aToken);
+    save('identifier', userEmail);
+    save('nickname', nname);
+    save('refreshToken', rToken);
+    await console.log(aToken);
+    await console.log('4' + SecureStore.getItemAsync('identifier'));
+    await console.log('5' + SecureStore.getItemAsync('nickname'));
+
+    // await SecureStore.setItemAsync('refreshToken', rToken);
+    await console.log('SecureStore 저장됨');
+  };
   // isFirst 값이 갱신되면 실행, 처음 로그인이면 추가정보입력으로 이동, 아닐 시 SecureStore에 토큰, 정보들 저장
   useEffect(() => {
     if (isFirst) {
       navigation.navigate('Nickname', { email: userEmail });
     } else if (isFirst === false) {
-      SecureStore.setItemAsync('identifier', userEmail);
-      SecureStore.setItemAsync('nickname', nname);
-      SecureStore.setItemAsync('accessToken', aToken);
-      SecureStore.setItemAsync('refreshToken', rToken);
-      console.log('SecureStore 저장됨');
+      saveStore();
+      console.log('3' + SecureStore.getItemAsync('accessToken'));
     }
   }, [isFirst]);
 
@@ -86,10 +104,10 @@ function LoginScreen({ navigation }) {
       .then(function (response) {
         console.log(response);
         console.log(response.data);
-        setIsFirst(response.data.isFirst);
         setNickname(response.data.nickname);
         setAccessToken(response.data.accessToken);
         setRefreshToken(response.data.refreshToken);
+        setIsFirst(response.data.isFirst);
       })
       .catch(function (error) {
         console.log(error);
@@ -125,8 +143,6 @@ function LoginScreen({ navigation }) {
 const LoginContainer = styled.View`
   flex: 1;
   background-color: #b1d8e8;
-  // justify-content: center;
-  // align-items: center;
 `;
 
 const GoogleLogin = styled.TouchableOpacity`

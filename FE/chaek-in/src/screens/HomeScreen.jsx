@@ -4,15 +4,19 @@ import * as SecureStore from 'expo-secure-store';
 
 function HomeScreen({ navigation }) {
   const [nickname, getNickname] = useState(null);
+  const [accessToken, getToken] = useState(null);
   useEffect(() => {
     const getResult = async () => {
       let name;
+      let token;
       try {
         name = await SecureStore.getItemAsync('nickname');
+        token = await SecureStore.getItemAsync('accessToken');
       } catch (e) {
         console.log(e);
       }
       await getNickname(name);
+      await getToken(token);
     };
     getResult();
   }, []);
@@ -34,6 +38,7 @@ function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <View>
         <Text>{nickname}님의 서재</Text>
+        <Text>토큰 : {accessToken}</Text>
       </View>
       <View>
         <Button onPress={goToBookLog} title='오늘의 책'></Button>

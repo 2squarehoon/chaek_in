@@ -16,11 +16,11 @@ function MeetingNavigation() {
       // screenOptions={{ headerShown: false }}
     >
       <MeetingStack.Screen name='MeetingHome' component={MeetingHomeScreen}></MeetingStack.Screen>
-      <MeetingStack.Screen name='MeetingAll' component={MeetingAllScreen}></MeetingStack.Screen>
+      {/* <MeetingStack.Screen name='MeetingAll' component={MeetingAllScreen}></MeetingStack.Screen>
       <MeetingStack.Screen name='MeetingMyBook' component={MeetingMyBookScreen}></MeetingStack.Screen>
       <MeetingStack.Screen name='MeetingOpposite' component={MeetingOppositeScreen}></MeetingStack.Screen>
       <MeetingStack.Screen name='MeetingSimilar' component={MeetingSimilarScreen}></MeetingStack.Screen>
-      <MeetingStack.Screen name='MeetingChallenge' component={MeetingChallengeScreen}></MeetingStack.Screen>
+      <MeetingStack.Screen name='MeetingChallenge' component={MeetingChallengeScreen}></MeetingStack.Screen> */}
     </MeetingStack.Navigator>
   );
 }

@@ -5,6 +5,7 @@ import HomeNavigation from './HomeNavigation';
 import ReadScreen from '../screens/ReadScreen';
 import RecordNavigation from './RecordNavigation';
 import MeetingNavigation from './MeetingNav/MeetingNavigation';
+import UserInfoNavigation from './UserinfoNavigation';
 
 const Tab = createBottomTabNavigator();
 
@@ -17,6 +18,7 @@ function TabNavigation() {
       <Tab.Screen name='Read' component={ReadScreen} />
       <Tab.Screen name='Meeting' component={MeetingNavigation} />
       <Tab.Screen name='Record' component={RecordNavigation} />
+      <Tab.Screen name='Userinfo' component={UserInfoNavigation} />
     </Tab.Navigator>
     // </NavigationContainer>
   );
