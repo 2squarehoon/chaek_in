@@ -8,6 +8,8 @@ import styled from 'styled-components/native';
 import { HOST } from '@env';
 // import EncryptedStorage from 'react-native-encrypted-storage';
 import * as SecureStore from 'expo-secure-store';
+import { useSelector, useDispatch } from 'react-redux';
+import { setAccessToken, setEmail, setNickname, setRefreshToken } from '../../redux/actions';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -15,9 +17,12 @@ function LoginScreen({ navigation }) {
   const [reqError, setReqError] = useState('');
   const [userEmail, setUserEmail] = useState();
   const [isFirst, setIsFirst] = useState('');
-  const [nname, setNickname] = useState('');
-  const [aToken, setAccessToken] = useState('');
-  const [rToken, setRefreshToken] = useState('');
+  const [nname, setNname] = useState('');
+  const [aToken, setAToken] = useState('');
+  const [rToken, setRToken] = useState('');
+
+  const { nickname, email, accessToken, refreshToken } = useSelector((state) => state.userReducer);
+  const dispatch = useDispatch();
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     expoClientId: GOOGLE_EXPO_CLIENT_ID,
@@ -40,7 +45,6 @@ function LoginScreen({ navigation }) {
     if (!mountedEmail.current) {
       mountedEmail.current = true;
     } else {
-      console.log(userEmail);
       requireBack(userEmail);
     }
   }, [userEmail]);
@@ -50,21 +54,19 @@ function LoginScreen({ navigation }) {
   }
 
   const saveStore = async () => {
-    // await SecureStore.setItemAsync('identifier', userEmail);
-    // await SecureStore.setItemAsync('nickname', nname);
-    // await SecureStore.setItemAsync('accessToken', aToken);
-    console.log('1' + SecureStore.isAvailableAsync());
-    await console.log('2' + SecureStore.getItemAsync('accessToken'));
     save('accessToken', aToken);
     save('identifier', userEmail);
     save('nickname', nname);
     save('refreshToken', rToken);
-    await console.log(aToken);
-    await console.log('4' + SecureStore.getItemAsync('identifier'));
-    await console.log('5' + SecureStore.getItemAsync('nickname'));
-
-    // await SecureStore.setItemAsync('refreshToken', rToken);
     await console.log('SecureStore 저장됨');
+  };
+
+  // redux state에 저장
+  const saveReduxState = () => {
+    dispatch(setNickname(nname));
+    dispatch(setEmail(userEmail));
+    dispatch(setRefreshToken(rToken));
+    dispatch(setAccessToken(aToken));
   };
   // isFirst 값이 갱신되면 실행, 처음 로그인이면 추가정보입력으로 이동, 아닐 시 SecureStore에 토큰, 정보들 저장
   useEffect(() => {
@@ -72,7 +74,7 @@ function LoginScreen({ navigation }) {
       navigation.navigate('Nickname', { email: userEmail });
     } else if (isFirst === false) {
       saveStore();
-      console.log('3' + SecureStore.getItemAsync('accessToken'));
+      saveReduxState();
     }
   }, [isFirst]);
 
@@ -102,11 +104,10 @@ function LoginScreen({ navigation }) {
   const requireBack = async (mail) => {
     await Axios.get(`${HOST}/api/v1/members/login?identifier=${mail}`)
       .then(function (response) {
-        console.log(response);
         console.log(response.data);
-        setNickname(response.data.nickname);
-        setAccessToken(response.data.accessToken);
-        setRefreshToken(response.data.refreshToken);
+        setNname(response.data.nickname);
+        setAToken(response.data.accessToken);
+        setRToken(response.data.refreshToken);
         setIsFirst(response.data.isFirst);
       })
       .catch(function (error) {
