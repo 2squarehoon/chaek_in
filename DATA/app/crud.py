@@ -7,9 +7,6 @@ import itertools
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-def get_books(db: Session, skip: int = 0, limit: int = 10):
-
-    return db.query(models.Book).offset(skip).limit(limit).all()
 
 def get_book_df():
     select_sql = 'SELECT * FROM book'
@@ -49,7 +46,6 @@ def clean_df(book_df, category_df):
 
 
     # CountVectorizer를 적용하기 위해 공백문자로 word 단위가 구분되는 문자열로 반환
-
     return df
 def count_sim(df):
 
@@ -57,7 +53,7 @@ def count_sim(df):
     cat_mat = count_vect.fit_transform(df['keywords'])
     cat_sim = cosine_similarity(cat_mat, cat_mat)
     cat_sim_sorted_ind = cat_sim.argsort()[:, ::-1]
-
+ 
     return cat_sim_sorted_ind
 
 def find_sim_book(df, sorted_ind, book_id, top_n=20):
@@ -71,7 +67,7 @@ def find_sim_book(df, sorted_ind, book_id, top_n=20):
     
     # 기준 영화 인덱스 제외
     sim_indexes = sim_indexes[sim_indexes != book_id_index]
-    
+   
     # top_n의 2배에 해당하는 후보군에서 w_rating이 높은 순으로 top_n만큼 추출
     return df.iloc[sim_indexes].sort_values('w_rating', ascending=False)[:top_n]
 
