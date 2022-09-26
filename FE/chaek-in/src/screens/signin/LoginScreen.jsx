@@ -6,9 +6,7 @@ import { GOOGLE_EXPO_CLIENT_ID, GOOGLE_ANDROID_CLIENT_ID, GOOGLE_WEB_CLIENT_ID }
 import Axios from 'axios';
 import styled from 'styled-components/native';
 import { HOST } from '@env';
-// import EncryptedStorage from 'react-native-encrypted-storage';
-import * as SecureStore from 'expo-secure-store';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setAccessToken, setEmail, setNickname, setRefreshToken } from '../../redux/actions';
 
 WebBrowser.maybeCompleteAuthSession();
@@ -21,7 +19,6 @@ function LoginScreen({ navigation }) {
   const [aToken, setAToken] = useState('');
   const [rToken, setRToken] = useState('');
 
-  const { nickname, email, accessToken, refreshToken } = useSelector((state) => state.main);
   const dispatch = useDispatch();
 
   const [request, response, promptAsync] = Google.useAuthRequest({
@@ -49,18 +46,6 @@ function LoginScreen({ navigation }) {
     }
   }, [userEmail]);
 
-  async function save(key, value) {
-    await SecureStore.setItemAsync(key, value, {});
-  }
-  // // secureStore에 직접 저장하는 코드, but 이젠 필요없음
-  // const saveStore = async () => {
-  //   save('accessToken', aToken);
-  //   save('identifier', userEmail);
-  //   save('nickname', nname);
-  //   save('refreshToken', rToken);
-  //   await console.log('SecureStore 저장됨');
-  // };
-
   // redux state에 저장
   const saveReduxState = () => {
     dispatch(setNickname(nname));
@@ -73,7 +58,6 @@ function LoginScreen({ navigation }) {
     if (isFirst) {
       navigation.navigate('Nickname', { email: userEmail });
     } else if (isFirst === false) {
-      // saveStore();
       saveReduxState();
     }
   }, [isFirst]);

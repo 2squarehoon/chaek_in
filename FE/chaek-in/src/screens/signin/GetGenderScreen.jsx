@@ -1,10 +1,9 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { StyleSheet, Text, View, TextInput, Alert, Button } from 'react-native';
 import styled from 'styled-components/native';
 import SelectDropdown from 'react-native-select-dropdown';
 import { HOST } from '@env';
-import * as SecureStore from 'expo-secure-store';
 import { useDispatch } from 'react-redux';
 import { setAccessToken, setEmail, setNickname, setRefreshToken } from '../../redux/actions';
 
@@ -28,11 +27,6 @@ function GetGenderScreen({ navigation, route }) {
         dispatch(setNickname(nickname));
         dispatch(setRefreshToken(response.data.refreshToken));
         dispatch(setAccessToken(response.data.accessToken));
-
-        // await SecureStore.setItemAsync('identifier', email);
-        // await SecureStore.setItemAsync('nickname', nickname);
-        // await SecureStore.setItemAsync('accessToken', response.data.accessToken);
-        // await SecureStore.setItemAsync('refreshToken', response.data.refreshToken);
         console.log('SecureStore 저장됨');
       })
       .catch(function (error) {

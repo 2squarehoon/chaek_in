@@ -2,7 +2,6 @@ import { StyleSheet, Text, View, Button, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import { HOST } from '@env';
-import * as SecureStore from 'expo-secure-store';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAccessToken, setEmail, setNickname, setRefreshToken } from '../../redux/actions';
 
@@ -10,26 +9,9 @@ function UserInfoScreen({ navigation }) {
   const { accessToken, nickname } = useSelector((state) => state.main);
   const dispatch = useDispatch();
 
-  // const [nickname, setNickname] = useState('');
   const [job, setJob] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
-
-  // // 여기부터 토큰 불러오는 코드
-  // const [accessToken, getUserToken] = useState(null);
-  // useEffect(() => {
-  //   const getToken = async () => {
-  //     let token;
-  //     try {
-  //       token = await SecureStore.getItemAsync('accessToken');
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //     await getUserToken(token);
-  //   };
-  //   getToken();
-  // }, []);
-  // // Redux 적용되기 전까진 이 코드 무지성 복붙해서 accessToken 쓸 것
 
   useEffect(() => {
     if (accessToken) {
@@ -51,10 +33,6 @@ function UserInfoScreen({ navigation }) {
   }, [accessToken]);
 
   const Logout = async () => {
-    // await SecureStore.deleteItemAsync('identifier');
-    // await SecureStore.deleteItemAsync('nickname');
-    // await SecureStore.deleteItemAsync('accessToken');
-    // await SecureStore.deleteItemAsync('refreshToken');
     dispatch(setNickname(''));
     dispatch(setEmail(''));
     dispatch(setRefreshToken(''));
@@ -70,10 +48,6 @@ function UserInfoScreen({ navigation }) {
         },
       })
         .then(async function () {
-          // await SecureStore.deleteItemAsync('identifier');
-          // await SecureStore.deleteItemAsync('nickname');
-          // await SecureStore.deleteItemAsync('accessToken');
-          // await SecureStore.deleteItemAsync('refreshToken');
           dispatch(setNickname(''));
           dispatch(setEmail(''));
           dispatch(setRefreshToken(''));
