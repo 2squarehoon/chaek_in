@@ -46,6 +46,8 @@ public class ReviewService {
     public long writeReview(long bookId, long memberId, ReviewRequest reviewRequest) {
         BookLog bookLog = getBookLog(bookId, memberId);
 
+        bookLog.getBook().addScore(reviewRequest.getScore());
+
         return reviewRepository.save(Review.builder()
                         .bookLog(bookLog)
                         .comment(reviewRequest.getComment())
@@ -63,6 +65,8 @@ public class ReviewService {
             throw new CustomException(DO_NOT_HAVE_AUTHORIZATION);
         }
 
+        bookLog.getBook().updateScore(review.getScore(), reviewRequest.getScore());
+
         review.update(reviewRequest.getScore(), reviewRequest.getComment());
     }
 
@@ -76,6 +80,8 @@ public class ReviewService {
         if (!memberId.equals(bookLog.getMember().getId())) {
             throw new CustomException(DO_NOT_HAVE_AUTHORIZATION);
         }
+        bookLog.getBook().deleteScore(review.getScore());
+
         reviewRepository.delete(review);
     }
 
