@@ -40,7 +40,6 @@ function LoginScreen({ navigation }) {
     if (!mountedEmail.current) {
       mountedEmail.current = true;
     } else {
-      console.log(userEmail);
       requireBack(userEmail);
     }
   }, [userEmail]);
@@ -50,20 +49,10 @@ function LoginScreen({ navigation }) {
   }
 
   const saveStore = async () => {
-    // await SecureStore.setItemAsync('identifier', userEmail);
-    // await SecureStore.setItemAsync('nickname', nname);
-    // await SecureStore.setItemAsync('accessToken', aToken);
-    console.log('1' + SecureStore.isAvailableAsync());
-    await console.log('2' + SecureStore.getItemAsync('accessToken'));
     save('accessToken', aToken);
     save('identifier', userEmail);
     save('nickname', nname);
     save('refreshToken', rToken);
-    await console.log(aToken);
-    await console.log('4' + SecureStore.getItemAsync('identifier'));
-    await console.log('5' + SecureStore.getItemAsync('nickname'));
-
-    // await SecureStore.setItemAsync('refreshToken', rToken);
     await console.log('SecureStore 저장됨');
   };
   // isFirst 값이 갱신되면 실행, 처음 로그인이면 추가정보입력으로 이동, 아닐 시 SecureStore에 토큰, 정보들 저장
@@ -72,7 +61,6 @@ function LoginScreen({ navigation }) {
       navigation.navigate('Nickname', { email: userEmail });
     } else if (isFirst === false) {
       saveStore();
-      console.log('3' + SecureStore.getItemAsync('accessToken'));
     }
   }, [isFirst]);
 
@@ -102,7 +90,6 @@ function LoginScreen({ navigation }) {
   const requireBack = async (mail) => {
     await Axios.get(`${HOST}/api/v1/members/login?identifier=${mail}`)
       .then(function (response) {
-        console.log(response);
         console.log(response.data);
         setNickname(response.data.nickname);
         setAccessToken(response.data.accessToken);

@@ -3,9 +3,6 @@ import { StyleSheet, Text, View, TextInput } from 'react-native';
 import styled from 'styled-components/native';
 
 function GetNicknameScreen({ navigation, route }) {
-  // useEffect(() => {
-  //   console.log(route.params.email);
-  // }, []);
   const [text, onChangeText] = useState('');
   const mail = route.params.email;
   const goToJob = (e) => {
@@ -15,7 +12,6 @@ function GetNicknameScreen({ navigation, route }) {
   return (
     <View>
       <Text>책크인에서 사용하실 닉네임을 정해주세요</Text>
-      <Text>{mail}</Text>
       <FormContainer>
         <UserinfoForm onChangeText={onChangeText} placeholder='닉네임을 입력하세요' />
         <UserinfoSubmit onPress={goToJob}>

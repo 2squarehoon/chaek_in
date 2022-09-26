@@ -4,7 +4,6 @@ import { StyleSheet, Text, View, TextInput, Alert, Button } from 'react-native';
 import styled from 'styled-components/native';
 import SelectDropdown from 'react-native-select-dropdown';
 import { HOST } from '@env';
-// import EncryptedStorage from 'react-native-encrypted-storage';
 import * as SecureStore from 'expo-secure-store';
 
 function GetGenderScreen({ navigation, route }) {
@@ -27,16 +26,6 @@ function GetGenderScreen({ navigation, route }) {
         await SecureStore.setItemAsync('accessToken', response.data.accessToken);
         await SecureStore.setItemAsync('refreshToken', response.data.refreshToken);
         console.log('SecureStore 저장됨');
-        // EncryptedStorage.setItem(
-        //   'user_session',
-        //   JSON.stringify({
-        //     identifier: email,
-        //     nickname: nickname,
-        //     accessToken: response.data.accessToken,
-        //     refreshToken: response.data.refreshToken,
-        //   }),
-        // );
-        // navigation.navigate('Login'); // 사전평점조사페이지로 이동
       })
       .catch(function (error) {
         if (error.response) {
@@ -57,11 +46,6 @@ function GetGenderScreen({ navigation, route }) {
         console.log(error.config);
       });
   }
-  const getNickname = (e) => {
-    const getnick = SecureStore.getItemAsync('nickname');
-    console.log(getnick);
-    console.log(nickname);
-  };
 
   return (
     <View>
@@ -80,9 +64,6 @@ function GetGenderScreen({ navigation, route }) {
         <UserinfoSubmit onPress={Signin}>
           <Text>회원가입</Text>
         </UserinfoSubmit>
-        <View>
-          <Button onPress={getNickname} title='닉네임'></Button>
-        </View>
       </FormContainer>
     </View>
   );
