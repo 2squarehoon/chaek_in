@@ -51,4 +51,18 @@ public class Book {
 //        this.title = title;
 //        this.category = category;
 //    }
+
+    public void addScore(double addScore) {
+        ratingScore = (ratingScore * ratingCount + addScore) / (ratingCount + 1);
+        ratingCount++;
+    }
+
+    public void updateScore(double origin, double newScore) {
+        ratingScore = ((ratingScore * ratingCount) - origin + newScore) / ratingCount;
+    }
+
+    public void deleteScore(double score) {
+        ratingScore = ((ratingScore * ratingCount) - score) / (ratingCount - 1);
+        ratingCount--;
+    }
 }
