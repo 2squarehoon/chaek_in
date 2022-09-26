@@ -3,10 +3,11 @@ from sqlalchemy.orm import Session
 import crud, models, schemas
 from database import SessionLocal, engine
 
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 import pandas as pd
-
+import json
 import math
 import time
 
@@ -23,31 +24,35 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/books/")
-def read_books(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    select_sql = 'SELECT * FROM book'
-    # items = crud.get_books(db, skip=skip, limit=limit)
-    df = pd.read_sql(select_sql, engine)
-    print(df.loc[0]['cover'])
-    return df.to_json(orient='columns')
+@app.get("/books/", response_model=list[schemas.Book])
+def read_books(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    books = crud.get_books(db, skip=skip, limit=limit)
+    return books
+
 
 @app.get('/')
 def read_df():
-    df, cat_sim_sorted_ind = crud.clean_df()
-    print('위에는 된거?')
-    return 1
+    df = crud.clean_df(crud.get_book_df(), crud.get_category())
+    df_json = json.loads(df.sample(10).to_json(orient='index', force_ascii=False, indent=4))
+    return df_json
 
-@app.get('/recommended/')
-def get_recommended(title: str = '오베라는 남자'):
+@app.get('/api/data/books/cbf/{user_id}/')
+def get_recommended(user_id: int):
     start = time.time()
-    df, cat_sim_sorted_ind = crud.clean_df()
-    sim_books = crud.find_sim_book(df, cat_sim_sorted_ind, title, 20)
-    
+    df = crud.clean_df(crud.get_book_df(), crud.get_category())
+    cat_sim_sorted_ind = crud.count_sim(df)
+    user_book = crud.get_user_read(user_id)
+    result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 
+                                 'category_id', 'publisher', 'page', 'rating_score', 'rating_count', 'w_rating', 'cid', 'keywords'])
+    for book_id in user_book[:5]:
+        sim_books = crud.find_sim_book(df, cat_sim_sorted_ind, book_id, 20)
+        result = pd.concat([result, sim_books])
+
+        
+    result = result.drop_duplicates(['id'])
+    result = result[['isbn', 'title', 'author', 'cover', 'rating_score']]
     end = time.time()
     print(f"{end - start:.5f} sec")
-    
-    return sim_books['cover']
 
-@app.post("/read_books/")
-async def input_book(title: str = Form()):
-    return {"title": title}
+    result = json.loads(result.sample(10).to_json(orient='index', force_ascii=False, indent=4))
+    return result
