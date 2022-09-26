@@ -1,5 +1,7 @@
 package com.team7.chaekin.global.aop;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -10,20 +12,35 @@ import org.aspectj.lang.reflect.CodeSignature;
 import org.springframework.stereotype.Component;
 
 @Slf4j
+@RequiredArgsConstructor
 @Aspect
 @Component
 public class LoggingAspect {
 
-    @Pointcut("within(com.team7.chaekin..controller..*)")
-    public void onRequest() { }
+    private final ObjectMapper objectMapper;
 
-    @Around("onRequest()")
-    public Object logging(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around("within(com.team7.chaekin..controller..*)")
+    public Object loggingController(ProceedingJoinPoint joinPoint) throws Throwable {
         String params = getParams(joinPoint);
-        log.info("Controller Method = {}, params = {}", joinPoint.getSignature().getName(), params);
-        Object result = joinPoint.proceed();
+        log.info("[Controller] Method = {}, params = {}", joinPoint.getSignature().getName(), params);
+        Object result = null;
+        try {
+            result = joinPoint.proceed();
+            return result;
+        } finally {
+            log.info("[Response] Response value = {}", objectMapper.writeValueAsString(result));
+        }
+    }
 
-        return result;
+    @Around("within(com.team7.chaekin..service..*)")
+    public Object loggingService(ProceedingJoinPoint joinPoint) throws Throwable {
+        long start = System.currentTimeMillis();
+        try {
+            return joinPoint.proceed();
+        } finally {
+            long end = System.currentTimeMillis();
+            log.info("[Service] Execute Time = {}ms", end - start);
+        }
     }
 
     private String getParams(JoinPoint joinPoint) {
