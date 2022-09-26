@@ -9,9 +9,9 @@ import javax.validation.constraints.Size;
 
 @Data
 public class ReviewRequest {
-    @Min(0) @Max(5)
+    @Min(value = 0, message = "Score is not valid.") @Max(value = 5, message = "Score is not valid.")
     private double score;
     @NotBlank
-    @Size(min = 1, max = 1000)
+    @Size(min = 1, max = 1000, message = "Comment's length is not valid.")
     private String comment;
 }

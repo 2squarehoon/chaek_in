@@ -8,9 +8,9 @@ import javax.validation.constraints.Size;
 
 @Data
 public class MeetingCommentCreateRequest {
-    @PositiveOrZero
+    @PositiveOrZero(message = "ParentId can not be minus value.")
     private long parentId;
     @NotBlank
-    @Size(max = 500)
+    @Size(min = 1, max = 500, message = "Content's length is not valid.")
     private String content;
 }

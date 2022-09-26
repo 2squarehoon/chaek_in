@@ -11,13 +11,13 @@ import javax.validation.constraints.Size;
 @Data
 public class MemberUpdateRequest {
     @NotBlank
-    @Size(min = 1, max = 255)
+    @Size(min = 1, max = 255, message = "Nickname's length is not valid.")
     private String nickname;
     @NotBlank
-    @Size(min = 1, max = 45)
+    @Size(min = 1, max = 45, message = "Job's length is not valid.")
     private String job;
-    @Min(1)
+    @Min(value = 1, message = "Age Value is not valid.")
     private int age;
-    @NotNull
+    @NotNull(message = "Gender Can not be null.")
     private Gender gender;
 }
