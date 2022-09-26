@@ -28,7 +28,6 @@ function UserInfoScreen({ navigation }) {
 
   useEffect(() => {
     if (accessToken) {
-      console.log('accessToken: ' + accessToken);
       Axios.get(`${HOST}/api/v1/members/me`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,

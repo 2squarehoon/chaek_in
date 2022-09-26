@@ -30,7 +30,6 @@ function ChangeUserinfoScreen({ navigation, route }) {
 
   const submitUserinfo = async () => {
     if (accessToken) {
-      console.log('accessToken: ' + accessToken);
       const header = {
         Authorization: `Bearer ${accessToken}`,
       };
