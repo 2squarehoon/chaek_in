@@ -22,7 +22,12 @@ server_run = False
 # 처음 서버시작이면
 if not(server_run):
     # 테이블 불렁고 필요한 데이터 가공하고 불러오는 함수 실행 후 df에 저장
-    df = crud.clean_df(crud.get_book_df(), crud.get_category())
+    book = crud.get_book()
+    category = crud.get_category()
+    booklog = crud.get_booklog()
+    review = crud.get_review()
+
+    df = crud.clean_df(book, category)
     # 서버 시작 구분 상태 변경, 이후에는 실행 안되도록
     server_run = not(server_run)
 
@@ -50,14 +55,14 @@ def read_df():
 def get_recommended(user_id: int):
     
     # 서버 시작할 떄 가져온 데이터프레임 쓰려고 global(전역변수) 선언
-    global df
+    global df, booklog, review
     start = time.time() # 실행시간 계산 코드
     
     # 코사인 유사도 계산하는 함수 실행 후 저장
     cat_sim_sorted_ind = crud.count_sim(df)
 
     # 사용자 id 입력하면 사용자가 읽은 책의 book_id을 리스트에 저장 후 변수에 저장
-    user_book = crud.get_user_read(user_id)
+    user_book = crud.get_user_read(user_id, booklog, review)
 
     # 빈 데이터 프레임 컬럼만 지정해서 만들고
     result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 

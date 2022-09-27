@@ -8,25 +8,40 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # book 테이블 불러오는 코드
-def get_book_df():
+def get_book():
     select_sql = 'SELECT * FROM book'
-    book_df = pd.read_sql(select_sql, engine)
-    book_df = book_df.reset_index(drop=True)
-    return book_df
+    book = pd.read_sql(select_sql, engine)
+    book= book.reset_index(drop=True)
+    return book
 
 # category 테이블 불러오는 코드
 def get_category():
     select_sql = 'SELECT * FROM category'
-    category_df = pd.read_sql(select_sql, engine)
-    category_df = category_df.set_index('id')
+    category = pd.read_sql(select_sql, engine)
+    category = category.set_index('id')
 
-    return category_df
+    return category
 
-def clean_df(book_df, category_df):
+# booklog 테이블 불러오는 코드
+def get_booklog():
+    select_sql = 'SELECT * FROM booklog'
+    booklog = pd.read_sql(select_sql, engine)
+    booklog = booklog.set_index('id')
+
+    return booklog
+# review 테이블 불러오는 코드
+def get_review():
+    select_sql = 'SELECT * FROM review'
+    review = pd.read_sql(select_sql, engine)
+    review = review.set_index('id')
+
+    return review
+
+def clean_df(book, category):
     # 가중평점 계산 후 컬럼에 추가
     percentile = 0.8
-    C = book_df['rating_score'].mean()
-    m = book_df['rating_count'].quantile(percentile)
+    C = book['rating_score'].mean()
+    m = book['rating_count'].quantile(percentile)
 
     def weighted_rating_score(record):
         v = record['rating_count']
@@ -34,15 +49,15 @@ def clean_df(book_df, category_df):
     
         return ( (v/(v + m)) * R) + ( (m/(v+m)) * C ) 
 
-    book_df['w_rating'] = book_df.apply(weighted_rating_score, axis=1)
+    book['w_rating'] = book.apply(weighted_rating_score, axis=1)
     
     # 데이터 전처리
-    book_df['category_id'] = book_df['category_id'].fillna(0)
-    book_df = book_df.astype({'category_id':'int'})
-    book_df = book_df.astype({'category_id':'str'})
+    book['category_id'] = book['category_id'].fillna(0)
+    book = book.astype({'category_id':'int'})
+    book = book.astype({'category_id':'str'})
 
     # book_df에 사용할 컬럼들 머지
-    df = pd.merge(book_df, category_df[['cid', 'keywords']], how='left', left_on='category_id', right_on='cid')
+    df = pd.merge(book, category[['cid', 'keywords']], how='left', left_on='category_id', right_on='cid')
     
     # None 값 0으로 채움
     df = df.fillna('0')
@@ -87,10 +102,12 @@ def find_sim_book(df, sorted_ind, book_id, top_n=20):
     # iloc은 데이터프레임 조회할 때 쓰는 메서드(loc, iloc)
     return df.iloc[sim_indexes].sort_values('w_rating', ascending=False)[:top_n]
 
-def get_user_read(user_id):
-    select_sql = 'SELECT * FROM research'
-    r_df = pd.read_sql(select_sql, engine)
-    r_df = r_df.reset_index(drop=True)
+def get_user_read(user_id, booklog, review):
+    user_score = []
+    for i in booklog[booklog['member_id'] == 4].index:
+        user_score.append(review[review['booklog_id'] == i]['score'][review[review['booklog_id'] == i]['score'].index[0]])
 
-    # research에 있는 데이터들 입력된 사용자(id로 구별)가 읽은 book_id를 평점 높은 순으로 내림차순해서 리스트로 반환
-    return list(r_df[r_df['member_Id'] == user_id].sort_values('score', ascending=False)['book_isbn_id'])
+    
+    return list(pd.DataFrame({'id':list(booklog[booklog['member_id'] == 4]['book_id']),
+             'score':user_score
+             }).sort_values('score', ascending=False)['id'])
