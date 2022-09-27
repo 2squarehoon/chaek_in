@@ -35,7 +35,7 @@ const EntireContainer = styled.View`
 `;
 
 const TitleContainer = styled.View`
-  margin: 20% 5% 20%;
+  margin: 30% 5% 20%;
 `;
 
 const TitleText = styled.Text`

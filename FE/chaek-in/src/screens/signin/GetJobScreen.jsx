@@ -40,7 +40,7 @@ const TitleContainer = styled.View`
 `;
 
 const TitleText = styled.Text`
-  font-size: 40px;
+  font-size: 35px;
 `;
 
 const FormContainer = styled.View`

@@ -15,7 +15,7 @@ function ReviewItem({ item, bookId }) {
       },
     })
       .then(function () {
-        Alert.alert('탈퇴되었습니다.');
+        Alert.alert('삭제되었습니다.');
       })
       .catch(function (error) {
         console.log(error);
