@@ -15,7 +15,7 @@ public interface BookLogRepository extends JpaRepository<BookLog, Long> {
     Optional<BookLog> findByMemberAndBook(Member member, Book book);
 
     @Query("SELECT bl FROM BookLog bl " +
-            "JOIN FETCH bl.book" +
+            "JOIN FETCH bl.book " +
             "WHERE bl.member.id = :memberId " +
             "AND bl.book.id = :bookId")
     Optional<BookLog> findBookLogByMemberIdAndBookId(@Param("memberId") long memberId, @Param("bookId") long bookId);
@@ -24,4 +24,5 @@ public interface BookLogRepository extends JpaRepository<BookLog, Long> {
 
     @EntityGraph(attributePaths = {"todayBooks"})
     List<BookLog> findWithTodayBooksByMember(Member member);
+
 }
