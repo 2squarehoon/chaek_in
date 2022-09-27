@@ -29,6 +29,11 @@ public class MeetingController {
         return ResponseEntity.ok(meetingService.getMeetingDetail(meetingId, memberId));
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<MeetingMyResponse> getMyMeetings(@LoginMemberId long memberId) {
+        return ResponseEntity.ok(meetingService.getMyMeetings(memberId));
+    }
+
     @PostMapping
     public ResponseEntity<MeetingIdResponse> createMeeting(@RequestBody @Valid MeetingCreateRequest meetingCreateRequest,
                                                            @LoginMemberId long memberId) {
