@@ -64,7 +64,14 @@ public class BookService {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new CustomException(BOOK_IS_NOT_EXIST));
 
-        return BookDetailResponse.builder().bookId(book.getId()).isbn(book.getIsbn()).author(book.getAuthor()).description(book.getDescription()).cover(book.getCover()).title(book.getTitle()).ratingScore(book.getRatingScore()).build();
+        return BookDetailResponse.builder()
+                .bookId(book.getId())
+                .isbn(book.getIsbn())
+                .author(book.getAuthor())
+                .description(book.getDescription())
+                .cover(book.getCover())
+                .title(book.getTitle())
+                .ratingScore(String.format("%.1f", book.getRatingScore())).build();
     }
 
     @Transactional
