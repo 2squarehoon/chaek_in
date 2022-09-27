@@ -5,6 +5,7 @@ import com.team7.chaekin.domain.common.entity.BaseTimeEntity;
 import com.team7.chaekin.domain.meeting.dto.MeetingDetailResponse;
 import com.team7.chaekin.domain.meeting.dto.MeetingListDto;
 import com.team7.chaekin.domain.meeting.dto.MeetingUpdateRequest;
+import com.team7.chaekin.domain.member.entity.Member;
 import com.team7.chaekin.domain.participant.entity.Participant;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -88,5 +89,16 @@ public class Meeting extends BaseTimeEntity {
         return (int) participants.stream()
                 .filter(p -> !p.isRemoved())
                 .count();
+    }
+
+    public Member getMeetingLeader() {
+        Member member = null;
+        for (Participant participant : participants) {
+            if (participant.isLeader()) {
+                member = participant.getMember();
+                break;
+            }
+        }
+        return member;
     }
 }

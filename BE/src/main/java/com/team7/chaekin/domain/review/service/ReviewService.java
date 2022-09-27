@@ -43,7 +43,8 @@ public class ReviewService {
                         .reviewId(r.getId())
                         .writer(r.getBookLog().getMember().getNickname())
                         .comment(r.getComment())
-                        .score(r.getScore())
+                        .score(String.format("%.1f", r.getScore()))
+                        .isMine(r.getBookLog().getMember().getId().equals(memberId))
                         .build()).collect(Collectors.toList());
         return new ReviewListResponse(totalPages, dtos);
     }

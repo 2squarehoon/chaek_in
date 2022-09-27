@@ -44,8 +44,13 @@ public class MeetingService {
     }
 
     @Transactional
-    public MeetingDetailResponse getMeetingDetail(long meetingId) {
-        return getMeeting(meetingId).toDetailDto();
+    public MeetingDetailResponse getMeetingDetail(long meetingId, long memberId) {
+        Meeting meeting = getMeeting(meetingId);
+        MeetingDetailResponse meetingDetailResponse = meeting.toDetailDto();
+
+        Member meetingLeader = meeting.getMeetingLeader();
+        meetingDetailResponse.setIsMine(meetingLeader.getId().equals(memberId));
+        return meetingDetailResponse;
     }
 
     @Transactional

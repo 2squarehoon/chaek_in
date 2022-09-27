@@ -25,8 +25,8 @@ public class MeetingController {
     }
 
     @GetMapping("/{meetingId}")
-    public ResponseEntity<MeetingDetailResponse> getMeetingDetail(@PathVariable long meetingId) {
-        return ResponseEntity.ok(meetingService.getMeetingDetail(meetingId));
+    public ResponseEntity<MeetingDetailResponse> getMeetingDetail(@PathVariable long meetingId, @LoginMemberId long memberId) {
+        return ResponseEntity.ok(meetingService.getMeetingDetail(meetingId, memberId));
     }
 
     @PostMapping
