@@ -2,14 +2,34 @@ import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import styled from 'styled-components/native';
 import BookItem from './BookItem';
+import BookRatingItem from './BookRatingItem';
 
-function BookItemList() {
+function BookItemList({ books, isFirst }) {
   return (
-    <>
-      <Text>여러 책을 디스플레이하는 틀</Text>
-      <BookItem />
-    </>
+    <ScrollViewContainer>
+      {isFirst ? (
+        <BookItemsContainer>
+          {books.map((book) => (
+            <BookRatingItem key={book.bookId} item={book} />
+          ))}
+        </BookItemsContainer>
+      ) : (
+        <BookItemsContainer>
+          {books.map((book) => (
+            <BookItem key={book.bookId} item={book} />
+          ))}
+        </BookItemsContainer>
+      )}
+    </ScrollViewContainer>
   );
 }
+const ScrollViewContainer = styled.ScrollView`
+  margin-top: 5%;
+`;
+
+const BookItemsContainer = styled.View`
+  display:flex
+  flex-flow: row wrap;
+`;
 
 export default BookItemList;

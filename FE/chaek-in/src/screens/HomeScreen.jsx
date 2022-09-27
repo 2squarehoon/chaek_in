@@ -19,7 +19,7 @@ function HomeScreen({ navigation }) {
         <Text>{nickname}님의 서재</Text>
       </View>
       <View>
-        <Button onPress={goToBookLog} title='오늘의 책'></Button>
+        <Button onPress={goToBookLog} title='테스트용으로 만든 책 검색페이지'></Button>
       </View>
       <View>
         <Text>책 번호 입력</Text>

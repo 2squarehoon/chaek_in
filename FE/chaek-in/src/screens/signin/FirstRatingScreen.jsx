@@ -1,18 +1,19 @@
 import styled from 'styled-components/native';
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
 import Axios from 'axios';
 import { HOST } from '@env';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAccessToken, setFakeAccessToken } from '../../redux/actions';
 import BookItemList from '../../components/common/BookItemList';
 import { AntDesign } from '@expo/vector-icons';
+import axios from 'axios';
 
 function FirstRatingScreen({ route }) {
   const dispatch = useDispatch();
   const [keyword, setKeyword] = useState('');
   const [books, setBooks] = useState([]);
   const { fakeAccessToken } = useSelector((state) => state.main);
+  const AccessToken = fakeAccessToken;
 
   function SearchBooks() {
     console.log(fakeAccessToken);
@@ -23,8 +24,8 @@ function FirstRatingScreen({ route }) {
         },
       })
         .then(function (response) {
-          console.log(response.data);
-          setBooks(response.data);
+          console.log(response.data.books);
+          setBooks(response.data.books);
         })
         .catch(function (error) {
           console.log(error);
@@ -35,8 +36,8 @@ function FirstRatingScreen({ route }) {
   function RatingBooks() {}
 
   async function FinishRating() {
-    await dispatch(setAccessToken(fakeAccessToken));
-    await dispatch(setFakeAccessToken(''));
+    dispatch(setFakeAccessToken(''));
+    dispatch(setAccessToken(AccessToken));
   }
 
   return (
@@ -50,6 +51,7 @@ function FirstRatingScreen({ route }) {
         />
         <AntDesign name='search1' size={24} color='black' onPress={SearchBooks} />
       </SearchContainer>
+      <BookItemList books={books} isFirst={true} />
     </EntireContainer>
   );
 }
