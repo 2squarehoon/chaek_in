@@ -23,7 +23,7 @@ function GetJobScreen({ navigation, route }) {
             placeholder='직업을 입력하세요'
             returnKeyType='next'
             onSubmitEditing={goToAge}
-            maxLength='10'
+            // maxLength='10'
           />
         </FormContainer>
       </TouchableWithoutFeedback>
@@ -40,7 +40,7 @@ const TitleContainer = styled.View`
 `;
 
 const TitleText = styled.Text`
-  font-size: 40px;
+  font-size: 35px;
 `;
 
 const FormContainer = styled.View`

@@ -3,6 +3,7 @@ package com.team7.chaekin.domain.todaybook.service;
 import com.team7.chaekin.domain.book.entity.Book;
 import com.team7.chaekin.domain.book.repository.BookRepository;
 import com.team7.chaekin.domain.booklog.entity.BookLog;
+import com.team7.chaekin.domain.booklog.entity.ReadStatus;
 import com.team7.chaekin.domain.booklog.repository.BookLogRepository;
 import com.team7.chaekin.domain.member.entity.Member;
 import com.team7.chaekin.domain.member.repository.MemberRepository;
@@ -82,7 +83,11 @@ public class TodayBookService {
 
         Member member = memberRepository.findById(memberId).get();
         Book book = bookRepository.findByIsbn(todayBookRequest.getIsbn()).orElseThrow(() -> new RuntimeException("message"));
-        BookLog bookLog = bookLogRepository.findByMemberAndBook(member, book).orElseGet(() -> bookLogRepository.save(new BookLog(member, book)));
+        BookLog bookLog = bookLogRepository.findByMemberAndBook(member, book)
+                .orElseGet(() -> bookLogRepository.save(BookLog.builder()
+                        .member(member)
+                        .book(book)
+                        .readStatus(ReadStatus.READING).build()));
 
         TodayBook todayBook = new TodayBook(bookLog);
         todayBookRepository.save(todayBook);

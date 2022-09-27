@@ -8,6 +8,7 @@ import lombok.Data;
 public class ReviewListDto {
     private long reviewId;
     private String writer;
-    private double score;
+    private String score;
     private String comment;
+    private Boolean isMine;
 }

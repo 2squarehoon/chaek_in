@@ -35,11 +35,11 @@ const EntireContainer = styled.View`
 `;
 
 const TitleContainer = styled.View`
-  margin: 20% 5% 20%;
+  margin: 30% 5% 20%;
 `;
 
 const TitleText = styled.Text`
-  font-size: 40px;
+  font-size: 35px;
 `;
 
 const FormContainer = styled.View`

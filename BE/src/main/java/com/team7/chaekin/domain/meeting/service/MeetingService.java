@@ -44,8 +44,23 @@ public class MeetingService {
     }
 
     @Transactional
-    public MeetingDetailResponse getMeetingDetail(long meetingId) {
-        return getMeeting(meetingId).toDetailDto();
+    public MeetingDetailResponse getMeetingDetail(long meetingId, long memberId) {
+        Meeting meeting = getMeeting(meetingId);
+        MeetingDetailResponse meetingDetailResponse = meeting.toDetailDto();
+
+        Member meetingLeader = meeting.getMeetingLeader();
+        meetingDetailResponse.setIsMine(meetingLeader.getId().equals(memberId));
+        return meetingDetailResponse;
+    }
+
+    @Transactional
+    public MeetingMyResponse getMyMeetings(long memberId) {
+        List<Participant> participants = participantRepository.findByMemberId(memberId);
+        List<MeetingListDto> dtoList = participants.stream()
+                .map(participant -> participant.getMeeting())
+                .map(Meeting::toListDto)
+                .collect(Collectors.toList());
+        return new MeetingMyResponse(dtoList);
     }
 
     @Transactional
@@ -90,5 +105,6 @@ public class MeetingService {
         return meetingRepository.findByIdAndIsRemovedIsFalse(meetingId)
                 .orElseThrow(() -> new CustomException(DomainErrorCode.MEETING_IS_NOT_EXIST));
     }
+
 
 }

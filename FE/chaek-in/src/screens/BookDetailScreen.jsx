@@ -5,6 +5,7 @@ import Axios from 'axios';
 import { HOST } from '@env';
 import ReviewList from '../components/review/ReviewList';
 import { useSelector } from 'react-redux';
+import { AntDesign } from '@expo/vector-icons';
 
 function BookDetailScreen({ route }) {
   const { accessToken } = useSelector((state) => state.main);
@@ -12,7 +13,7 @@ function BookDetailScreen({ route }) {
   const [author, setAuthor] = useState('');
   const [score, setScore] = useState(0);
   const [cover, setCover] = useState('');
-  const [index, setIndex] = useState('');
+  // const [index, setIndex] = useState('');
   const [description, setDescription] = useState('');
   const bookId = route.params.bookId;
   useEffect(() => {
@@ -25,9 +26,9 @@ function BookDetailScreen({ route }) {
         console.log(response.data);
         setTitle(response.data.title);
         setAuthor(response.data.author);
-        setScore(response.data.ratingScore);
+        setScore(Math.round(response.data.ratingScore * 10) / 10);
         setCover(response.data.cover);
-        setIndex(response.data.index);
+        // setIndex(response.data.index);
         setDescription(response.data.description);
       })
       .catch(function (error) {
@@ -38,7 +39,7 @@ function BookDetailScreen({ route }) {
   return (
     <>
       <ScrollViewContainer>
-        <BeforeContainer>
+        {/* <BeforeContainer>
           <ButtonContainer style={{ marginLeft: 'auto', marginRight: 15 }}>
             <ButtonText>찜하기</ButtonText>
           </ButtonContainer>
@@ -61,12 +62,14 @@ function BookDetailScreen({ route }) {
           <ButtonContainer>
             <ButtonText>독후감 보기</ButtonText>
           </ButtonContainer>
-        </AfterContainer>
+        </AfterContainer> */}
         <ImageContainer source={{ uri: cover }} style={{ width: 240, height: 360 }} />
         <MiddleContainer>
           <BookTitle>{title}</BookTitle>
-          <Author>{author} 지음</Author>
-          <Author>평점 : {score}</Author>
+          <Author>{author}</Author>
+          <Author>
+            <AntDesign name='star' size={20} color='#ffce31' /> {score}
+          </Author>
           <StartTime>독서시작 : 2022.09.21 12:01</StartTime>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
@@ -75,7 +78,7 @@ function BookDetailScreen({ route }) {
             </View>
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
           </View>
-          <Intro>
+          {/* <Intro>
             <Text>{index}</Text>
           </Intro>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -84,7 +87,7 @@ function BookDetailScreen({ route }) {
               <Text style={{ width: 50, textAlign: 'center', fontSize: 15 }}>목차</Text>
             </View>
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
-          </View>
+          </View> */}
           <Intro>
             <Text>{description}</Text>
           </Intro>
@@ -156,7 +159,7 @@ const MiddleContainer = styled.View`
 const BookTitle = styled.Text`
   font-size: 20px;
   font-weight: bold;
-  margin-bottom: 2%;
+  margin: 0 10% 2%;
 `;
 
 const Author = styled.Text`

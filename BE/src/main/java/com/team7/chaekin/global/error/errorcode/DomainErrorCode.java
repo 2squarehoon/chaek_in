@@ -13,6 +13,7 @@ public enum DomainErrorCode implements ErrorCode {
 
     MEMBER_IS_NOT_EXIST(HttpStatus.NOT_FOUND, "Member is not exist"),
     ALREADY_REGIST_MEMBER(HttpStatus.BAD_REQUEST, "Already registed member"),
+    ALREADY_REGIST_BOOKLOG(HttpStatus.BAD_REQUEST, "Already registed bookLog"),
 
     BOOK_IS_NOT_EXIST(HttpStatus.NOT_FOUND, "The book is not exist."),
 

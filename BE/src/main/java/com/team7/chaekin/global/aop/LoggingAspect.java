@@ -39,7 +39,7 @@ public class LoggingAspect {
             return joinPoint.proceed();
         } finally {
             long end = System.currentTimeMillis();
-            log.info("[Service] Execute Time = {}ms", end - start);
+            log.info("[Service] {} : Execute Time = {}ms", joinPoint.getSignature().getName(), end - start);
         }
     }
 

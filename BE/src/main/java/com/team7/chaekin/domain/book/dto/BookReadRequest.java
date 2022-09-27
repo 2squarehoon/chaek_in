@@ -6,8 +6,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Data
-public class BookSearchRequest {
+public class BookReadRequest {
     @NotBlank
-    @Size(min = 1, max = 255)
-    private String keyword;
+    @Size(min = 1, max = 20, message = "Isbn is not valid.")
+    private String isbn;
 }
