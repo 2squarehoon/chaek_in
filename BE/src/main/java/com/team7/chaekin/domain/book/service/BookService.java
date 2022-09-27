@@ -11,8 +11,6 @@ import com.team7.chaekin.domain.member.repository.MemberRepository;
 import com.team7.chaekin.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -109,19 +107,17 @@ public class BookService {
     }
 
     @Transactional
-    public void startReadBook(long bookId, long memberId) {
-        Book book = bookRepository.findById(bookId)
+    public void registReadBook(String isbn, long memberId) {
+        Book book = bookRepository.findByIsbn(isbn)
                 .orElseThrow(() -> new CustomException(BOOK_IS_NOT_EXIST));
         Member member = getMember(memberId);
         bookLogRepository.findByMemberAndBook(member, book)
-                .ifPresent(bookLog -> {
-                    throw new CustomException(ALREADY_REGIST_MEMBER);
-                });
-
-        bookLogRepository.save(BookLog.builder()
-                .book(book)
-                .member(member)
-                .readStatus(ReadStatus.READING).build());
+                .ifPresentOrElse(bookLog -> {
+                    bookLog.updateStatus();
+                }, () -> bookLogRepository.save(BookLog.builder()
+                                .book(book)
+                                .member(member)
+                                .readStatus(ReadStatus.READING).build()));
     }
 
     private Member getMember(long memberId) {

@@ -1,9 +1,6 @@
 package com.team7.chaekin.domain.book.controller;
 
-import com.team7.chaekin.domain.book.dto.BookDetailResponse;
-import com.team7.chaekin.domain.book.dto.BookListResponse;
-import com.team7.chaekin.domain.book.dto.BookMyListResponse;
-import com.team7.chaekin.domain.book.dto.BookSearchRequest;
+import com.team7.chaekin.domain.book.dto.*;
 import com.team7.chaekin.domain.book.service.BookService;
 import com.team7.chaekin.global.oauth.config.LoginMemberId;
 import lombok.RequiredArgsConstructor;
@@ -43,9 +40,9 @@ public class BookController {
         return ResponseEntity.ok(bookService.getCalenderData(memberId));
     }
 
-    @PostMapping("/{bookId}")
-    public ResponseEntity<?> startReadBook(@PathVariable long bookId, @LoginMemberId long memberId) {
-        bookService.startReadBook(bookId, memberId);
+    @PostMapping
+    public ResponseEntity<?> startReadBook(@Valid BookReadRequest bookReadRequest, @LoginMemberId long memberId) {
+        bookService.registReadBook(bookReadRequest.getIsbn(), memberId);
         return ResponseEntity.ok().build();
     }
 
