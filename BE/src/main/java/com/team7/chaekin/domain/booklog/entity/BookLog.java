@@ -54,7 +54,6 @@ public class BookLog extends BaseTimeEntity {
     }
 
     public void updateStatus() {
-        //TODO: 만약 Complete 상태를 이후 변경 불가한지 정하기.
         this.readStatus = ReadStatus.COMPLETE;
     }
 
