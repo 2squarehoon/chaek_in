@@ -1,24 +1,10 @@
 //environment.js
-import {
-  GOOGLE_CLOUD_VISION_API_KEY,
-  FIREBASE_API_KEY,
-  FIREBASE_AUTH_DOMAIN,
-  FIREBASE_DATABASE_URL,
-  FIREBASE_PROJECT_ID,
-  FIREBASE_STORAGE_BUCKET,
-  FIREBASE_MESSAGING_SENDER_ID,
-} from '../../secret';
+import { GOOGLE_CLOUD_VISION_API_KEY } from '../../secret';
 import Constants from 'expo-constants';
 const { version } = Constants.manifest;
 
 var environments = {
   staging: {
-    FIREBASE_API_KEY,
-    FIREBASE_AUTH_DOMAIN,
-    FIREBASE_DATABASE_URL,
-    FIREBASE_PROJECT_ID,
-    FIREBASE_STORAGE_BUCKET,
-    FIREBASE_MESSAGING_SENDER_ID,
     GOOGLE_CLOUD_VISION_API_KEY,
   },
   production: {
