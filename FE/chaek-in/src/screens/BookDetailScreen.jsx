@@ -39,7 +39,7 @@ function BookDetailScreen({ route }) {
   return (
     <>
       <ScrollViewContainer>
-        <BeforeContainer>
+        {/* <BeforeContainer>
           <ButtonContainer style={{ marginLeft: 'auto', marginRight: 15 }}>
             <ButtonText>찜하기</ButtonText>
           </ButtonContainer>
@@ -62,7 +62,7 @@ function BookDetailScreen({ route }) {
           <ButtonContainer>
             <ButtonText>독후감 보기</ButtonText>
           </ButtonContainer>
-        </AfterContainer>
+        </AfterContainer> */}
         <ImageContainer source={{ uri: cover }} style={{ width: 240, height: 360 }} />
         <MiddleContainer>
           <BookTitle>{title}</BookTitle>

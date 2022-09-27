@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Keyboard } from 'react-native';
+import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import SelectDropdown from 'react-native-select-dropdown';
 
 function GetAgeScreen({ navigation, route }) {
   const [text, onChangeText] = useState('');
-  const goToGender = () => {
-    navigation.navigate('Gender', {
+  const goToGender = async () => {
+    await navigation.navigate('Gender', {
       email: route.params.email,
       nickname: route.params.nickname,
       job: route.params.job,
       age: text,
     });
   };
+  const getYears = (num, start = 1) => new Array(num).fill(0).map((_, i) => start + i);
 
   return (
     <EntireContainer>
@@ -22,15 +24,23 @@ function GetAgeScreen({ navigation, route }) {
           <TitleText> </TitleText>
         </TitleContainer>
         <FormContainer>
-          <UserinfoForm
-            value={text}
-            onChangeText={onChangeText}
-            placeholder='나이를 입력하세요'
-            returnKeyType='next'
-            onSubmitEditing={goToGender}
-            // maxLength='3'
-            keyboardType='number-pad'
-          />
+          <DropdownContainer>
+            <SelectDropdown
+              data={getYears(25, 1980)}
+              defaultValue='2000'
+              onSelect={(selectedItem, index) => {
+                onChangeText(selectedItem);
+                goToGender();
+              }}
+              buttonStyle={{
+                width: 200,
+                backgroundColor: '#ffffff',
+                borderBottomWidth: 1,
+                borderBottomColor: '#000000',
+              }}
+              rowStyle={{ backgroundColor: '#fcf9f0' }}
+            />
+          </DropdownContainer>
         </FormContainer>
       </TouchableWithoutFeedback>
     </EntireContainer>
@@ -46,7 +56,7 @@ const TitleContainer = styled.View`
 `;
 
 const TitleText = styled.Text`
-  font-size: 40px;
+  font-size: 35px;
 `;
 
 const FormContainer = styled.View`
@@ -58,14 +68,8 @@ margin-left:5%
 background-color: #ffffff;
 `;
 
-const UserinfoForm = styled.TextInput`
-  width: 60%;
-  height: 10%;
-  margin-top: 10%;
-  margin-left: 10%;
-  border-bottom-color: #000000;
-  border-bottom-width: 1px;
-  font-size: 20px;
+const DropdownContainer = styled.View`
+  margin: 5% 5%;
 `;
 
 export default GetAgeScreen;

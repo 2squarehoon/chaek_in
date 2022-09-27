@@ -12,18 +12,24 @@ function ReviewForm({ bookId }) {
   const [comment, changeComment] = useState(0);
 
   const createReview = () => {
-    Axios.post(`${HOST}/api/v1/books/${bookId}/reviews`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+    const header = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+    Axios.post(
+      `${HOST}/api/v1/books/${bookId}/reviews`,
+      {
+        score: score,
+        comment: comment,
       },
-      score: score,
-      comment: comment,
-    })
+      {
+        headers: header,
+      },
+    )
       .then(function (response) {
         console.log(response.data);
       })
       .catch(function (error) {
-        console.log(error);
+        console.log(error.message);
       });
     changeScore(0);
     changeComment('');
