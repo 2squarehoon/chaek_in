@@ -46,10 +46,10 @@ public class BookLog extends BaseTimeEntity {
     private List<TodayBook> todayBooks = new ArrayList<>();
 
     @Builder
-    public BookLog(Member member, Book book) {
+    public BookLog(Member member, Book book, ReadStatus readStatus) {
         this.member = member;
         this.book = book;
-        this.readStatus = ReadStatus.READING;
+        this.readStatus = readStatus;
         this.startDate = LocalDate.now();
     }
 

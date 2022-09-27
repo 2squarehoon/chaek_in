@@ -1,10 +1,13 @@
 package com.team7.chaekin.domain.review.service;
 
+import com.team7.chaekin.domain.book.entity.Book;
+import com.team7.chaekin.domain.book.repository.BookRepository;
 import com.team7.chaekin.domain.booklog.entity.BookLog;
+import com.team7.chaekin.domain.booklog.entity.ReadStatus;
 import com.team7.chaekin.domain.booklog.repository.BookLogRepository;
-import com.team7.chaekin.domain.review.dto.ReviewListDto;
-import com.team7.chaekin.domain.review.dto.ReviewListResponse;
-import com.team7.chaekin.domain.review.dto.ReviewRequest;
+import com.team7.chaekin.domain.member.entity.Member;
+import com.team7.chaekin.domain.member.repository.MemberRepository;
+import com.team7.chaekin.domain.review.dto.*;
 import com.team7.chaekin.domain.review.entity.Review;
 import com.team7.chaekin.domain.review.repository.ReviewRepository;
 import com.team7.chaekin.global.error.exception.CustomException;
@@ -14,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +29,8 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final BookLogRepository bookLogRepository;
+    private final BookRepository bookRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public ReviewListResponse getReviewList(long bookId, long memberId, Pageable pageable) {
@@ -40,6 +46,65 @@ public class ReviewService {
                         .score(r.getScore())
                         .build()).collect(Collectors.toList());
         return new ReviewListResponse(totalPages, dtos);
+    }
+
+    @Transactional
+    public void saveFirstRatings(long memberId, ReviewFirstRequest reviewFirstRequest) {
+        Member member = getMember(memberId);
+        List<ReviewFirstDto> ratings = getRatings(reviewFirstRequest);
+
+        List<Book> books = findBooksOrderByIdAsc(ratings);
+
+        List<BookLog> bookLogs = new ArrayList<>();
+        for (int i = 0, j = 0; i < books.size() && j < ratings.size(); i++, j++) {
+            Book book = books.get(i);
+            ReviewFirstDto dto = ratings.get(j);
+            while (isNotBookRating(book, dto) && ++j < ratings.size()) {
+                dto = ratings.get(j);
+            }
+            if (isNotBookRating(book, dto)) {
+                continue;
+            }
+
+            book.addScore(dto.getScore());
+            bookLogs.add(BookLog.builder()
+                            .book(book)
+                            .member(member)
+                            .readStatus(ReadStatus.COMPLETE).build());
+        }
+        bookLogRepository.saveAll(bookLogs);
+    }
+
+    private List<ReviewFirstDto> getRatings(ReviewFirstRequest reviewFirstRequest) {
+        List<ReviewFirstDto> ratings = reviewFirstRequest.getRatings();
+        ratings.sort((o1, o2) -> compareTo(o1.getBookId(), o2.getBookId()));
+        return ratings;
+    }
+
+    private boolean isNotBookRating(Book book, ReviewFirstDto reviewFirstDto) {
+        return !book.getId().equals(reviewFirstDto.getBookId());
+    }
+
+    private Member getMember(long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
+        return member;
+    }
+
+    private List<Book> findBooksOrderByIdAsc(List<ReviewFirstDto> ratings) {
+        List<Long> bookIds = ratings.stream()
+                .map(dto -> dto.getBookId()).collect(Collectors.toList());
+        List<Book> books = bookRepository.findByBookIds(bookIds);
+        return books;
+    }
+
+    private int compareTo(long a, long b) {
+        if (a > b) {
+            return 1;
+        } else if (a < b) {
+            return -1;
+        }
+        return 0;
     }
 
     @Transactional
@@ -94,4 +159,6 @@ public class ReviewService {
         return bookLogRepository.findBookLogByMemberIdAndBookId(memberId, bookId)
                 .orElseThrow(() -> new CustomException(BOOKLOG_IS_NOT_EXIST));
     }
+
+
 }
