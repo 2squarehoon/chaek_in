@@ -54,7 +54,7 @@ public class BookService {
                 .title(bookLog.getBook().getTitle())
                 .author(bookLog.getBook().getAuthor())
                 .cover(bookLog.getBook().getCover())
-                .ratingScore(bookLog.getBook().getRatingScore())
+                .ratingScore(String.format("%.1f", bookLog.getBook().getRatingScore()))
                 .build()).collect(Collectors.toList());
         return new BookMyListResponse(books);
     }

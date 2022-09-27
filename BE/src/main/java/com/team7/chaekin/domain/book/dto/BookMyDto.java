@@ -10,5 +10,5 @@ public class BookMyDto {
     private String title;
     private String author;
     private String cover;
-    private double ratingScore;
+    private String ratingScore;
 }
