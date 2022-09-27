@@ -120,7 +120,7 @@ function LoginScreen({ navigation }) {
           promptAsync();
         }}
       >
-        <Image source={require('../../../assets/image/google.png')} style={{ width: '10%', height: '40%' }} />
+        <Image source={require('../../../assets/image/google.png')} style={{ width: '12%', height: '40%' }} />
         <ButtonText>Google로 로그인</ButtonText>
       </GoogleLogin>
     </LoginContainer>

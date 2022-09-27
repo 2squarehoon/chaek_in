@@ -2,12 +2,16 @@ import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import styled from 'styled-components/native';
 
-function BookItem() {
+function BookItem({ item }) {
   return (
-    <>
-      <Text>개별 책</Text>
-    </>
+    <BookItemContainer>
+      <Image source={{ uri: item.cover }} style={{ width: 80, height: 120 }} />
+    </BookItemContainer>
   );
 }
+
+const BookItemContainer = styled.View`
+  margin: 3% 5.5%;
+`;
 
 export default BookItem;
