@@ -44,6 +44,7 @@ public class ReviewService {
                         .writer(r.getBookLog().getMember().getNickname())
                         .comment(r.getComment())
                         .score(String.format("%.1f", r.getScore()))
+                        .isMine(r.getBookLog().getMember().getId().equals(memberId))
                         .build()).collect(Collectors.toList());
         return new ReviewListResponse(totalPages, dtos);
     }

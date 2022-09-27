@@ -10,4 +10,5 @@ public class ReviewListDto {
     private String writer;
     private String score;
     private String comment;
+    private Boolean isMine;
 }

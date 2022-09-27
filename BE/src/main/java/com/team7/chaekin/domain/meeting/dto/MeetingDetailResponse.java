@@ -14,4 +14,5 @@ public class MeetingDetailResponse {
     private int currentMember;
     private int maxCapacity;
     private String createdAt;
+    private Boolean isMine;
 }
