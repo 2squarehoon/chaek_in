@@ -28,7 +28,7 @@ public class LoggingAspect {
             result = joinPoint.proceed();
             return result;
         } finally {
-            log.info("[Response] Response value = {}", objectMapper.writeValueAsString(result));
+            log.info(" <====== [Response] Response value = {}", objectMapper.writeValueAsString(result));
         }
     }
 
