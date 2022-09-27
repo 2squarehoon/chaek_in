@@ -11,11 +11,11 @@ import com.team7.chaekin.domain.member.repository.MemberRepository;
 import com.team7.chaekin.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,10 +31,10 @@ public class BookService {
     private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
-    public BookListResponse search(BookSearchRequest bookSearchRequest, Pageable pageable) {
-        Page<Book> page = bookRepository.findByTitleContaining(bookSearchRequest.getKeyword(), pageable);
+    public BookListResponse search(String keyword) {
+        List<Book> books = bookRepository.findBookListBySearch(keyword);
 
-        return new BookListResponse(page.toList().stream()
+        return new BookListResponse(books.stream()
                 .map(book -> BookListDto.builder()
                         .bookId(book.getId())
                         .title(book.getTitle())
@@ -74,20 +74,50 @@ public class BookService {
                 .ratingScore(String.format("%.1f", book.getRatingScore())).build();
     }
 
+
     @Transactional
-    public void startReadBook(long bookId, long memberId) {
-        Book book = bookRepository.findById(bookId)
+    public BookCalenderResponse getCalenderData(long memberId) {
+        Member member = getMember(memberId);
+
+        LocalDate now = LocalDate.now();
+        int month = now.getMonthValue();
+        int lastDay = now.lengthOfMonth();
+
+        LocalDate firstDate = now.withDayOfMonth(1);
+        LocalDate lastDate = now.withDayOfMonth(lastDay);
+        List<BookLog> bookLogs = bookLogRepository
+                .findByMemberAndStartDateBetweenOrderByStartDate(member, firstDate, lastDate);
+
+        BookCalenderListDto[] calenderList = new BookCalenderListDto[lastDay];
+        for (int i = 0, j = 0; i < lastDay; i++, j++) {
+            int day = i + 1;
+            List<BookCalenderDto> books = new ArrayList<>();
+            while (j < bookLogs.size() && bookLogs.get(j).getStartDate().getDayOfMonth() == day) {
+                books.add(BookCalenderDto.builder()
+                                        .bookId(bookLogs.get(j).getBook().getId())
+                                        .title(bookLogs.get(j++).getBook().getTitle()).build());
+            }
+
+            calenderList[i] = BookCalenderListDto.builder()
+                    .day(i + 1)
+                    .isExist(false)
+                    .books(books).build();
+        }
+        return new BookCalenderResponse(month, calenderList);
+    }
+
+    @Transactional
+    public void registReadBook(String isbn, long memberId) {
+        Book book = bookRepository.findByIsbn(isbn)
                 .orElseThrow(() -> new CustomException(BOOK_IS_NOT_EXIST));
         Member member = getMember(memberId);
         bookLogRepository.findByMemberAndBook(member, book)
-                .ifPresent(bookLog -> {
-                    throw new CustomException(ALREADY_REGIST_MEMBER);
-                });
-
-        bookLogRepository.save(BookLog.builder()
-                .book(book)
-                .member(member)
-                .readStatus(ReadStatus.READING).build());
+                .ifPresentOrElse(bookLog -> {
+                    bookLog.updateStatus();
+                }, () -> bookLogRepository.save(BookLog.builder()
+                                .book(book)
+                                .member(member)
+                                .readStatus(ReadStatus.READING).build()));
     }
 
     private Member getMember(long memberId) {

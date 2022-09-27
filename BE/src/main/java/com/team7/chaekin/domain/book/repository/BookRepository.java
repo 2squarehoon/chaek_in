@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface BookRepository extends JpaRepository<Book, Long> {
-    Page<Book> findByTitleContaining(String title, Pageable pageable);
-
+public interface BookRepository extends JpaRepository<Book, Long>, BookRepositoryCustom {
     Optional<Book> findByIsbn(String isbn);
 
     @Query("SELECT b FROM Book b WHERE b.id IN :bookIds " +
