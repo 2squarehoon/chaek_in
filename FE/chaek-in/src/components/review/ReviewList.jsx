@@ -26,9 +26,9 @@ function ReviewList({ bookId }) {
   return (
     <View style={{ marginTop: 5 }}>
       <ReviewForm bookId={bookId} />
-      {/* {reviews.map((review) => (
+      {reviews.map((review) => (
         <ReviewItem key={review.reviewId} item={review} bookId={bookId} />
-      ))} */}
+      ))}
     </View>
   );
 }

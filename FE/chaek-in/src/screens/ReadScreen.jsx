@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, Button, Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import styled from 'styled-components/native';
 
@@ -20,6 +20,7 @@ function ReadScreen() {
     setScanned(true);
     setBarcodeType(type);
     setBarcodeData(data);
+    Alert.alert('스캔되었습니다.');
     // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
   };
 
@@ -37,8 +38,8 @@ function ReadScreen() {
           onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
           style={StyleSheet.absoluteFillObject}
         />
-        {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
       </ScannerContainer>
+      {scanned && <Button title={'다시 스캔하기'} onPress={() => setScanned(false)} />}
       <ResultContainer>
         <View>
           <Text>타입 : {barcodeType}</Text>
@@ -52,7 +53,10 @@ function ReadScreen() {
 }
 
 const ScannerContainer = styled.View`
-  flex: 1;
+  width: 60%
+  margin-left: 20%
+  margin-bottom: 5%
+  flex: 2;
 `;
 
 const ResultContainer = styled.View`

@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import Axios from 'axios';
 import { HOST } from '@env';
 import { useSelector } from 'react-redux';
+import StarRating from 'react-native-star-rating-widget';
 
 function ReviewForm({ bookId }) {
   const { accessToken } = useSelector((state) => state.main);
@@ -11,46 +12,62 @@ function ReviewForm({ bookId }) {
   const [comment, changeComment] = useState(0);
 
   const createReview = () => {
-    Axios.post(`${HOST}/api/v1/books/${bookId}/reviews`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+    const header = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+    Axios.post(
+      `${HOST}/api/v1/books/${bookId}/reviews`,
+      {
+        score: score,
+        comment: comment,
       },
-      score: score,
-      comment: comment,
-    })
+      {
+        headers: header,
+      },
+    )
       .then(function (response) {
         console.log(response.data);
       })
       .catch(function (error) {
-        console.log(error);
+        console.log(error.message);
       });
     changeScore(0);
     changeComment('');
   };
 
   const createPress = () => {
-    Alert.alert('삭제하시겠습니까?', '', [
+    Alert.alert('작성하시겠습니까?', '', [
       { text: '아니오', style: 'cancel' },
       { text: '네', onPress: createReview },
     ]);
   };
   return (
     <>
+      <RatingContainer>
+        <StarRating rating={score} onChange={changeScore} />
+        <Text>{score}점</Text>
+      </RatingContainer>
       <ReviewInputContainer>
-        <ReviewInput
+        {/* <ReviewInput
           placeholder='평점을 입력하세요'
           value={score}
           onChangeText={changeScore}
           keyboardType='number-pad'
-        />
+        /> */}
         <ReviewInput placeholder='리뷰를 입력하세요' value={comment} onChangeText={changeComment} />
-        <ButtonContainer onPress={createPress}>
-          <Text>Enter</Text>
+        <ButtonContainer onPress={createPress} color='#ffce31'>
+          <Text>입력</Text>
         </ButtonContainer>
       </ReviewInputContainer>
     </>
   );
 }
+
+const RatingContainer = styled.View`
+  margin: 2% 0% 2% 5%
+  align-items: center;
+  flex-direction: row;
+`;
 
 const ReviewInput = styled.TextInput`
   width: 60%;
@@ -70,7 +87,7 @@ const ReviewInputContainer = styled.View`
 
 const ButtonContainer = styled.TouchableOpacity`
   background-color: #b1d8e8;
-  width: 20%;
+  width: 18%;
   border-radius: 15px;
   padding: 15px;
   margin-right: 5%;
