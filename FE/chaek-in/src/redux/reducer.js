@@ -1,13 +1,13 @@
 import { SET_USER_NICKNAME, SET_USER_EMAIL, SET_USER_ACCESSTOKEN, SET_USER_REFRESHTOKEN } from './actions';
 
 const initialState = {
-  nickname: null,
-  email: null,
-  accessToken: null,
-  refreshToken: null,
+  nickname: '',
+  email: '',
+  accessToken: '',
+  refreshToken: '',
 };
 
-function userReducer(state = initialState, action) {
+function userReducer(state = { nickname: '', email: '', accessToken: '', refreshToken: '' }, action) {
   switch (action.type) {
     case SET_USER_NICKNAME:
       return { ...state, nickname: action.payload };
