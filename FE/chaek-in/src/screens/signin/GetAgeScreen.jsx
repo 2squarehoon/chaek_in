@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import SelectDropdown from 'react-native-select-dropdown';
 
 function GetAgeScreen({ navigation, route }) {
-  const [text, onChangeText] = useState('');
-  const goToGender = async () => {
+  const goToGender = async (age) => {
+    console.log(age);
     await navigation.navigate('Gender', {
+      age: age,
       email: route.params.email,
       nickname: route.params.nickname,
       job: route.params.job,
-      age: text,
     });
   };
   const getYears = (num, start = 1) => new Array(num).fill(0).map((_, i) => start + i);
@@ -27,11 +27,12 @@ function GetAgeScreen({ navigation, route }) {
           <DropdownContainer>
             <SelectDropdown
               data={getYears(25, 1980)}
-              defaultValue='2000'
+              // defaultValue='2000'
               onSelect={(selectedItem, index) => {
-                onChangeText(selectedItem);
-                goToGender();
+                console.log(selectedItem);
+                goToGender(selectedItem);
               }}
+              defaultButtonText='태어난 연도를 선택해주세요'
               buttonStyle={{
                 width: 200,
                 backgroundColor: '#ffffff',
@@ -49,6 +50,7 @@ function GetAgeScreen({ navigation, route }) {
 
 const EntireContainer = styled.View`
   background-color: #fcf9f0;
+  flex: 1;
 `;
 
 const TitleContainer = styled.View`
@@ -62,7 +64,7 @@ const TitleText = styled.Text`
 const FormContainer = styled.View`
 border: 1px solid #000;
 width: 90%;
-height: 67%
+height: 70%
 border-radius: 15px;
 margin-left:5%
 background-color: #ffffff;

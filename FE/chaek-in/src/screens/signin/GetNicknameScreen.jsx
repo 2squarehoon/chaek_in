@@ -32,6 +32,7 @@ function GetNicknameScreen({ navigation, route }) {
 
 const EntireContainer = styled.View`
   background-color: #fcf9f0;
+  flex: 1;
 `;
 
 const TitleContainer = styled.View`

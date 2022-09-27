@@ -33,6 +33,7 @@ function GetJobScreen({ navigation, route }) {
 
 const EntireContainer = styled.View`
   background-color: #fcf9f0;
+  flex: 1;
 `;
 
 const TitleContainer = styled.View`
@@ -44,12 +45,12 @@ const TitleText = styled.Text`
 `;
 
 const FormContainer = styled.View`
-border: 1px solid #000;
-width: 90%;
-height: 67%
-border-radius: 15px;
-margin-left:5%
-background-color: #ffffff;
+  border: 1px solid #000;
+  width: 90%;
+  height: 70%
+  border-radius: 15px;
+  margin-left:5%
+  background-color: #ffffff;
 `;
 
 const UserinfoForm = styled.TextInput`
