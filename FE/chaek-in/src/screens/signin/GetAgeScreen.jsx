@@ -28,7 +28,7 @@ function GetAgeScreen({ navigation, route }) {
             placeholder='나이를 입력하세요'
             returnKeyType='next'
             onSubmitEditing={goToGender}
-            maxLength='3'
+            // maxLength='3'
             keyboardType='number-pad'
           />
         </FormContainer>
