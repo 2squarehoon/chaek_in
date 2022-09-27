@@ -33,10 +33,10 @@ public class BookService {
     private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
-    public BookListResponse search(BookSearchRequest bookSearchRequest, Pageable pageable) {
-        Page<Book> page = bookRepository.findByTitleContaining(bookSearchRequest.getKeyword(), pageable);
+    public BookListResponse search(String keyword) {
+        List<Book> books = bookRepository.findBookListBySearch(keyword);
 
-        return new BookListResponse(page.toList().stream()
+        return new BookListResponse(books.stream()
                 .map(book -> BookListDto.builder()
                         .bookId(book.getId())
                         .title(book.getTitle())
