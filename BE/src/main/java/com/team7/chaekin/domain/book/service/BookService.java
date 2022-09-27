@@ -16,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,10 +33,10 @@ public class BookService {
     private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
-    public BookListResponse search(BookSearchRequest bookSearchRequest, Pageable pageable) {
-        Page<Book> page = bookRepository.findByTitleContaining(bookSearchRequest.getKeyword(), pageable);
+    public BookListResponse search(String keyword) {
+        List<Book> books = bookRepository.findBookListBySearch(keyword);
 
-        return new BookListResponse(page.toList().stream()
+        return new BookListResponse(books.stream()
                 .map(book -> BookListDto.builder()
                         .bookId(book.getId())
                         .title(book.getTitle())
@@ -72,6 +74,38 @@ public class BookService {
                 .cover(book.getCover())
                 .title(book.getTitle())
                 .ratingScore(String.format("%.1f", book.getRatingScore())).build();
+    }
+
+
+    @Transactional
+    public BookCalenderResponse getCalenderData(long memberId) {
+        Member member = getMember(memberId);
+
+        LocalDate now = LocalDate.now();
+        int month = now.getMonthValue();
+        int lastDay = now.lengthOfMonth();
+
+        LocalDate firstDate = now.withDayOfMonth(1);
+        LocalDate lastDate = now.withDayOfMonth(lastDay);
+        List<BookLog> bookLogs = bookLogRepository
+                .findByMemberAndStartDateBetweenOrderByStartDate(member, firstDate, lastDate);
+
+        BookCalenderListDto[] calenderList = new BookCalenderListDto[lastDay];
+        for (int i = 0, j = 0; i < lastDay; i++, j++) {
+            int day = i + 1;
+            List<BookCalenderDto> books = new ArrayList<>();
+            while (j < bookLogs.size() && bookLogs.get(j).getStartDate().getDayOfMonth() == day) {
+                books.add(BookCalenderDto.builder()
+                                        .bookId(bookLogs.get(j).getBook().getId())
+                                        .title(bookLogs.get(j++).getBook().getTitle()).build());
+            }
+
+            calenderList[i] = BookCalenderListDto.builder()
+                    .day(i + 1)
+                    .isExist(false)
+                    .books(books).build();
+        }
+        return new BookCalenderResponse(month, calenderList);
     }
 
     @Transactional
