@@ -2,6 +2,7 @@ package com.team7.chaekin.domain.booklog.repository;
 
 import com.team7.chaekin.domain.book.entity.Book;
 import com.team7.chaekin.domain.booklog.entity.BookLog;
+import com.team7.chaekin.domain.booklog.entity.ReadStatus;
 import com.team7.chaekin.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,5 +25,8 @@ public interface BookLogRepository extends JpaRepository<BookLog, Long> {
 
     @EntityGraph(attributePaths = {"todayBooks"})
     List<BookLog> findWithTodayBooksByMember(Member member);
+
+    @EntityGraph(attributePaths = {"book"})
+    List<BookLog> findByMemberAndReadStatusEqualsOrderByStartDate(Member member, ReadStatus readStatus);
 
 }

@@ -1,8 +1,6 @@
 package com.team7.chaekin.domain.book.controller;
 
-import com.team7.chaekin.domain.book.dto.BookDetailResponse;
-import com.team7.chaekin.domain.book.dto.BookListResponse;
-import com.team7.chaekin.domain.book.dto.BookSearchRequest;
+import com.team7.chaekin.domain.book.dto.*;
 import com.team7.chaekin.domain.book.service.BookService;
 import com.team7.chaekin.global.oauth.config.LoginMemberId;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +25,17 @@ public class BookController {
                                         Pageable pageable){
         BookListResponse bookListResponse = bookService.search(bookSearchRequest, pageable);
         return ResponseEntity.ok(bookListResponse);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<BookMyListResponse> getMyBooks(@RequestParam(defaultValue = "true") Boolean isReading, @LoginMemberId long memberId) {
+        return ResponseEntity.ok(bookService.getMyBooks(memberId, isReading));
+    }
+
+    @PostMapping("/{bookId}")
+    public ResponseEntity<?> startReadBook(@PathVariable long bookId, @LoginMemberId long memberId) {
+        bookService.startReadBook(bookId, memberId);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{bookId}")

@@ -46,10 +46,11 @@ public class Category {
 
     //Test를 위해 만든 Builder, 이후 수정해도 괜찮음.
     @Builder
-    public Category(String cid, String name, String mall, String depth1) {
+    public Category(String cid, String name, String mall, String depth1, String keywords) {
         this.cid = cid;
         this.name = name;
         this.mall = mall;
         this.depth1 = depth1;
+        this.keywords = keywords;
     }
 }
