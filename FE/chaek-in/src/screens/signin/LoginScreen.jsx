@@ -22,21 +22,6 @@ function LoginScreen({ navigation }) {
 
   const dispatch = useDispatch();
 
-  const [isFont, setIsFont] = useState(false);
-
-  // 폰트 적용
-
-  async function getFont() {
-    const font = await Font.loadAsync({
-      Medium: require('../../../assets/font/Medium.ttf'),
-    });
-    setIsFont(true);
-  }
-
-  useEffect(() => {
-    getFont();
-  }, []);
-
   const [request, response, promptAsync] = Google.useAuthRequest({
     expoClientId: GOOGLE_EXPO_CLIENT_ID,
     androidClientId: GOOGLE_ANDROID_CLIENT_ID,
@@ -152,7 +137,7 @@ const GoogleLogin = styled.TouchableOpacity`
   margin: 10% 20% 0;
   background-color: white;
   width: 60%;
-  height: 10%;
+  height: 9%;
   border-radius: 15px;
   justify-content: space-around;
   align-items: center;
@@ -171,7 +156,7 @@ const MiddleText = styled.Text`
 `;
 
 const ButtonText = styled.Text`
-  font-size: 14px;
+  font-size: 16px;
   font-family: Medium;
 `;
 
