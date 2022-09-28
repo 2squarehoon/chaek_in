@@ -31,7 +31,7 @@
     "expo-clipboard": "~3.1.0",
     "expo-constants": "^13.2.4",
     "expo-file-system": "^14.1.0",
-    "expo-font": "^10.2.0",
+    "expo-font": "^10.2.1",
     "expo-image-crop": "^1.0.4",
     "expo-image-manipulator": "^10.4.0",
     "expo-image-picker": "^13.3.1",
