@@ -18,7 +18,7 @@ function TabNavigation() {
       <Tab.Screen name='Read' component={ReadScreen} />
       <Tab.Screen name='Meeting' component={MeetingNavigation} />
       <Tab.Screen name='Record' component={RecordNavigation} />
-      <Tab.Screen name='Userinfo' component={UserInfoNavigation} />
+      <Tab.Screen name='Userinfo' component={UserInfoNavigation} options={{ headerShown: false }} />
     </Tab.Navigator>
     // </NavigationContainer>
   );
