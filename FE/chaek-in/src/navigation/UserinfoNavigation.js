@@ -11,11 +11,25 @@ const UserinfoStack = createStackNavigator();
 
 function UserinfoNavigation() {
   return (
-    <UserinfoStack.Navigator initialRouteName='MyPage'>
+    <UserinfoStack.Navigator
+      initialRouteName='MyPage'
+      screenOptions={{
+        headerTitleAlign: 'center',
+        headerTintColor: '#010811',
+        headerStyle: {
+          backgroundColor: '#FCF9F0',
+          shadowColor: '#FCF9F0',
+          elevation: 0,
+        },
+        headerTitleStyle: {
+          fontFamily: 'Medium',
+        },
+      }}
+    >
       <UserinfoStack.Screen
         name='MyPage'
         component={MyPageScreen}
-        options={{ title: '마이 페이지' }}
+        options={{ title: '내 서재' }}
       ></UserinfoStack.Screen>
       <UserinfoStack.Screen
         name='ChangeUserinfo'
