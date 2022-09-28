@@ -111,3 +111,11 @@ def get_user_read(user_id, booklog, review):
     return list(pd.DataFrame({'id':list(booklog[booklog['member_id'] == user_id]['book_id']),
              'score':user_score
              }).sort_values('score', ascending=False)['id'])
+
+# booklog 테이블 불러오는 코드
+def get_booklog_id(user_id: int):
+    select_sql = 'SELECT id FROM booklog where member_id = %(user_id)s'
+    booklog = pd.read_sql(select_sql, engine, params={'user_id': str(user_id)})
+    booklog = booklog.set_index('id')
+
+    return booklog
