@@ -30,8 +30,8 @@ public class BookController {
     }
 
     @GetMapping("/{bookId}")
-    public ResponseEntity<?> getBookDetail(@PathVariable long bookId){
-        BookDetailResponse bookDetailResponse = bookService.detail(bookId);
+    public ResponseEntity<?> getBookDetail(@PathVariable long bookId, @LoginMemberId long memberId) {
+        BookDetailResponse bookDetailResponse = bookService.detail(bookId, memberId);
         return ResponseEntity.ok(bookDetailResponse);
     }
 
