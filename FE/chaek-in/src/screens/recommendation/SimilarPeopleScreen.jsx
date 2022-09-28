@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-function RecommendScreen() {
+function SimilarPeopleScreen() {
   return (
     <View style={styles.container}>
       <Text>추천</Text>
@@ -17,4 +17,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RecommendScreen;
+export default SimilarPeopleScreen;

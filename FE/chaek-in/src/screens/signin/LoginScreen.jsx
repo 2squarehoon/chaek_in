@@ -8,6 +8,7 @@ import styled from 'styled-components/native';
 import { HOST } from '@env';
 import { useDispatch } from 'react-redux';
 import { setAccessToken, setEmail, setNickname, setRefreshToken } from '../../redux/actions';
+import * as Font from 'expo-font';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -20,6 +21,21 @@ function LoginScreen({ navigation }) {
   const [rToken, setRToken] = useState('');
 
   const dispatch = useDispatch();
+
+  const [isFont, setIsFont] = useState(false);
+
+  // 폰트 적용
+
+  async function getFont() {
+    const font = await Font.loadAsync({
+      Medium: require('../../../assets/font/Medium.ttf'),
+    });
+    setIsFont(true);
+  }
+
+  useEffect(() => {
+    getFont();
+  }, []);
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     expoClientId: GOOGLE_EXPO_CLIENT_ID,
@@ -60,7 +76,7 @@ function LoginScreen({ navigation }) {
     } else if (isFirst === false) {
       saveReduxState();
     }
-  }, [isFirst]);
+  }, [isFirst, navigation, saveReduxState, userEmail]);
 
   // 구글에 요청해서 email만 받아와서 state에 저장
   const getGoogleUser = async (accessToken) => {
@@ -151,10 +167,12 @@ const MiddleContainer = styled.View`
 
 const MiddleText = styled.Text`
   font-size: 20px;
+  font-family: Medium;
 `;
 
 const ButtonText = styled.Text`
-  font-size: 20px;
+  font-size: 14px;
+  font-family: Medium;
 `;
 
 export default LoginScreen;
