@@ -13,4 +13,6 @@ public class BookDetailResponse {
     private String cover;
     private String title;
     private String ratingScore;
+    private Boolean isLiked;
+    private String readStatus;
 }

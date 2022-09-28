@@ -30,8 +30,8 @@ public class BookController {
     }
 
     @GetMapping("/{bookId}")
-    public ResponseEntity<?> getBookDetail(@PathVariable long bookId){
-        BookDetailResponse bookDetailResponse = bookService.detail(bookId);
+    public ResponseEntity<?> getBookDetail(@PathVariable long bookId, @LoginMemberId long memberId) {
+        BookDetailResponse bookDetailResponse = bookService.detail(bookId, memberId);
         return ResponseEntity.ok(bookDetailResponse);
     }
 
@@ -41,9 +41,8 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<?> startReadBook(@Valid @RequestBody BookReadRequest bookReadRequest, @LoginMemberId long memberId) {
-        bookService.registReadBook(bookReadRequest.getIsbn(), memberId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<BookReadResponse> startReadBook(@Valid @RequestBody BookReadRequest bookReadRequest, @LoginMemberId long memberId) {
+        return ResponseEntity.ok(bookService.registReadBook(bookReadRequest.getIsbn(), memberId));
     }
 
     @PatchMapping("/{bookId}/complete")

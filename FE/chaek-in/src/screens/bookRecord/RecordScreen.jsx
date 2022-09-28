@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import styled from 'styled-components/native';
 
 function RecordScreen({ route, navigation }) {
+  // const bookId = route.params.bookId;
   // 내가 쓴 메모 목록 useEffect로 불러오면 끝
   // useEffect();
 

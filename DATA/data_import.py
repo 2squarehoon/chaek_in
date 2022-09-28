@@ -115,7 +115,7 @@ def process(conn, logger):
     API_HEAD = 'http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey='
     
     #   api key
-    API_KEYS = [['ttbkit38631200001', 0, '인태'],['ttbbeckhem961036001', 0, '희영'],['ttbgmldud03231035001', 3907, '완택']]
+    API_KEYS = [['ttbkit38631200001', 4000, '인태'],['ttbbeckhem961036001', 4000, '희영'],['ttbgmldud03231035001', 4000, '완택']]
     
     API_BODY = '&itemIdType=ISBN13&ItemId='
     
@@ -149,9 +149,11 @@ def process(conn, logger):
                 param = res.json()
                 if is_error(param):
                     update_book_isbn_no_item(conn, isbn, logger)
+                    API_KEYS[key_index][1] -= 1
                     continue
             except:
                 update_book_isbn_has_err(conn, isbn, logger)
+                API_KEYS[key_index][1] -= 1
                 continue
 
             #   api 요청 중 카테고리 정보 파싱
@@ -160,6 +162,7 @@ def process(conn, logger):
             # parsing_category_result가 None면 eBook인 경우
             if parsing_category_result is None:
                 update_book_isbn_has_err(conn, isbn, logger)
+                API_KEYS[key_index][1] -= 1
                 continue
 
             category_cid = parsing_category_result[0]

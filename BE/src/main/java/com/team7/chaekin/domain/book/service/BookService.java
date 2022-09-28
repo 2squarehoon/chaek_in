@@ -8,6 +8,8 @@ import com.team7.chaekin.domain.booklog.entity.ReadStatus;
 import com.team7.chaekin.domain.booklog.repository.BookLogRepository;
 import com.team7.chaekin.domain.member.entity.Member;
 import com.team7.chaekin.domain.member.repository.MemberRepository;
+import com.team7.chaekin.domain.wishlist.entity.WishList;
+import com.team7.chaekin.domain.wishlist.repository.WishListRepository;
 import com.team7.chaekin.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,7 @@ public class BookService {
 
     private final BookLogRepository bookLogRepository;
     private final MemberRepository memberRepository;
+    private final WishListRepository wishListRepository;
 
     @Transactional(readOnly = true)
     public BookListResponse search(String keyword) {
@@ -60,9 +63,14 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public BookDetailResponse detail(long bookId) {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new CustomException(BOOK_IS_NOT_EXIST));
+    public BookDetailResponse detail(long bookId, long memberId) {
+        Book book = getBook(bookId);
+        Member member = getMember(memberId);
+
+        WishList wishList = wishListRepository.findByMemberIdAndBookId(memberId, bookId)
+                .orElse(null);
+        BookLog bookLog = bookLogRepository.findByMemberAndBook(member, book)
+                .orElse(null);
 
         return BookDetailResponse.builder()
                 .bookId(book.getId())
@@ -71,7 +79,9 @@ public class BookService {
                 .description(book.getDescription())
                 .cover(book.getCover())
                 .title(book.getTitle())
-                .ratingScore(String.format("%.1f", book.getRatingScore())).build();
+                .ratingScore(String.format("%.1f", book.getRatingScore()))
+                .isLiked(wishList != null && !wishList.isRemoved())
+                .readStatus(bookLog != null ? bookLog.getReadStatus().name() : "NONE").build();
     }
 
 
@@ -107,23 +117,28 @@ public class BookService {
     }
 
     @Transactional
-    public void registReadBook(String isbn, long memberId) {
+    public BookReadResponse registReadBook(String isbn, long memberId) {
         Book book = bookRepository.findByIsbn(isbn)
                 .orElseThrow(() -> new CustomException(BOOK_IS_NOT_EXIST));
         Member member = getMember(memberId);
+
+        BookReadResponse response = BookReadResponse.builder()
+                .bookId(book.getId())
+                .title(book.getTitle())
+                .readStatus(ReadStatus.READING.name()).build();
         bookLogRepository.findByMemberAndBook(member, book)
                 .ifPresentOrElse(bookLog -> {
                     bookLog.updateStatus();
-                }, () -> bookLogRepository.save(BookLog.builder()
-                                .book(book)
-                                .member(member)
-                                .readStatus(ReadStatus.READING).build()));
-    }
-
-    private Member getMember(long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
-        return member;
+                    response.setReadStatus(ReadStatus.COMPLETE.name());
+                }, () -> {
+                    bookLogRepository.save(BookLog.builder()
+                            .book(book)
+                            .member(member)
+                            .readStatus(ReadStatus.READING).build());
+                    wishListRepository.findByMemberIdAndBookId(member.getId(), book.getId())
+                            .ifPresent(wishList -> wishList.delete());
+                });
+        return response;
     }
 
     @Transactional
@@ -131,6 +146,16 @@ public class BookService {
         BookLog bookLog = bookLogRepository.findBookLogByMemberIdAndBookId(memberId, bookId)
                 .orElseThrow(() -> new CustomException(BOOKLOG_IS_NOT_EXIST));
         bookLog.updateStatus();
+    }
+
+    private Book getBook(long bookId) {
+        return bookRepository.findById(bookId)
+                .orElseThrow(() -> new CustomException(BOOK_IS_NOT_EXIST));
+    }
+
+    private Member getMember(long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
     }
 
 }
