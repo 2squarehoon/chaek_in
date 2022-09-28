@@ -5,10 +5,11 @@ import { Text, View, ScrollView, Image, Alert, TouchableOpacity } from 'react-na
 import React, { useEffect, useState } from 'react';
 import Environment from '../../config/environment';
 import Button from '../../components/Button';
+import styled from 'styled-components/native';
 
 // https://cloud.google.com/vision/docs/ocr?apix_params=%7B%22resource%22%3A%7B%22requests%22%3A%5B%7B%22features%22%3A%5B%7B%22type%22%3A%22TEXT_DETECTION%22%7D%5D%2C%22image%22%3A%7B%22source%22%3A%7B%22imageUri%22%3A%22gs%3A%2F%2Fcloud-samples-data%2Fvision%2Focr%2Fsign.jpg%22%7D%7D%7D%5D%7D%7D#vision_text_detection-nodejs
 
-export default function OCRScreen({ navigation }) {
+function OCRScreen({ navigation }) {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [response, setResponse] = useState(null);
   const [loadMessage, setLoadMessage] = useState('Pick an image');
@@ -126,9 +127,15 @@ export default function OCRScreen({ navigation }) {
       />
       <View style={styles.wrapper}>
         <View style={styles.textWrapper}>
-          {(response && <Text style={styles.nameText}>OCR 처리 완료: {response.description}</Text>) || (
-            <Text style={styles.loadingText}>{loadMessage}</Text>
-          )}
+          <OCRTouchableText
+            onPress={() => {
+              navigation.navigate('OCRRecordCreate', { OCRText: response.description });
+            }}
+          >
+            {(response && <Text style={styles.nameText}>OCR 처리 완료: {response.description}</Text>) || (
+              <Text style={styles.loadingText}>{loadMessage}</Text>
+            )}
+          </OCRTouchableText>
           <Button text='갤러리' style={styles.button} onPress={handleClick} />
           <Button text='사진 찍기' style={styles.button} onPress={takePicture} />
         </View>
@@ -136,3 +143,15 @@ export default function OCRScreen({ navigation }) {
     </ScrollView>
   );
 }
+
+const OCRTouchableText = styled.TouchableOpacity`
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #000;
+  border-radius: 5px;
+  width: 100%;
+  height: 200px;
+`;
+
+export default OCRScreen;

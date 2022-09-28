@@ -107,17 +107,24 @@ public class BookService {
     }
 
     @Transactional
-    public void registReadBook(String isbn, long memberId) {
+    public BookReadResponse registReadBook(String isbn, long memberId) {
         Book book = bookRepository.findByIsbn(isbn)
                 .orElseThrow(() -> new CustomException(BOOK_IS_NOT_EXIST));
         Member member = getMember(memberId);
+
+        BookReadResponse response = BookReadResponse.builder()
+                .bookId(book.getId())
+                .title(book.getTitle())
+                .readStatus(ReadStatus.READING.name()).build();
         bookLogRepository.findByMemberAndBook(member, book)
                 .ifPresentOrElse(bookLog -> {
                     bookLog.updateStatus();
+                    response.setReadStatus(ReadStatus.COMPLETE.name());
                 }, () -> bookLogRepository.save(BookLog.builder()
                                 .book(book)
                                 .member(member)
                                 .readStatus(ReadStatus.READING).build()));
+        return response;
     }
 
     private Member getMember(long memberId) {

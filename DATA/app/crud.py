@@ -104,10 +104,10 @@ def find_sim_book(df, sorted_ind, book_id, top_n=20):
 
 def get_user_read(user_id, booklog, review):
     user_score = []
-    for i in booklog[booklog['member_id'] == 4].index:
+    for i in booklog[booklog['member_id'] == user_id].index:
         user_score.append(review[review['booklog_id'] == i]['score'][review[review['booklog_id'] == i]['score'].index[0]])
 
     
-    return list(pd.DataFrame({'id':list(booklog[booklog['member_id'] == 4]['book_id']),
+    return list(pd.DataFrame({'id':list(booklog[booklog['member_id'] == user_id]['book_id']),
              'score':user_score
              }).sort_values('score', ascending=False)['id'])
