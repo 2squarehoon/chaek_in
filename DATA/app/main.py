@@ -6,6 +6,8 @@ from database import SessionLocal, engine
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
+import book_cf
+
 import sys
 import pandas as pd
 import numpy as np
@@ -138,4 +140,17 @@ def get_recommend_will_meeting(user_id: int):
     response['willMeeting'] = json.loads(wiimeetings.to_json(orient='records', force_ascii=False, indent=4))
     end = time.time() # 실행 끝나는 시간 계산
     print(f"{end - start:.5f} sec")
+    return response
+
+
+@app.get('/api/data/books/cf/{memberId}')
+def get_book_cf(memberId: int):
+
+    start = time.time() # 실행시간 계산 코드
+
+    response = book_cf.get_cf_books(memberId)
+    
+    end = time.time() # 실행 끝나는 시간 계산
+    print(f"{end - start:.5f} sec")
+
     return response
