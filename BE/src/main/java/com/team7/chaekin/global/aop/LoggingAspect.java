@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.CodeSignature;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -28,7 +29,12 @@ public class LoggingAspect {
             result = joinPoint.proceed();
             return result;
         } finally {
-            log.info(" <====== [Response] Response value = {}", objectMapper.writeValueAsString(result));
+            ResponseEntity response = (ResponseEntity) result;
+            String value = "";
+            if (response != null) {
+                value = objectMapper.writeValueAsString(response.getBody());
+            }
+            log.info(" <====== [Response] Response value = {}", value.length() > 50 ? value.substring(0, 50) : value);
         }
     }
 
