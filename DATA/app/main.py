@@ -66,12 +66,17 @@ def get_db():
 
 
 # 일단 이부분만 보면 될듯
+<<<<<<< Updated upstream
 @app.get('/api/data/books/cbf/{user_id}')
 def get_recommended(user_id: int):
     
     # redis connection pool에서 연결 하나 갖고옴
     global rd
 
+=======
+@app.get('/api/data/books/cbf/{memberId}')
+def get_recommended(memberId: int):
+>>>>>>> Stashed changes
     # 서버 시작할 떄 가져온 데이터프레임 쓰려고 global(전역변수) 선언
     global df, booklog, review, cbf_result
 
@@ -81,7 +86,12 @@ def get_recommended(user_id: int):
     if rd.exists(key) == 1:
         #   redis에서 key로 조회시 값이 존재하고
 
+<<<<<<< Updated upstream
         #   요청 시점의 booklog와 기록된 booklog 사이의 변겸점이 없다면
+=======
+    # 사용자 id 입력하면 사용자가 읽은 책의 book_id을 리스트에 저장 후 변수에 저장
+    user_book = crud.get_user_read(memberId, booklog, review)
+>>>>>>> Stashed changes
 
         #   redis에서 바로 가져와서 리턴
         json_dict = rd.get(key).decode('utf-8')
@@ -188,36 +198,12 @@ def get_recommended(user_id: int):
         return response # 반환값
 
 
-@app.get('/api/data/meeting/will/{user_id}')
-def get_recommend_will_meeting(user_id: int):
+@app.get('/api/data/meeting/will/{memberId}')
+def get_recommend_will_meeting(memberId: int):
     # 저장된 cbf 활용, 그래서 지금은 cbf 함수 실행시키고 cbf 가져와야함
     # 레디스되고 나서 추천 리스트 어떻게 가져올지 봐야함
-    global cbf_result 
-    start = time.time() # 실행시간 계산 코드
-    # 게시글 데이터가 없으니 임의로 생성
-    # 필요 컬럼 - id, title, book_id, users(id정보), 모임의 종류(다 읽은 책 => 1, 읽을 책 => 2)
-    # user_id 4가 읽은 책(5572819, 5795911. 1323591)으로 만든 모임
-    titles = []
-    covers = []
-    maxCapacity = []
-    for bookid in [2431928, 1072294, 2396943, 1006570, 2155671, 1323591, 2396986, 2376187, 2037399, 2083728]:
-        titles.append(book[book['title'] == bookid])
-        covers.append(book[book['cover'] == bookid])
-        maxCapacity.append(6)
-        
-    meeting = pd.DataFrame({'meetingId': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                        'bookId': [2431928, 1072294, 2396943, 1006570, 2155671, 1323591, 2396986, 2376187, 2037399, 2083728],
-                        'bookTitle': titles,
-                        'cover': covers,
-                        'meetingtTitle': ['완독을 위해 같이 책 읽을 분', '읽은 책에 대한 얘기 나누실 분', 
-                                '완독을 위해 같이 책 읽을 분', '읽은 책에 대한 얘기 나누실 분', 
-                                '완독을 위해 같이 책 읽을 분', '읽은 책에 대한 얘기 나누실 분', 
-                                '완독을 위해 같이 책 읽을 분', '읽은 책에 대한 얘기 나누실 분', 
-                                '완독을 위해 같이 책 읽을 분', '읽은 책에 대한 얘기 나누실 분'],
-                        'currenMember': [[42, 10], [35], [40, 26], [42, 32], [62, 9], [25, 39, 51], [47, 12], [21, 37], [57], [16, 48]],
-                        'maxCapacity':maxCapacity,
-                        'meetingCategory':[2, 1, 2, 1, 2, 1, 2, 1, 2, 1]
-                        })
+    global cbf_result, book
+    meeting = curd.get_test_meeting_data(book)
     # 추천 코드
     result_id = list(cbf_result.sort_values('w_rating', ascending=False)['id']) # 추천 받은 책을 가중 평점으로 정렬 후 id => 리스트 
     will_read = list(meeting.groupby('meetingCategory').get_group(2)['bookId']) # 같이 독서하는 모임의 book_id 리스트
@@ -300,3 +286,9 @@ def booklog_update(user_id: int, result: bool = False):
     print(f"{end - start:.5f} sec")
     
     return
+@app.get('/api/data/meeting/similar/{memberId}')
+def get_recommend_similar_meeting(memberId: int):
+    global booklog, review, book
+    
+    meeting = crud.get_test_meeting_data(book)
+    return crud.get_member_sim_meeting(memberId, booklog, review, meeting)
