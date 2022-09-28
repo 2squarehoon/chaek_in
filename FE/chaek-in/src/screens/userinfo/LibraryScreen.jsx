@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, TouchableOpacity } from 'react-native';
 import Axios from 'axios';
 import { HOST } from '@env';
 import { useSelector } from 'react-redux';
@@ -18,6 +18,7 @@ function LibraryScreen({ navigation }) {
     })
       .then(function (response) {
         console.log(response.data);
+        setLikeBooks(response.data.wishlist);
       })
       .catch(function (error) {
         console.log(error);
@@ -28,6 +29,10 @@ function LibraryScreen({ navigation }) {
     navigation.navigate('ReadBooks');
   };
 
+  const goBookDetail = (bookNumber) => {
+    navigation.navigate('BookDetail', { bookId: bookNumber });
+  };
+
   return (
     <LibraryContainer>
       <Text>내 서재</Text>
@@ -35,6 +40,11 @@ function LibraryScreen({ navigation }) {
       <View>
         <Button onPress={goReadBooks} title='내가 읽은 책'></Button>
       </View>
+      {likeBooks.map((book) => (
+        <TouchableOpacity key={book.bookId} onPress={() => goBookDetail(book.bookId)}>
+          <BookItem item={book} />
+        </TouchableOpacity>
+      ))}
     </LibraryContainer>
   );
 }
