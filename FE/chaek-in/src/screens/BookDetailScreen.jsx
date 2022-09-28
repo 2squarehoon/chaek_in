@@ -108,8 +108,6 @@ function BookDetailScreen({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
   },
 });
 
@@ -119,7 +117,6 @@ const BeforeContainer = styled.View`
 
 const ReadingContainer = styled.View`
   flex: 1;
-  // background-color: #fff;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
@@ -127,7 +124,6 @@ const ReadingContainer = styled.View`
 
 const AfterContainer = styled.View`
   flex: 1;
-  // background-color: #fff;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
