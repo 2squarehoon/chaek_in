@@ -82,8 +82,6 @@ def get_recommended(user_id: int):
         #   redis에서 key로 조회시 값이 존재하고
 
         #   요청 시점의 booklog와 기록된 booklog 사이의 변겸점이 없다면
-        booklog_id_req = crud.get_booklog_id(user_id)
-        print(booklog_id_req.index)
 
         #   redis에서 바로 가져와서 리턴
         json_dict = rd.get(key).decode('utf-8')
@@ -105,6 +103,7 @@ def get_recommended(user_id: int):
         
         return response
 
+    # else 이 후 없어져도 되는지 한 번 생각해보기
     else:
     
         # 코사인 유사도 계산하는 함수 실행 후 저장
@@ -250,7 +249,7 @@ def get_book_cf(memberId: int):
     return response
 
 
-# booklog 업데이트 시 유사도 행렬 갱신 후
+# booklog 업데이트 시 유사도 행렬 갱신 후 추천 목록 업데이트 후 redis에 저장
 @app.get('/api/data/booklogs/update/{user_id}', status_code=status.HTTP_200_OK)
 def booklog_update(user_id: int, result: bool = False):
     # redis connection pool에서 연결 하나 갖고옴
@@ -258,6 +257,8 @@ def booklog_update(user_id: int, result: bool = False):
 
     # 서버 시작할 떄 가져온 데이터프레임 쓰려고 global(전역변수) 선언
     global df, booklog, review, cbf_result
+
+    start = time.time() # 실행시간 계산 코드
 
     if result:
         # 코사인 유사도 갱신 후 저장
@@ -294,4 +295,8 @@ def booklog_update(user_id: int, result: bool = False):
         rd.delete(key)
         # 키 값 갱신
         rd.set(key, json_value)
-        return
+
+    end = time.time() # 실행 끝나는 시간 계산
+    print(f"{end - start:.5f} sec")
+    
+    return
