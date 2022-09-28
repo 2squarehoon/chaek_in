@@ -17,8 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.*;
@@ -51,17 +50,20 @@ public class ReviewService {
 
     @Transactional
     public void saveFirstRatings(long memberId, ReviewFirstRequest reviewFirstRequest) {
-        Member member = getMember(memberId);
-        List<ReviewFirstDto> ratings = getRatings(reviewFirstRequest);
+        List<ReviewFirstDto> filtered = filteringDuplicatedRating(reviewFirstRequest.getRatings());
+        filtered.sort((o1, o2) -> compareTo(o1.getBookId(), o2.getBookId()));
 
-        List<Book> books = findBooksOrderByIdAsc(ratings);
+        List<Book> books = bookRepository.findByBookIds(filtered.stream()
+                    .map(dto -> dto.getBookId())
+                    .collect(Collectors.toList()));
+        Member member = getMember(memberId);
 
         List<BookLog> bookLogs = new ArrayList<>();
-        for (int i = 0, j = 0; i < books.size() && j < ratings.size(); i++, j++) {
+        for (int i = 0, j = 0; i < books.size() && j < filtered.size(); i++, j++) {
             Book book = books.get(i);
-            ReviewFirstDto dto = ratings.get(j);
-            while (isNotBookRating(book, dto) && ++j < ratings.size()) {
-                dto = ratings.get(j);
+            ReviewFirstDto dto = filtered.get(j);
+            while (isNotBookRating(book, dto) && ++j < filtered.size()) {
+                dto = filtered.get(j);
             }
             if (isNotBookRating(book, dto)) {
                 continue;
@@ -76,10 +78,13 @@ public class ReviewService {
         bookLogRepository.saveAll(bookLogs);
     }
 
-    private List<ReviewFirstDto> getRatings(ReviewFirstRequest reviewFirstRequest) {
-        List<ReviewFirstDto> ratings = reviewFirstRequest.getRatings();
-        ratings.sort((o1, o2) -> compareTo(o1.getBookId(), o2.getBookId()));
-        return ratings;
+    private List<ReviewFirstDto> filteringDuplicatedRating(List<ReviewFirstDto> ratings) {
+        Collections.reverse(ratings);
+        Set<Long> bookIdSet = new HashSet<>();
+        List<ReviewFirstDto> filtered = ratings.stream()
+                .filter(reviewFirstDto -> bookIdSet.add(reviewFirstDto.getBookId()))
+                .collect(Collectors.toList());
+        return filtered;
     }
 
     private boolean isNotBookRating(Book book, ReviewFirstDto reviewFirstDto) {
@@ -90,13 +95,6 @@ public class ReviewService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
         return member;
-    }
-
-    private List<Book> findBooksOrderByIdAsc(List<ReviewFirstDto> ratings) {
-        List<Long> bookIds = ratings.stream()
-                .map(dto -> dto.getBookId()).collect(Collectors.toList());
-        List<Book> books = bookRepository.findByBookIds(bookIds);
-        return books;
     }
 
     private int compareTo(long a, long b) {
