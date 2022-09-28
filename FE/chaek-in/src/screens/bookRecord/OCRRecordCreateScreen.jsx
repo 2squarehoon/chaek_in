@@ -5,9 +5,9 @@ import { HOST } from '@env';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components/native';
 
-const RecordCreateScreen = ({ navigation }) => {
+const OCRRecordCreateScreen = ({ route, navigation }) => {
   const { accessToken } = useSelector((state) => state.main);
-  const [text, onChangeText] = React.useState('');
+  const [text, onChangeText] = React.useState(`${route.params.OCRText}`);
   const [memoColor, setMemoColor] = React.useState('#F8DFAA');
   // const bookId = route.params.bookId;
 
@@ -103,4 +103,4 @@ const BluePressable = styled.Pressable`
   margin: 10px 0px;
 `;
 
-export default RecordCreateScreen;
+export default OCRRecordCreateScreen;
