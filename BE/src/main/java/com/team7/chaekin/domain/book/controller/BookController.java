@@ -41,7 +41,7 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<?> startReadBook(@Valid BookReadRequest bookReadRequest, @LoginMemberId long memberId) {
+    public ResponseEntity<?> startReadBook(@Valid @RequestBody BookReadRequest bookReadRequest, @LoginMemberId long memberId) {
         bookService.registReadBook(bookReadRequest.getIsbn(), memberId);
         return ResponseEntity.ok().build();
     }
