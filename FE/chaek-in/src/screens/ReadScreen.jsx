@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button, Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import styled, { ThemeConsumer } from 'styled-components/native';
-import Axios from 'axios';
+import axios from 'axios';
 import { HOST } from '@env';
 import { useSelector } from 'react-redux';
 
-function ReadScreen() {
+function ReadScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [barcodeData, setBarcodeData] = useState(null);
@@ -20,11 +20,11 @@ function ReadScreen() {
     })();
   }, []);
 
-  const handleBarCodeScanned = async ({ type, data }) => {
+  const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     setBarcodeType(type);
     setBarcodeData(data);
-    await Alert.alert('책읽기를 시작하시겠습니까?', '', [
+    Alert.alert('책읽기를 시작하시겠습니까?', '', [
       { text: '아니오', style: 'cancel' },
       { text: '네', onPress: () => RegistBook(data) },
     ]);
@@ -39,16 +39,22 @@ function ReadScreen() {
   }
 
   async function RegistBook(barcode) {
-    const data = { isbn: barcode };
     console.log(barcode);
-    console.log(typeof barcode);
-    await Axios.post(`${HOST}/api/v1/books`, data, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
+    const data = { isbn: barcode };
+    await axios
+      .post(`${HOST}/api/v1/books`, data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
       .then(function (response) {
         console.log(response.data);
+        if (response.data.readStatus === 'READING') {
+          Alert.alert('책 읽기를 시작합니다.', response.data.title);
+        } else if (response.data.readStatus === 'COMPLETE') {
+          Alert.alert('책 읽기를 완료합니다.', response.data.title);
+        }
+        navigation.navigate('BookDetail', { bookId: response.data.bookId });
       })
       .catch(function (error) {
         console.log(error);
