@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, Form
+from fastapi import Depends, FastAPI, HTTPException, Form, status
 from sqlalchemy.orm import Session
 import crud, models, schemas
 from database import SessionLocal, engine
@@ -13,6 +13,13 @@ import pandas as pd
 import numpy as np
 import json
 import time
+import random
+
+import os
+from dotenv import load_dotenv
+import redis
+
+load_dotenv()
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -33,6 +40,19 @@ if not(server_run):
     # 서버 시작 구분 상태 변경, 이후에는 실행 안되도록
     server_run = not(server_run)
 
+try:
+    REDIS_HOST = os.getenv("REDIS_HOST")
+    REDIS_PORT = integer = os.getenv("REDIS_PORT")
+    REDIS_DATABASE = integer = os.getenv("REDIS_DATABASE")
+    pool = redis.ConnectionPool(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE)
+    rd = redis.Redis(connection_pool=pool)
+except:
+    print("redis 연결 에러")
+# redis.StrictRedis( ... ) 라고도 사용할 수 있다
+# Python의 버전이 3으로 업데이트 되면서 함수명이 변경되었다
+# 하지만 버전 호환을 위해 StrictRedis로도 연결을 할 수 있다
+# 즉, Redis = StrictRedis로 동일한 기능을 하는 함수이다
+
 app = FastAPI()
 
 
@@ -48,51 +68,124 @@ def get_db():
 # 일단 이부분만 보면 될듯
 @app.get('/api/data/books/cbf/{user_id}')
 def get_recommended(user_id: int):
+    
+    # redis connection pool에서 연결 하나 갖고옴
+    global rd
+
     # 서버 시작할 떄 가져온 데이터프레임 쓰려고 global(전역변수) 선언
     global df, booklog, review, cbf_result
 
     start = time.time() # 실행시간 계산 코드
     
-    # 코사인 유사도 계산하는 함수 실행 후 저장
-    cat_sim_sorted_ind = crud.count_sim(df)
+    key = "user:" + str(user_id)
+    if rd.exists(key) == 1:
+        #   redis에서 key로 조회시 값이 존재하고
 
-    # 사용자 id 입력하면 사용자가 읽은 책의 book_id을 리스트에 저장 후 변수에 저장
-    user_book = crud.get_user_read(user_id, booklog, review)
+        #   요청 시점의 booklog와 기록된 booklog 사이의 변겸점이 없다면
 
-    # 빈 데이터 프레임 컬럼만 지정해서 만들고
-    cbf_result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 
-                                'category_id', 'publisher', 'page', 'rating_score', 'rating_count', 'w_rating', 'cid', 'keywords'])
-    
-    # 읽은 책 리스트의 평점 상위 5개를 하나씩 접근해서
-    for book_id in user_book[:5]:
-
-        # book_id로 비슷한 책 찾아서
-        sim_books = crud.find_sim_book(df, cat_sim_sorted_ind, book_id, 1000)
-        # 위에서 만든 빈 데이터프레임에 하나씩 추가
-        cbf_result = pd.concat([cbf_result, sim_books])
-
-    # 중복값 제거
-    cbf_result = cbf_result.drop_duplicates(['id'])
-    
-    # 필요한 컬럼만 다시 저장, 약 100개의 행을 가진 데이터 프레임
-    cbf_result = cbf_result[['id', 'isbn', 'title', 'author', 'cover', 'rating_score', 'w_rating']]
-    cbf_result = cbf_result.sort_values('w_rating', ascending=False)
-    # json형태로 반환하기 위해 빈 딕셔너리 생성
-    response = dict()
-    # 빈 딕셔너리에 key:cbfBooks
-    # value: result에서 10개를 임의 추출 후 json으로 변환 to_json은 json형식으로 변환하려고 썼고
-    # json.loads는 json으로 깔끔하게 만들어줘서 썼음
-    response['cbfBooks'] = json.loads(cbf_result[:100].sample(10).to_json(orient='records', force_ascii=False, indent=4))
-    
-    # 아래 반복문은 Response Body 형식 맞추는 코드
-    for i in range(len(response['cbfBooks'])):
-        item = dict()
-        item['item'] = response['cbfBooks'][i]
-        response['cbfBooks'][i] = item
+        #   redis에서 바로 가져와서 리턴
+        json_dict = rd.get(key).decode('utf-8')
+        dict_list = json.loads(json_dict)
         
-    end = time.time() # 실행 끝나는 시간 계산
-    print(f"{end - start:.5f} sec")
-    return response # 반환값
+        response = dict()
+        response['cbfBooks'] = random.sample(dict_list, 10)
+
+        for i in range(len(response['cbfBooks'])):
+            item = dict()
+            item['item'] = response['cbfBooks'][i]
+            response['cbfBooks'][i] = item
+
+        # print(response)
+        print(type(response))
+        
+        end = time.time() # 실행 끝나는 시간 계산
+        print(f"use redis: {end - start:.5f} sec")
+        
+        return response
+
+    # else 이 후 없어져도 되는지 한 번 생각해보기
+    else:
+    
+        # 코사인 유사도 계산하는 함수 실행 후 저장
+        cat_sim_sorted_ind = crud.count_sim(df)
+
+        # 사용자 id 입력하면 사용자가 읽은 책의 book_id을 리스트에 저장 후 변수에 저장
+        user_book = crud.get_user_read(user_id, booklog, review)
+
+        # 빈 데이터 프레임 컬럼만 지정해서 만들고
+        cbf_result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 
+                                'category_id', 'publisher', 'page', 'rating_score', 'rating_count', 'w_rating', 'cid', 'keywords'])
+        
+        # 읽은 책 리스트의 평점 상위 5개를 하나씩 접근해서
+        for book_id in user_book[:5]:
+
+            # book_id로 비슷한 책 찾아서
+            sim_books = crud.find_sim_book(df, cat_sim_sorted_ind, book_id, 1000)
+            # 위에서 만든 빈 데이터프레임에 하나씩 추가
+            cbf_result = pd.concat([cbf_result, sim_books])
+
+        # 중복값 제거
+        cbf_result = cbf_result.drop_duplicates(['id'])
+        
+        # 필요한 컬럼만 다시 저장, 약 100개의 행을 가진 데이터 프레임
+        cbf_result = cbf_result[['id', 'isbn', 'title', 'author', 'cover', 'rating_score', 'w_rating']]
+        cbf_result = cbf_result.sort_values('w_rating', ascending=False)
+        
+        print("--------------------------------------------------result------------------------------------------------------------")
+        print(cbf_result)
+
+        print("--------------------------------------------------result.to_json(orient='records', force_ascii=False, indent=4)------------------------------------------------------------")
+        print(cbf_result.to_json(orient='records', force_ascii=False, indent=4))
+
+        key = "user:" + str(user_id)
+        json_value = cbf_result.to_json(orient='records', force_ascii=False, indent=4)
+        # json_value = json.dumps(value, ensure_ascii=False).encode('utf-8')
+        print("--------------------------------------------------json.dumps(value, ensure_axcii=False).encode('utf-8')------------------------------------------------------------")
+        print(json_value)
+        print(type(json_value))
+        rd.set(key, json_value)
+
+        # json_value_get = json_value.decode('utf-8')
+        json_value_get = rd.get("user:37").decode('utf-8')
+        print("--------------------------------------------------rd.get(user:37).decode('utf-8')------------------------------------------------------------")
+        print(json_value_get)
+        
+        # json_dict = dict(json.loads(json_value_get))
+
+        json_dict = dict(json.loads(json_value_get))
+        print("--------------------------------------------------dict(json.loads(value_get))------------------------------------------------------------")
+        print(json_dict)
+
+
+        # json형태로 반환하기 위해 빈 딕셔너리 생성
+        response = dict()
+        # 빈 딕셔너리에 key:cbfBooks
+        # value: result에서 10개를 임의 추출 후 json으로 변환 to_json은 json형식으로 변환하려고 썼고
+        # json.loads는 json으로 깔끔하게 만들어줘서 썼음
+        response['cbfBooks'] = json.loads(cbf_result[:100].sample(10).to_json(orient='records', force_ascii=False, indent=4))
+        print("------------------------------------------------response['cbfBooks']------------------------------------------------")
+        print(response['cbfBooks'])
+
+        
+
+        # 아래 반복문은 이런식으로 만들어주는 코드
+        # {
+        #    cbfBook: [
+        #       {itme:{'isbn':~~~~,
+        #              'title':~~~
+        #              .......
+        #}
+        #}
+        #]
+        #} 
+        for i in range(len(response['cbfBooks'])):
+            item = dict()
+            item['item'] = response['cbfBooks'][i]
+            response['cbfBooks'][i] = item
+            
+        end = time.time() # 실행 끝나는 시간 계산
+        print(f"{end - start:.5f} sec")
+        return response # 반환값
 
 
 @app.get('/api/data/meeting/will/{user_id}')
@@ -154,3 +247,56 @@ def get_book_cf(memberId: int):
     print(f"{end - start:.5f} sec")
 
     return response
+
+
+# booklog 업데이트 시 유사도 행렬 갱신 후 추천 목록 업데이트 후 redis에 저장
+@app.get('/api/data/booklogs/update/{user_id}', status_code=status.HTTP_200_OK)
+def booklog_update(user_id: int, result: bool = False):
+    # redis connection pool에서 연결 하나 갖고옴
+    global rd
+
+    # 서버 시작할 떄 가져온 데이터프레임 쓰려고 global(전역변수) 선언
+    global df, booklog, review, cbf_result
+
+    start = time.time() # 실행시간 계산 코드
+
+    if result:
+        # 코사인 유사도 갱신 후 저장
+        cat_sim_sorted_ind = crud.count_sim(df)
+
+        # 사용자 id 입력하면 사용자가 읽은 책의 book_id을 리스트에 저장 후 변수에 저장
+        user_book = crud.get_user_read(user_id, booklog, review)
+
+        # 빈 데이터 프레임 컬럼만 지정해서 만들고
+        cbf_result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 
+                                'category_id', 'publisher', 'page', 'rating_score', 'rating_count', 'w_rating', 'cid', 'keywords'])
+        
+        # 사용자에게 추천할 책 목록 갱신
+        # 읽은 책 리스트의 평점 상위 5개를 하나씩 접근해서
+        for book_id in user_book[:5]:
+
+            # book_id로 비슷한 책 찾아서
+            sim_books = crud.find_sim_book(df, cat_sim_sorted_ind, book_id, 1000)
+            # 위에서 만든 빈 데이터프레임에 하나씩 추가
+            cbf_result = pd.concat([cbf_result, sim_books])
+
+        # 중복값 제거
+        cbf_result = cbf_result.drop_duplicates(['id'])
+        
+        # 필요한 컬럼만 다시 저장, 약 100개의 행을 가진 데이터 프레임
+        cbf_result = cbf_result[['id', 'isbn', 'title', 'author', 'cover', 'rating_score', 'w_rating']]
+        cbf_result = cbf_result.sort_values('w_rating', ascending=False)
+
+        key = "user:" + str(user_id)
+        json_value = cbf_result.to_json(orient='records', force_ascii=False, indent=4)
+        # json_value = json.dumps(value, ensure_ascii=False).encode('utf-8')
+
+        # 기존 키 제거 후
+        rd.delete(key)
+        # 키 값 갱신
+        rd.set(key, json_value)
+
+    end = time.time() # 실행 끝나는 시간 계산
+    print(f"{end - start:.5f} sec")
+    
+    return
