@@ -22,6 +22,8 @@ public interface BookLogRepository extends JpaRepository<BookLog, Long> {
             "AND bl.book.id = :bookId")
     Optional<BookLog> findBookLogByMemberIdAndBookId(@Param("memberId") long memberId, @Param("bookId") long bookId);
 
+    List<BookLog> findByBookAndReadStatusEquals(Book book, ReadStatus readStatus);
+
     List<BookLog> findByMember(Member member);
 
     @EntityGraph(attributePaths = {"todayBooks"})
@@ -32,5 +34,8 @@ public interface BookLogRepository extends JpaRepository<BookLog, Long> {
 
     @EntityGraph(attributePaths = {"book"})
     List<BookLog> findByMemberAndStartDateBetweenOrderByStartDate(Member member, LocalDate first, LocalDate last);
+
+    @EntityGraph(attributePaths = {"member"})
+    List<BookLog> findByEndDateNotNullAndStartDateBefore(LocalDate date);
 
 }

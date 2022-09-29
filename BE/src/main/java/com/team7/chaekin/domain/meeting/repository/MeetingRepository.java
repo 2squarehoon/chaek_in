@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface MeetingRepository extends JpaRepository<Meeting, Long> {
+public interface MeetingRepository extends JpaRepository<Meeting, Long>, MeetingRepositoryCustom {
     Page<Meeting> findByTitleContainingAndIsRemovedIsFalse(String title, Pageable pageable);
 
     Optional<Meeting> findByIdAndIsRemovedIsFalse(long id);

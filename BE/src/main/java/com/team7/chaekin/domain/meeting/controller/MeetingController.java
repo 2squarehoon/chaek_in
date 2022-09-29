@@ -19,7 +19,7 @@ public class MeetingController {
     private final MeetingService meetingService;
 
     @GetMapping
-    public ResponseEntity<MeetingListResponse> getMeetings(@PageableDefault(size=24) Pageable pageable,
+    public ResponseEntity<MeetingListResponse> getMeetings(@PageableDefault(size=12) Pageable pageable,
                                                            MeetingListRequest meetingListRequest) {
         return ResponseEntity.ok(meetingService.getMeetings(meetingListRequest, pageable));
     }

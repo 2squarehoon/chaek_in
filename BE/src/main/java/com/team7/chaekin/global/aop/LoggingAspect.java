@@ -38,7 +38,7 @@ public class LoggingAspect {
         }
     }
 
-    @Around("within(com.team7.chaekin..service..*)")
+    @Around("within(com.team7.chaekin.domain..service..*)")
     public Object loggingService(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
         try {

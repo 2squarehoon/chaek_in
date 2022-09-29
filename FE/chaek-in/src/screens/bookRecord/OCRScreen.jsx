@@ -1,9 +1,8 @@
 import * as ImagePicker from 'expo-image-picker';
 import { Camera } from 'expo-camera';
-import styles from './styles';
 import { Text, View, ScrollView, Image, Alert, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import Environment from '../../config/environment';
+import Environment from '../../../secret';
 import Button from '../../components/Button';
 import styled from 'styled-components/native';
 
@@ -19,6 +18,8 @@ function OCRScreen({ navigation }) {
   const [camera, setCamera] = useState(null);
   const [imageUri, setImageUri] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
+  const [isCamera, setIsCamera] = useState(true);
+  const [isResponse, setIsResponse] = useState(false);
 
   // 카메라 권한 허용
   const permissionFunction = async () => {
@@ -70,6 +71,7 @@ function OCRScreen({ navigation }) {
       const data = await camera.takePictureAsync(options);
       setImageUri(data.uri);
       callGoogleApi(data.base64);
+      setIsCamera(false);
     }
   };
 
@@ -85,66 +87,137 @@ function OCRScreen({ navigation }) {
     // 선택된 이미지를 인코딩하여 변수에 저장
     let pickedImage = await ImagePicker.launchImageLibraryAsync(options);
     if (pickedImage.cancelled === true) {
+      setIsCamera(true);
       return;
     }
     // Image state 업데이트
     setImage(pickedImage);
     // cloud vision api 호출
     callGoogleApi(pickedImage.base64);
+    setIsCamera(false);
   };
 
   return (
-    <ScrollView>
-      <Camera ref={(ref) => setCamera(ref)} style={{ width: '100%', height: 300 }} type={type}>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'transparent',
-            flexDirection: 'row',
-          }}
+    <ScrollView
+      style={{
+        backgroundColor: '#FCF9F0',
+        flex: 1,
+      }}
+    >
+      {isCamera ? (
+        <Camera
+          ref={(ref) => setCamera(ref)}
+          style={{ width: '100%', height: 400 }}
+          type={type}
+          ratio={'1:1'}
         >
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: 'transparent',
+              flexDirection: 'row',
+            }}
+          ></View>
           <TouchableOpacity
             style={{
-              flex: 0.5,
               alignSelf: 'flex-end',
               alignItems: 'center',
+              backgroundColor: '#A8CA47',
+              borderRadius: 10,
+              margin: 10,
+              padding: 10,
+              borderColor: 'black',
+              borderWidth: 1,
             }}
             onPress={takePicture}
           >
-            <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>SNAP</Text>
+            <Text style={{ fontSize: 14, color: 'white', fontFamily: 'Medium' }}>문장 찍기</Text>
           </TouchableOpacity>
-        </View>
-      </Camera>
-      <Image
-        style={{
-          width: 200,
-          height: 200,
-          resizeMode: 'contain',
-        }}
-        source={{
-          uri: imageUri,
-        }}
-      />
-      <View style={styles.wrapper}>
-        <View style={styles.textWrapper}>
-          <OCRTouchableText
-            onPress={() => {
-              navigation.navigate('OCRRecordCreate', { OCRText: response.description });
+          <TouchableOpacity
+            style={{
+              alignSelf: 'flex-end',
+              alignItems: 'center',
+              backgroundColor: '#A8CA47',
+              borderRadius: 10,
+              margin: 10,
+              padding: 10,
+              borderColor: 'black',
+              borderWidth: 1,
+            }}
+            onPress={handleClick}
+          >
+            <Text style={{ fontSize: 14, color: 'white', fontFamily: 'Medium' }}>내 갤러리</Text>
+          </TouchableOpacity>
+        </Camera>
+      ) : (
+        <View
+          styles={{
+            flex: 1,
+            backgroundColor: '#FCF9F0',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Image
+            style={{
+              width: 300,
+              height: 300,
+              marginLeft: 30,
+              borderRadius: 10,
+              borderColor: 'black',
+              borderWidth: 1,
+            }}
+            source={{
+              uri: imageUri,
+            }}
+          />
+          <View
+            style={{
+              marginHorizontal: 20,
+              backgroundColor: '#FCF9F0',
             }}
           >
-            {(response && <Text style={styles.nameText}>OCR 처리 완료: {response.description}</Text>) || (
-              <Text style={styles.loadingText}>{loadMessage}</Text>
-            )}
-          </OCRTouchableText>
-          <Button text='갤러리' style={styles.button} onPress={handleClick} />
-          <Button text='사진 찍기' style={styles.button} onPress={takePicture} />
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('OCRRecordCreate', { OCRText: response.description });
+              }}
+            >
+              <View>
+                <OCRScrollView
+                  style={{
+                    backgroundColor: 'white',
+                  }}
+                >
+                  <View style={{ padding: 10 }}>
+                    {(response && (
+                      <Text
+                        style={{
+                          fontFamily: 'Medium',
+                        }}
+                      >
+                        {response.description}
+                      </Text>
+                    )) || (
+                      <Text
+                        style={{
+                          fontFamily: 'Medium',
+                        }}
+                      >
+                        {loadMessage}
+                      </Text>
+                    )}
+                  </View>
+                </OCRScrollView>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      )}
     </ScrollView>
   );
 }
 
-const OCRTouchableText = styled.TouchableOpacity`
+const OCRScrollView = styled.ScrollView`
   margin-top: 20px;
   margin-bottom: 20px;
   padding: 10px;

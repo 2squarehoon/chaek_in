@@ -104,7 +104,7 @@ const MeetingHomeView = styled.View`
 
 const MyMeetingView = styled.View`
   width: 100%;
-  height: 100px;
+  height: 200px;
   background-color: #f2f2f2;
 `;
 
