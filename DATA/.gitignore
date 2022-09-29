@@ -21,6 +21,7 @@ docs.zip
 archive.zip
 __custom__
 .log
+.env
 
 # vim temporary files
 *~

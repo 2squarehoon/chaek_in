@@ -6,7 +6,7 @@ from database import SessionLocal, engine
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-import book_cf
+import book_cf, recent_book_meeting
 
 import sys
 import pandas as pd
@@ -319,3 +319,17 @@ def get_recommend_similar_meeting(memberId: int):
     
     meeting = crud.get_test_meeting_data(book)
     return crud.get_member_sim_meeting(memberId, booklog, review, meeting)
+
+    
+@app.get('/api/data/meeting/recent-book/{memberId}')
+def get_recent_book_meeting(memberId: int):
+
+    start = time.time() # 실행시간 계산 코드
+
+    response = recent_book_meeting.get_meetings(memberId)
+    # response = recent_book_meeting.get_my_meetings(memberId)
+    
+    end = time.time() # 실행 끝나는 시간 계산
+    print(f"{end - start:.5f} sec")
+
+    return response
