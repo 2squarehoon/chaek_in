@@ -42,7 +42,7 @@ public class BookController {
 
     @PostMapping
     public ResponseEntity<BookReadResponse> startReadBook(@Valid @RequestBody BookReadRequest bookReadRequest, @LoginMemberId long memberId) {
-        return ResponseEntity.ok(bookService.registReadBook(bookReadRequest.getIsbn(), memberId));
+        return ResponseEntity.ok(bookService.registerBook(bookReadRequest.getIsbn(), memberId));
     }
 
     @PatchMapping("/{bookId}/complete")

@@ -2,7 +2,6 @@ package com.team7.chaekin.domain.review.entity;
 
 import com.team7.chaekin.domain.booklog.entity.BookLog;
 import com.team7.chaekin.domain.common.entity.BaseTimeEntity;
-import com.team7.chaekin.domain.review.dto.ReviewRequest;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

@@ -53,8 +53,11 @@ public class BookLog extends BaseTimeEntity {
         this.startDate = LocalDate.now();
     }
 
-    public void updateStatus() {
-        this.readStatus = ReadStatus.COMPLETE;
+    public void completeReadBook() {
+        if (readStatus.equals(ReadStatus.COMPLETE))
+            return;
+        readStatus = ReadStatus.COMPLETE;
+        endDate = LocalDate.now();
     }
 
     public void addTodayBook(TodayBook todayBook) {
