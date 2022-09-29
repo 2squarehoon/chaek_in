@@ -5,6 +5,7 @@ from database import SessionLocal, engine
 
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordBearer
 
 import book_cf
 
@@ -63,6 +64,8 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
 
 
 # 일단 이부분만 보면 될듯
