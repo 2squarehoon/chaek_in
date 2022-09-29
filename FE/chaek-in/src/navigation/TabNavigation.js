@@ -20,6 +20,7 @@ function TabNavigation() {
     <Tab.Navigator
       initialRouteName='Library'
       screenOptions={{
+        tabBarHideOnKeyboard: true,
         tabBarShowLabel: false,
         tabBarStyle: {
           position: 'absolute',
@@ -120,14 +121,14 @@ function TabNavigation() {
 
 const styles = StyleSheet.create({
   shadow: {
-    shadowColor: 'black',
+    shadowColor: 'white',
     shadowOffset: {
       width: 1,
-      height: 1,
+      height: 10,
     },
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.1,
     shadowRadius: 3,
-    elevation: 5,
+    elevation: 10,
   },
 });
 
