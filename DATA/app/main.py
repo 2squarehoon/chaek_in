@@ -69,9 +69,8 @@ def get_db():
 
 
 # 일단 이부분만 보면 될듯
-@app.get('/api/data/books/cbf/{memberId}')
+@app.get('/api/data/books/cbf/{memberId}', dependencies=[Depends(JWTBearer())])
 def get_recommended(memberId: int):
-    
     # redis connection pool에서 연결 하나 갖고옴
     global rd
 
@@ -172,8 +171,8 @@ def get_recommended(memberId: int):
 
 
 
-@app.get('/api/data/meeting/will/{memberId}')
-def get_recommend_will_meeting(memberId: int, dependencies=[Depends(JWTBearer())]):
+@app.get('/api/data/meeting/will/{memberId}', dependencies=[Depends(JWTBearer())])
+def get_recommend_will_meeting(memberId: int):
     # 저장된 cbf 활용, 그래서 지금은 cbf 함수 실행시키고 cbf 가져와야함
     # 레디스되고 나서 추천 리스트 어떻게 가져올지 봐야함
     global rd, book
@@ -317,7 +316,8 @@ def booklog_update(memberId: int, result: bool = False):
     print(f"{end - start:.5f} sec")
     
     return
-@app.get('/api/data/meeting/similar/{memberId}')
+
+@app.get('/api/data/meeting/similar/{memberId}', dependencies=[Depends(JWTBearer())])
 def get_recommend_similar_meeting(memberId: int):
     global booklog, review, book
     
@@ -325,7 +325,7 @@ def get_recommend_similar_meeting(memberId: int):
     return crud.get_member_sim_meeting(memberId, booklog, review, meeting)
 
     
-@app.get('/api/data/meeting/recent-book/{memberId}')
+@app.get('/api/data/meeting/recent-book/{memberId}', dependencies=[Depends(JWTBearer())])
 def get_recent_book_meeting(memberId: int):
 
     start = time.time() # 실행시간 계산 코드
