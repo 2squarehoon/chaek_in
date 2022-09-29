@@ -2,6 +2,7 @@ package com.team7.chaekin.domain.wishlist.service;
 
 import com.team7.chaekin.domain.book.entity.Book;
 import com.team7.chaekin.domain.book.repository.BookRepository;
+import com.team7.chaekin.domain.booklog.repository.BookLogRepository;
 import com.team7.chaekin.domain.member.entity.Member;
 import com.team7.chaekin.domain.member.repository.MemberRepository;
 import com.team7.chaekin.domain.wishlist.dto.WishListDto;
@@ -26,6 +27,7 @@ public class WishListService {
     private final WishListRepository wishListRepository;
     private final BookRepository bookRepository;
     private final MemberRepository memberRepository;
+    private final BookLogRepository bookLogRepository;
 
     @Transactional
     public WishListResponse getWishList(long memberId) {
@@ -43,6 +45,8 @@ public class WishListService {
 
     @Transactional
     public void createWishListBook(long memberId, long bookId) {
+        bookLogRepository.findBookLogByMemberIdAndBookId(memberId, bookId)
+                .ifPresent(bookLog -> { throw new CustomException(ALREADY_READ_BOOK); });
         wishListRepository.findByMemberIdAndBookId(memberId, bookId)
                 .ifPresentOrElse(
                         wishList -> wishList.gotDibs(),
