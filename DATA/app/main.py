@@ -19,6 +19,7 @@ import random
 import os
 from dotenv import load_dotenv
 import redis
+from auth.auth_bearer import JWTBearer
 
 load_dotenv()
 
@@ -26,7 +27,6 @@ models.Base.metadata.create_all(bind=engine)
 
 # 서버 시작이 처음인지 아닌지 구분 코드
 server_run = False
-
 
 
 # 처음 서버시작이면
@@ -43,8 +43,8 @@ if not(server_run):
 
 try:
     REDIS_HOST = os.getenv("REDIS_HOST")
-    REDIS_PORT = integer = os.getenv("REDIS_PORT")
-    REDIS_DATABASE = integer = os.getenv("REDIS_DATABASE")
+    REDIS_PORT = os.getenv("REDIS_PORT")
+    REDIS_DATABASE = os.getenv("REDIS_DATABASE")
     pool = redis.ConnectionPool(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE)
     rd = redis.Redis(connection_pool=pool)
 except:
@@ -191,7 +191,7 @@ def get_recommended(user_id: int):
         return response # 반환값
 
 
-@app.get('/api/data/meeting/will/{user_id}')
+@app.get('/api/data/meeting/will/{user_id}', dependencies=[Depends(JWTBearer())])
 def get_recommend_will_meeting(user_id: int):
     # 저장된 cbf 활용, 그래서 지금은 cbf 함수 실행시키고 cbf 가져와야함
     # 레디스되고 나서 추천 리스트 어떻게 가져올지 봐야함
@@ -239,7 +239,7 @@ def get_recommend_will_meeting(user_id: int):
     return response
 
 
-@app.get('/api/data/books/cf/{memberId}')
+@app.get('/api/data/books/cf/{memberId}', dependencies=[Depends(JWTBearer())])
 def get_book_cf(memberId: int):
 
     start = time.time() # 실행시간 계산 코드
