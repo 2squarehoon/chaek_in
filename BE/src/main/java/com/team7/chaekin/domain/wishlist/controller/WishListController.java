@@ -1,5 +1,6 @@
 package com.team7.chaekin.domain.wishlist.controller;
 
+import com.team7.chaekin.domain.wishlist.dto.WishListResponse;
 import com.team7.chaekin.domain.wishlist.service.WishListService;
 import com.team7.chaekin.global.oauth.config.LoginMemberId;
 import lombok.RequiredArgsConstructor;
@@ -16,18 +17,18 @@ public class WishListController {
     private final WishListService wishListService;
 
     @GetMapping
-    public ResponseEntity<?> getWishList(@LoginMemberId long memberId) {
+    public ResponseEntity<WishListResponse> getWishList(@LoginMemberId long memberId) {
         return ResponseEntity.ok(wishListService.getWishList(memberId));
     }
 
     @PostMapping("/books/{bookId}")
-    public ResponseEntity<?> createWishList(@PathVariable long bookId, @LoginMemberId long memberId){
+    public ResponseEntity<Void> createWishList(@PathVariable long bookId, @LoginMemberId long memberId){
         wishListService.createWishListBook(memberId, bookId);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/books/{bookId}")
-    public ResponseEntity<?> deleteWishList(@PathVariable long bookId, @LoginMemberId long memberId){
+    public ResponseEntity<Void> deleteWishList(@PathVariable long bookId, @LoginMemberId long memberId){
         wishListService.deleteWishListBook(memberId, bookId);
         return ResponseEntity.noContent().build();
     }

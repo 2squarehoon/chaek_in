@@ -9,10 +9,16 @@ import { Store, Persistor } from './src/redux/store';
 import { useSelector, Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import styled from 'styled-components/native';
+import { useFonts } from 'expo-font';
 
 const Stack = createStackNavigator();
 
 function AppInner({ navigation }) {
+  const [fontsLoaded] = useFonts({
+    Light: require('../../../S07P22A107/FE/chaek-in/assets/font/Light.ttf'),
+    Medium: require('../../../S07P22A107/FE/chaek-in/assets/font/Medium.ttf'),
+    Bold: require('../../../S07P22A107/FE/chaek-in/assets/font/Bold.ttf'),
+  });
   const { accessToken } = useSelector((state) => state.main);
   return (
     <NavigationContainer>

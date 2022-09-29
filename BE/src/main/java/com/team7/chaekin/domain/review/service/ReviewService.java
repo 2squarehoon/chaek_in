@@ -45,7 +45,8 @@ public class ReviewService {
                         .score(String.format("%.1f", r.getScore()))
                         .isMine(r.getBookLog().getMember().getId().equals(memberId))
                         .build()).collect(Collectors.toList());
-        return new ReviewListResponse(totalPages, dtos);
+        Boolean isWritten = checkWrittenReview(dtos);
+        return new ReviewListResponse(totalPages, isWritten, dtos);
     }
 
     @Transactional
@@ -54,8 +55,8 @@ public class ReviewService {
         filtered.sort((o1, o2) -> compareTo(o1.getBookId(), o2.getBookId()));
 
         List<Book> books = bookRepository.findByBookIds(filtered.stream()
-                    .map(dto -> dto.getBookId())
-                    .collect(Collectors.toList()));
+                .map(dto -> dto.getBookId())
+                .collect(Collectors.toList()));
         Member member = getMember(memberId);
 
         List<BookLog> bookLogs = new ArrayList<>();
@@ -71,39 +72,11 @@ public class ReviewService {
 
             book.addScore(dto.getScore());
             bookLogs.add(BookLog.builder()
-                            .book(book)
-                            .member(member)
-                            .readStatus(ReadStatus.COMPLETE).build());
+                    .book(book)
+                    .member(member)
+                    .readStatus(ReadStatus.COMPLETE).build());
         }
         bookLogRepository.saveAll(bookLogs);
-    }
-
-    private List<ReviewFirstDto> filteringDuplicatedRating(List<ReviewFirstDto> ratings) {
-        Collections.reverse(ratings);
-        Set<Long> bookIdSet = new HashSet<>();
-        List<ReviewFirstDto> filtered = ratings.stream()
-                .filter(reviewFirstDto -> bookIdSet.add(reviewFirstDto.getBookId()))
-                .collect(Collectors.toList());
-        return filtered;
-    }
-
-    private boolean isNotBookRating(Book book, ReviewFirstDto reviewFirstDto) {
-        return !book.getId().equals(reviewFirstDto.getBookId());
-    }
-
-    private Member getMember(long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
-        return member;
-    }
-
-    private int compareTo(long a, long b) {
-        if (a > b) {
-            return 1;
-        } else if (a < b) {
-            return -1;
-        }
-        return 0;
     }
 
     @Transactional
@@ -113,9 +86,9 @@ public class ReviewService {
         bookLog.getBook().addScore(reviewRequest.getScore());
 
         return reviewRepository.save(Review.builder()
-                        .bookLog(bookLog)
-                        .comment(reviewRequest.getComment())
-                        .score(reviewRequest.getScore()).build()).getId();
+                .bookLog(bookLog)
+                .comment(reviewRequest.getComment())
+                .score(reviewRequest.getScore()).build()).getId();
     }
 
     @Transactional
@@ -159,5 +132,35 @@ public class ReviewService {
                 .orElseThrow(() -> new CustomException(BOOKLOG_IS_NOT_EXIST));
     }
 
+    private Boolean checkWrittenReview(List<ReviewListDto> dtos) {
+        return dtos.stream().filter(reviewListDto -> reviewListDto.getIsMine()).count() > 0;
+    }
 
+    private List<ReviewFirstDto> filteringDuplicatedRating(List<ReviewFirstDto> ratings) {
+        Collections.reverse(ratings);
+        Set<Long> bookIdSet = new HashSet<>();
+        List<ReviewFirstDto> filtered = ratings.stream()
+                .filter(reviewFirstDto -> bookIdSet.add(reviewFirstDto.getBookId()))
+                .collect(Collectors.toList());
+        return filtered;
+    }
+
+    private boolean isNotBookRating(Book book, ReviewFirstDto reviewFirstDto) {
+        return !book.getId().equals(reviewFirstDto.getBookId());
+    }
+
+    private Member getMember(long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
+        return member;
+    }
+
+    private int compareTo(long a, long b) {
+        if (a > b) {
+            return 1;
+        } else if (a < b) {
+            return -1;
+        }
+        return 0;
+    }
 }

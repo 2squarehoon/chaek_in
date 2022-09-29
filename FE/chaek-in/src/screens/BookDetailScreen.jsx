@@ -6,13 +6,16 @@ import { HOST } from '@env';
 import ReviewList from '../components/review/ReviewList';
 import { useSelector } from 'react-redux';
 import { AntDesign } from '@expo/vector-icons';
+import axios from 'axios';
 
-function BookDetailScreen({ route }) {
+function BookDetailScreen({ route, navigation }) {
   const { accessToken } = useSelector((state) => state.main);
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [score, setScore] = useState(0);
   const [cover, setCover] = useState('');
+  const [isLiked, setIsLiked] = useState(false);
+  const [readStatus, setReadStatus] = useState('');
   // const [index, setIndex] = useState('');
   const [description, setDescription] = useState('');
   const bookId = route.params.bookId;
@@ -30,40 +33,92 @@ function BookDetailScreen({ route }) {
         setCover(response.data.cover);
         // setIndex(response.data.index);
         setDescription(response.data.description);
+        setIsLiked(response.data.isLiked);
+        setReadStatus(response.data.readStatus);
       })
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [isLiked, readStatus]);
+
+  function LikeBook() {
+    axios
+      .post(`${HOST}/api/v1/wishlist/books/${bookId}`, '', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then(function (response) {
+        console.log(response);
+        setIsLiked(true);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  function DislikeBook() {
+    axios
+      .patch(`${HOST}/api/v1/wishlist/books/${bookId}`, '', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then(function (response) {
+        console.log(response);
+        setIsLiked(false);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  function GoRecord() {
+    navigation.navigate('RecordScreen', { bookId: bookId });
+  }
+
+  function PressLike() {
+    if (isLiked) {
+      DislikeBook();
+    } else {
+      LikeBook();
+    }
+  }
 
   return (
     <>
       <ScrollViewContainer>
-        {/* <BeforeContainer>
-          <ButtonContainer style={{ marginLeft: 'auto', marginRight: 15 }}>
-            <ButtonText>찜하기</ButtonText>
-          </ButtonContainer>
-        </BeforeContainer>
-        <ReadingContainer>
-          <ButtonContainer style={{ marginRight: 'auto', marginLeft: 15 }}>
-            <ButtonText>읽기 종료</ButtonText>
-          </ButtonContainer>
-          <ButtonContainer style={{ marginLeft: 'auto', marginRight: 15 }}>
-            <ButtonText>나의 기록</ButtonText>
-          </ButtonContainer>
-        </ReadingContainer>
-        <AfterContainer>
-          <ButtonContainer>
-            <ButtonText>내 기록 보기</ButtonText>
-          </ButtonContainer>
-          <ButtonContainer>
-            <ButtonText>독후감 작성</ButtonText>
-          </ButtonContainer>
-          <ButtonContainer>
-            <ButtonText>독후감 보기</ButtonText>
-          </ButtonContainer>
-        </AfterContainer> */}
-        <ImageContainer source={{ uri: cover }} style={{ width: 240, height: 360 }} />
+        {readStatus === 'NONE' && (
+          <BeforeContainer>
+            <Text>대충읽기전로고</Text>
+            {isLiked ? (
+              <ButtonContainer style={{ marginLeft: 'auto', marginRight: 15 }} onPress={DislikeBook}>
+                <ButtonText>찜안하기</ButtonText>
+              </ButtonContainer>
+            ) : (
+              <ButtonContainer style={{ marginLeft: 'auto', marginRight: 15 }} onPress={LikeBook}>
+                <ButtonText>찜하기</ButtonText>
+              </ButtonContainer>
+            )}
+          </BeforeContainer>
+        )}
+        {readStatus === 'READING' && (
+          <ReadingContainer>
+            <Text>대충읽고있는로고</Text>
+            <ButtonContainer style={{ marginLeft: 'auto', marginRight: 15 }} onPress={GoRecord}>
+              <ButtonText>나의 기록</ButtonText>
+            </ButtonContainer>
+          </ReadingContainer>
+        )}
+        {readStatus === 'COMPLETE' && (
+          <AfterContainer>
+            <Text>대충다읽은로고</Text>
+            <ButtonContainer style={{ marginLeft: 'auto', marginRight: 15 }} onPress={GoRecord}>
+              <ButtonText>나의 기록</ButtonText>
+            </ButtonContainer>
+          </AfterContainer>
+        )}
+        <ImageContainer source={cover ? { uri: cover } : null} style={{ width: 240, height: 360 }} />
         <MiddleContainer>
           <BookTitle>{title}</BookTitle>
           <Author>{author}</Author>

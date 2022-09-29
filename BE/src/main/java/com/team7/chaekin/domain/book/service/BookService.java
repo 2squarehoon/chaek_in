@@ -11,8 +11,11 @@ import com.team7.chaekin.domain.member.repository.MemberRepository;
 import com.team7.chaekin.domain.wishlist.entity.WishList;
 import com.team7.chaekin.domain.wishlist.repository.WishListRepository;
 import com.team7.chaekin.global.error.exception.CustomException;
+import com.team7.chaekin.global.notification.entity.FcmToken;
+import com.team7.chaekin.global.notification.util.FCMUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +35,19 @@ public class BookService {
     private final BookLogRepository bookLogRepository;
     private final MemberRepository memberRepository;
     private final WishListRepository wishListRepository;
+    private final FCMUtil fcmUtil;
+
+    @Transactional
+    @Scheduled(cron = "0 0 10 * * *") //TODO: 매일 몇 시에 보낼지 정하기
+    protected void sendRemindNotification() {
+        LocalDate date = LocalDate.now().minusMonths(1);
+        List<BookLog> bookLogs = bookLogRepository.findByEndDateNotNullAndStartDateBefore(date);
+
+        List<FcmToken> tokens = new ArrayList<>();
+        bookLogs.stream().forEach(bookLog -> tokens.addAll(bookLog.getMember().getFcmTokens()));
+        fcmUtil.sendMessage(tokens);
+    }
+
 
     @Transactional(readOnly = true)
     public BookListResponse search(String keyword) {
@@ -92,6 +108,7 @@ public class BookService {
         LocalDate now = LocalDate.now();
         int month = now.getMonthValue();
         int lastDay = now.lengthOfMonth();
+        int today = now.getDayOfMonth();
 
         LocalDate firstDate = now.withDayOfMonth(1);
         LocalDate lastDate = now.withDayOfMonth(lastDay);
@@ -99,25 +116,28 @@ public class BookService {
                 .findByMemberAndStartDateBetweenOrderByStartDate(member, firstDate, lastDate);
 
         BookCalenderListDto[] calenderList = new BookCalenderListDto[lastDay];
-        for (int i = 0, j = 0; i < lastDay; i++, j++) {
-            int day = i + 1;
-            List<BookCalenderDto> books = new ArrayList<>();
-            while (j < bookLogs.size() && bookLogs.get(j).getStartDate().getDayOfMonth() == day) {
-                books.add(BookCalenderDto.builder()
-                                        .bookId(bookLogs.get(j).getBook().getId())
-                                        .title(bookLogs.get(j++).getBook().getTitle()).build());
-            }
-
+        for (int i = 0; i < lastDay; i++) {
             calenderList[i] = BookCalenderListDto.builder()
                     .day(i + 1)
                     .isExist(false)
-                    .books(books).build();
+                    .books(new ArrayList<>()).build();
         }
+        bookLogs.stream().forEach(bookLog -> {
+            int start = bookLog.getStartDate().getDayOfMonth();
+            int last = bookLog.getEndDate() == null ? today : bookLog.getEndDate().getDayOfMonth();
+
+            for (int i = start - 1; i < last; i++) {
+                calenderList[i].getBooks().add(BookCalenderDto.builder()
+                                .bookId(bookLog.getBook().getId())
+                                .title(bookLog.getBook().getTitle()).build());
+            }
+        });
+
         return new BookCalenderResponse(month, calenderList);
     }
 
     @Transactional
-    public BookReadResponse registReadBook(String isbn, long memberId) {
+    public BookReadResponse registerBook(String isbn, long memberId) {
         Book book = bookRepository.findByIsbn(isbn)
                 .orElseThrow(() -> new CustomException(BOOK_IS_NOT_EXIST));
         Member member = getMember(memberId);
@@ -128,7 +148,7 @@ public class BookService {
                 .readStatus(ReadStatus.READING.name()).build();
         bookLogRepository.findByMemberAndBook(member, book)
                 .ifPresentOrElse(bookLog -> {
-                    bookLog.updateStatus();
+                    bookLog.completeReadBook();
                     response.setReadStatus(ReadStatus.COMPLETE.name());
                 }, () -> {
                     bookLogRepository.save(BookLog.builder()
@@ -137,6 +157,8 @@ public class BookService {
                             .readStatus(ReadStatus.READING).build());
                     wishListRepository.findByMemberIdAndBookId(member.getId(), book.getId())
                             .ifPresent(wishList -> wishList.delete());
+
+                    fcmUtil.sendMessage(member.getFcmTokens());
                 });
         return response;
     }
@@ -145,7 +167,7 @@ public class BookService {
     public void endRead(long memberId, long bookId) {
         BookLog bookLog = bookLogRepository.findBookLogByMemberIdAndBookId(memberId, bookId)
                 .orElseThrow(() -> new CustomException(BOOKLOG_IS_NOT_EXIST));
-        bookLog.updateStatus();
+        bookLog.completeReadBook();
     }
 
     private Book getBook(long bookId) {
@@ -158,4 +180,9 @@ public class BookService {
                 .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
     }
 
+    public BookPeopleResponse getReadingPeopleNumber(long bookId) {
+        Book book = getBook(bookId);
+        int numberOfPeople = bookLogRepository.findByBookAndReadStatusEquals(book, ReadStatus.READING).size();
+        return new BookPeopleResponse(bookId, numberOfPeople);
+    }
 }

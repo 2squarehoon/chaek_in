@@ -41,7 +41,7 @@ public class MeetingCommentService {
 
         meetingCommentPages.toList().stream()
                 .forEach(mc -> {
-                    if (mc.getParent() == null)
+                    if (mc.getParent() != null)
                         return;
                     MeetingCommentParentDto parent = MeetingCommentParentDto.builder()
                             .meetingCommentId(mc.isRemoved() ? 0L : mc.getId())

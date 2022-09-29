@@ -9,7 +9,7 @@ const RecordStack = createStackNavigator();
 
 function RecordNavigation() {
   return (
-    <RecordStack.Navigator initialRouteName='RecordScreen'>
+    <RecordStack.Navigator initialRouteName='RecordScreen' screenOptions={{ headerShown: false }}>
       <RecordStack.Screen name='RecordScreen' component={RecordScreen}></RecordStack.Screen>
       <RecordStack.Screen name='RecordCreate' component={RecordCreateScreen}></RecordStack.Screen>
       <RecordStack.Screen name='OCRRecordCreate' component={OCRRecordCreateScreen}></RecordStack.Screen>

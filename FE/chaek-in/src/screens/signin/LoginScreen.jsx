@@ -8,6 +8,7 @@ import styled from 'styled-components/native';
 import { HOST } from '@env';
 import { useDispatch } from 'react-redux';
 import { setAccessToken, setEmail, setNickname, setRefreshToken } from '../../redux/actions';
+import * as Font from 'expo-font';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -60,7 +61,7 @@ function LoginScreen({ navigation }) {
     } else if (isFirst === false) {
       saveReduxState();
     }
-  }, [isFirst]);
+  }, [isFirst, navigation, saveReduxState, userEmail]);
 
   // 구글에 요청해서 email만 받아와서 state에 저장
   const getGoogleUser = async (accessToken) => {
@@ -136,7 +137,7 @@ const GoogleLogin = styled.TouchableOpacity`
   margin: 10% 20% 0;
   background-color: white;
   width: 60%;
-  height: 10%;
+  height: 9%;
   border-radius: 15px;
   justify-content: space-around;
   align-items: center;
@@ -151,10 +152,12 @@ const MiddleContainer = styled.View`
 
 const MiddleText = styled.Text`
   font-size: 20px;
+  font-family: Medium;
 `;
 
 const ButtonText = styled.Text`
-  font-size: 20px;
+  font-size: 16px;
+  font-family: Medium;
 `;
 
 export default LoginScreen;

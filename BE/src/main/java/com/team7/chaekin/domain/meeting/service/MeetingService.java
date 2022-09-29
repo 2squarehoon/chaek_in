@@ -34,7 +34,7 @@ public class MeetingService {
 
     @Transactional
     public MeetingListResponse getMeetings(MeetingListRequest meetingListRequest, Pageable pageable) {
-        Page<Meeting> pageList = meetingRepository.findByTitleContainingAndIsRemovedIsFalse(meetingListRequest.getKeyword(), pageable);
+        Page<Meeting> pageList = meetingRepository.searchMeetingList(meetingListRequest.getKeyword(), pageable);
 
         List<MeetingListDto> meetings = pageList.toList().stream()
                 .map(Meeting::toListDto)
