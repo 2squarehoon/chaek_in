@@ -2,7 +2,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Camera } from 'expo-camera';
 import { Text, View, ScrollView, Image, Alert, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import Environment from '../../config/environment';
+import Environment from '../../../secret';
 import Button from '../../components/Button';
 import styled from 'styled-components/native';
 
