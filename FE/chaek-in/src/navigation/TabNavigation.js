@@ -30,7 +30,7 @@ function TabNavigation() {
           elevation: 0,
           backgroundColor: '#B1D8E8',
           borderRadius: 15,
-          height: 80,
+          height: 70,
           paddingLeft: 10,
           paddingRight: 10,
           borderColor: 'black',
