@@ -32,7 +32,11 @@ public enum DomainErrorCode implements ErrorCode {
 
     REVIEW_IS_NOT_EXIST(HttpStatus.NOT_FOUND, "Review is not exist."),
 
-    INVALID_BOOK_ID(HttpStatus.BAD_REQUEST, "Invalid bookId in request."),;
+    INVALID_BOOK_ID(HttpStatus.BAD_REQUEST, "Invalid bookId in request."),
+
+    ALREADY_READ_BOOK(HttpStatus.BAD_REQUEST, "Already read this book."),
+    ;
+
     private final HttpStatus httpStatus;
     private final String message;
 }
