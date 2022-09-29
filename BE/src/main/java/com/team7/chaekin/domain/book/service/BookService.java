@@ -108,6 +108,7 @@ public class BookService {
         LocalDate now = LocalDate.now();
         int month = now.getMonthValue();
         int lastDay = now.lengthOfMonth();
+        int today = now.getDayOfMonth();
 
         LocalDate firstDate = now.withDayOfMonth(1);
         LocalDate lastDate = now.withDayOfMonth(lastDay);
@@ -115,20 +116,23 @@ public class BookService {
                 .findByMemberAndStartDateBetweenOrderByStartDate(member, firstDate, lastDate);
 
         BookCalenderListDto[] calenderList = new BookCalenderListDto[lastDay];
-        for (int i = 0, j = 0; i < lastDay; i++, j++) {
-            int day = i + 1;
-            List<BookCalenderDto> books = new ArrayList<>();
-            while (j < bookLogs.size() && bookLogs.get(j).getStartDate().getDayOfMonth() == day) {
-                books.add(BookCalenderDto.builder()
-                                        .bookId(bookLogs.get(j).getBook().getId())
-                                        .title(bookLogs.get(j++).getBook().getTitle()).build());
-            }
-
+        for (int i = 0; i < lastDay; i++) {
             calenderList[i] = BookCalenderListDto.builder()
                     .day(i + 1)
                     .isExist(false)
-                    .books(books).build();
+                    .books(new ArrayList<>()).build();
         }
+        bookLogs.stream().forEach(bookLog -> {
+            int start = bookLog.getStartDate().getDayOfMonth();
+            int last = bookLog.getEndDate() == null ? today : bookLog.getEndDate().getDayOfMonth();
+
+            for (int i = start - 1; i < last; i++) {
+                calenderList[i].getBooks().add(BookCalenderDto.builder()
+                                .bookId(bookLog.getBook().getId())
+                                .title(bookLog.getBook().getTitle()).build());
+            }
+        });
+
         return new BookCalenderResponse(month, calenderList);
     }
 
@@ -176,4 +180,9 @@ public class BookService {
                 .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
     }
 
+    public BookPeopleResponse getReadingPeopleNumber(long bookId) {
+        Book book = getBook(bookId);
+        int numberOfPeople = bookLogRepository.findByBookAndReadStatusEquals(book, ReadStatus.READING).size();
+        return new BookPeopleResponse(bookId, numberOfPeople);
+    }
 }

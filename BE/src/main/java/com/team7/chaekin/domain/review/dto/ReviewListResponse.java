@@ -9,5 +9,6 @@ import java.util.List;
 @Data
 public class ReviewListResponse {
     private int totalPages;
+    private Boolean isWritten;
     private List<ReviewListDto> reviews;
 }
