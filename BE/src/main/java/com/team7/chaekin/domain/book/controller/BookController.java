@@ -40,6 +40,11 @@ public class BookController {
         return ResponseEntity.ok(bookService.getCalenderData(memberId));
     }
 
+    @GetMapping("/{bookId}/people")
+    public ResponseEntity<BookPeopleResponse> getReadingPeopleNumber(@PathVariable long bookId) {
+        return ResponseEntity.ok(bookService.getReadingPeopleNumber(bookId));
+    }
+
     @PostMapping
     public ResponseEntity<BookReadResponse> startReadBook(@Valid @RequestBody BookReadRequest bookReadRequest, @LoginMemberId long memberId) {
         return ResponseEntity.ok(bookService.registerBook(bookReadRequest.getIsbn(), memberId));

@@ -176,4 +176,9 @@ public class BookService {
                 .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
     }
 
+    public BookPeopleResponse getReadingPeopleNumber(long bookId) {
+        Book book = getBook(bookId);
+        int numberOfPeople = bookLogRepository.findByBookAndReadStatusEquals(book, ReadStatus.READING).size();
+        return new BookPeopleResponse(bookId, numberOfPeople);
+    }
 }
