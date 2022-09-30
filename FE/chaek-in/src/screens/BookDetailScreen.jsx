@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import { HOST } from '@env';
 import ReviewList from '../components/review/ReviewList';
+import ReviewForm from '../components/review/ReviewForm';
 import { useSelector } from 'react-redux';
 import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
@@ -19,6 +20,7 @@ function BookDetailScreen({ route, navigation }) {
   // const [index, setIndex] = useState('');
   const [description, setDescription] = useState('');
   const bookId = route.params.bookId;
+  console.log(bookId);
   useEffect(() => {
     Axios.get(`${HOST}/api/v1/books/${route.params.bookId}`, {
       headers: {
@@ -26,7 +28,7 @@ function BookDetailScreen({ route, navigation }) {
       },
     })
       .then(function (response) {
-        console.log(response.data);
+        // console.log(response.data);
         setTitle(response.data.title);
         setAuthor(response.data.author);
         setScore(Math.round(response.data.ratingScore * 10) / 10);
@@ -133,16 +135,6 @@ function BookDetailScreen({ route, navigation }) {
             </View>
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
           </View>
-          {/* <Intro>
-            <Text>{index}</Text>
-          </Intro>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
-            <View>
-              <Text style={{ width: 50, textAlign: 'center', fontSize: 15 }}>목차</Text>
-            </View>
-            <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
-          </View> */}
           <Intro>
             <Text>{description}</Text>
           </Intro>
@@ -155,6 +147,7 @@ function BookDetailScreen({ route, navigation }) {
           </View>
         </MiddleContainer>
         <ReviewList bookId={bookId} />
+        <BlackContainer></BlackContainer>
       </ScrollViewContainer>
     </>
   );
@@ -215,7 +208,7 @@ const BookTitle = styled.Text`
 
 const Author = styled.Text`
   font-size: 15px;
-  margin-bottom: 2%;
+  margin: 0% 10% 3%;
 `;
 
 const StartTime = styled.Text`
@@ -229,6 +222,9 @@ const Intro = styled.View`
 
 const ScrollViewContainer = styled.ScrollView`
   flex: 7;
+`;
+const BlackContainer = styled.View`
+  height: 150px;
 `;
 
 export default BookDetailScreen;
