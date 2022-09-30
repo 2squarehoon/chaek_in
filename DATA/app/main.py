@@ -94,9 +94,6 @@ def get_recommended(memberId: int):
         response = dict()
         response['cbfBooks'] = random.sample(dict_list, 10)
 
-        # print(response)
-        print(type(response))
-        
         end = time.time() # 실행 끝나는 시간 계산
         print(f"use redis: {end - start:.5f} sec")
         
@@ -129,32 +126,9 @@ def get_recommended(memberId: int):
         # 필요한 컬럼만 다시 저장, 약 100개의 행을 가진 데이터 프레임
         cbf_result = cbf_result[['id', 'isbn', 'title', 'author', 'cover', 'rating_score', 'w_rating']]
         cbf_result = cbf_result.sort_values('w_rating', ascending=False)
-        
-        print("--------------------------------------------------result------------------------------------------------------------")
-        print(cbf_result)
-
-        print("--------------------------------------------------result.to_json(orient='records', force_ascii=False, indent=4)------------------------------------------------------------")
-        print(cbf_result.to_json(orient='records', force_ascii=False, indent=4))
 
         key = "user:" + str(memberId)
         json_value = cbf_result.to_json(orient='records', force_ascii=False, indent=4)
-        # json_value = json.dumps(value, ensure_ascii=False).encode('utf-8')
-        print("--------------------------------------------------json.dumps(value, ensure_axcii=False).encode('utf-8')------------------------------------------------------------")
-        print(json_value)
-        print(type(json_value))
-        rd.set(key, json_value)
-
-        # json_value_get = json_value.decode('utf-8')
-        json_value_get = rd.get("user:37").decode('utf-8')
-        print("--------------------------------------------------rd.get(user:37).decode('utf-8')------------------------------------------------------------")
-        print(json_value_get)
-        
-        # json_dict = dict(json.loads(json_value_get))
-
-        json_dict = dict(json.loads(json_value_get))
-        print("--------------------------------------------------dict(json.loads(value_get))------------------------------------------------------------")
-        print(json_dict)
-
 
         # json형태로 반환하기 위해 빈 딕셔너리 생성
         response = dict()
@@ -162,8 +136,6 @@ def get_recommended(memberId: int):
         # value: result에서 10개를 임의 추출 후 json으로 변환 to_json은 json형식으로 변환하려고 썼고
         # json.loads는 json으로 깔끔하게 만들어줘서 썼음
         response['cbfBooks'] = json.loads(cbf_result[:100].sample(10).to_json(orient='records', force_ascii=False, indent=4))
-        print("------------------------------------------------response['cbfBooks']------------------------------------------------")
-        print(response['cbfBooks'])
             
         end = time.time() # 실행 끝나는 시간 계산
         print(f"{end - start:.5f} sec")
@@ -183,6 +155,7 @@ def get_recommend_will_meeting(memberId: int):
         json_dict = rd.get(key).decode('utf-8')
         dict_list = json.loads(json_dict)
         cbf_result = pd.DataFrame(dict_list)
+        # print(cbf_result)
         # 추천 코드
         result_id = list(cbf_result.sort_values('w_rating', ascending=False)['id']) # 추천 받은 책을 가중 평점으로 정렬 후 id => 리스트 
         will_read = list(meeting.groupby('meetingCategory').get_group(2)['bookId']) # 같이 독서하는 모임의 book_id 리스트
@@ -228,14 +201,6 @@ def get_recommend_will_meeting(memberId: int):
         json_value = cbf_result.to_json(orient='records', force_ascii=False, indent=4)
         # json_value = json.dumps(value, ensure_ascii=False).encode('utf-8')
         rd.set(key, json_value)
-
-        # json_value_get = json_value.decode('utf-8')
-        json_value_get = rd.get("user:37").decode('utf-8')
-
-        
-        # json_dict = dict(json.loads(json_value_get))
-
-        json_dict = dict(json.loads(json_value_get))
 
         result_id = list(cbf_result.sort_values('w_rating', ascending=False)['id']) # 추천 받은 책을 가중 평점으로 정렬 후 id => 리스트 
         will_read = list(meeting.groupby('meetingCategory').get_group(2)['bookId']) # 같이 독서하는 모임의 book_id 리스트
