@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import React, { useState, useReducer } from 'react';
+import React, { useState, useReducer, useEffect } from 'react';
 import { Alert, StyleSheet, Text, Pressable, View, Button, TouchableOpacity, Image } from 'react-native';
 import Axios from 'axios';
 import { HOST } from '@env';
@@ -9,7 +9,7 @@ import BookRatingItem from '../../components/common/BookRatingItem';
 import { AntDesign } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
 import StarRating from 'react-native-star-rating-widget';
-import axios from 'axios';
+import Star from 'react-native-star-view';
 
 function FirstRatingScreen() {
   const dispatch = useDispatch();
@@ -20,8 +20,9 @@ function FirstRatingScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [bookTitle, setBookTitle] = useState('');
   const [bookCover, setBookCover] = useState('');
-  const [score, changeScore] = useState(0);
+  const [score, setScore] = useState(0);
   const [id, setId] = useState('');
+  const [idx, setIdx] = useState('');
   const [ratingArray, setRatingArray] = useState([]);
 
   var lst = [];
@@ -57,6 +58,7 @@ function FirstRatingScreen() {
   // function resetId() {
   //   idDispatch({ type: 'RESET' });
   // }
+  useEffect(() => {}, [books]);
 
   function SearchBooks() {
     console.log(fakeAccessToken);
@@ -68,7 +70,18 @@ function FirstRatingScreen() {
       })
         .then(function (response) {
           console.log(response.data.books);
-          setBooks(response.data.books);
+          var test1 = response.data.books;
+          // var test = test1.map((book) => {
+          //   console.log(book);
+          //   book.rating = 0;
+          //   console.log(book);
+          // });
+          for (let i = 0; i < test1.length; i++) {
+            test1[i].rating = 0;
+            console.log(test1[i]);
+          }
+          console.log(test1);
+          setBooks(test1);
         })
         .catch(function (error) {
           console.log(error);
@@ -80,12 +93,13 @@ function FirstRatingScreen() {
     setRatingArray([...ratingArray, { bookId: id, score: score }]);
   }
 
-  function PressBook(id, title, cover) {
+  function PressBook(id, title, cover, idx) {
     setId(id);
     setBookTitle(title);
     setBookCover(cover);
     setModalVisible(true);
-    changeScore(0);
+    setScore(0);
+    setIdx(idx);
     console.log('hi');
     console.log(ratingArray);
   }
@@ -93,6 +107,7 @@ function FirstRatingScreen() {
   function CloseModal() {
     setBookTitle('');
     setBookCover('');
+    books[idx].rating = score;
     if (score !== 0) {
       pushList(id, score);
     }
@@ -104,12 +119,11 @@ function FirstRatingScreen() {
 
   function RatingSubmit() {
     const data = { ratings: ratingArray };
-    axios
-      .post(`${HOST}/api/v1/reviews/me`, data, {
-        headers: {
-          Authorization: `Bearer ${fakeAccessToken}`,
-        },
-      })
+    Axios.post(`${HOST}/api/v1/reviews/me`, data, {
+      headers: {
+        Authorization: `Bearer ${fakeAccessToken}`,
+      },
+    })
       .then(function (response) {
         console.log(response);
         FinishRating();
@@ -131,6 +145,12 @@ function FirstRatingScreen() {
     ]);
   };
 
+  const starStyle = {
+    Color: '#ffce31',
+    width: 80,
+    height: 20,
+  };
+
   return (
     <EntireContainer>
       <SearchContainer>
@@ -142,17 +162,15 @@ function FirstRatingScreen() {
         />
         <AntDesign name='search1' size={24} color='black' onPress={SearchBooks} />
       </SearchContainer>
-      <SubmitButton onPress={RatingPress}>
-        <Text>제출</Text>
-      </SubmitButton>
       <ScrollViewContainer>
         <BookItemsContainer>
           {books.map((book) => (
             <TouchableOpacity
               key={book.bookId}
-              onPress={() => PressBook(book.bookId, book.title, book.cover)}
+              onPress={() => PressBook(book.bookId, book.title, book.cover, books.indexOf(book))}
             >
-              <BookRatingItem item={book} rating={0} />
+              <BookRatingItem item={book} />
+              {book.rating ? <Star score={book.rating} style={starStyle} /> : <Text></Text>}
             </TouchableOpacity>
           ))}
           <Modal
@@ -170,13 +188,16 @@ function FirstRatingScreen() {
               <Image source={{ uri: bookCover }} style={{ width: '80%', height: '60%', margin: '10%' }} />
               <ModalText>{bookTitle}</ModalText>
               <StarRatingContainer>
-                <StarRating rating={score} onChange={changeScore} starSize={25} />
+                <StarRating rating={score} onChange={setScore} starSize={25} />
               </StarRatingContainer>
               <Text>{score}점</Text>
             </ModalContainer>
           </Modal>
         </BookItemsContainer>
       </ScrollViewContainer>
+      <SubmitButton onPress={RatingPress}>
+        <Text>제출</Text>
+      </SubmitButton>
     </EntireContainer>
   );
 }
@@ -230,8 +251,8 @@ const ModalText = styled.Text`
 const SubmitButton = styled.TouchableOpacity`
   background-color: #b1d8e8;
   position: absolute;
-  right: 10px;
-  bottom: 10px;
+  right: 20px;
+  bottom: 20px;
   width: 50px;
   height: 50px;
   justify-content: space-around;

@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import Star from 'react-native-star-view';
 import Modal from 'react-native-modal';
 
-function BookRatingItem({ item, rating }) {
+function BookRatingItem({ item }) {
   // 색깔 안바뀌는거 킹받네
   const starStyle = {
     Color: '#ffce31',
@@ -18,7 +18,7 @@ function BookRatingItem({ item, rating }) {
     <BookItemContainer>
       <View>
         <Image source={{ uri: item.cover }} style={{ width: 80, height: 120 }} />
-        {rating ? <Star score={rating} style={starStyle} /> : <Text></Text>}
+        {/* {item.rating ? <Star score={item.rating} style={starStyle} /> : <Text></Text>} */}
       </View>
     </BookItemContainer>
   );
