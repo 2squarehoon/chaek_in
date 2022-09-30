@@ -46,6 +46,12 @@ public class ParticipantService {
         Member member = getMember(memberId);
         Meeting meeting = getMeeting(meetingId);
 
+        if (meeting.getMeetingLeader().getId().equals(memberId)) {
+            throw new CustomException(ALREADY_JOIN_MEETING);
+        }
+        if (meeting.getCurrentParticipants() >= meeting.getCapacity()) {
+            throw new CustomException(MEETING_IS_FULL);
+        }
         return participantRepository.save(Participant.makeParticipant(meeting, member, false))
                 .getId();
     }
@@ -62,7 +68,9 @@ public class ParticipantService {
         if (!participant.getMeeting().equals(meeting)) {
             throw new CustomException(MEMBER_IS_NOT_BELONG_MEETING);
         }
-        meeting.getParticipants().remove(participant);
+//        if (participant.isLeader()) {
+//            throw new CustomException(CAN_NOT_LEAVE_MEETING_READER);
+//        }
         participant.leave();
     }
 
