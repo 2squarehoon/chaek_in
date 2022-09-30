@@ -6,7 +6,7 @@ from database import SessionLocal, engine
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-import book_cf, recent_book_meeting
+import book_cf, recent_book_meeting, opposite_meeting
 
 import sys
 import pandas as pd
@@ -121,6 +121,9 @@ def get_recommended(memberId: int):
             # 위에서 만든 빈 데이터프레임에 하나씩 추가
             cbf_result = pd.concat([cbf_result, sim_books])
 
+        # 여러 책을 기준으로 추천 받으면 읽은 책도 추천 리스트에 포함될 수 있으니 삭제
+        for bookid in user_book:
+            cbf_result = cbf_result[cbf_result.index != bookid]
         # 중복값 제거
         cbf_result = cbf_result.drop_duplicates(['id'])
         
@@ -213,6 +216,12 @@ def get_recommend_will_meeting(memberId: int):
             # 위에서 만든 빈 데이터프레임에 하나씩 추가
             cbf_result = pd.concat([cbf_result, sim_books])
 
+        # 여러 책을 기준으로 추천 받으면 읽은 책도 추천 리스트에 포함될 수 있으니 삭제
+        for bookid in user_book:
+            cbf_result = cbf_result[cbf_result.index != bookid]
+            
+        # 중복값 제거
+        cbf_result = cbf_result.drop_duplicates(['id'])
         # 중복값 제거
         cbf_result = cbf_result.drop_duplicates(['id'])
         
@@ -234,8 +243,15 @@ def get_recommend_will_meeting(memberId: int):
 
         json_dict = dict(json.loads(json_value_get))
 
+        meeting_cat = meeting.groupby('meetingCategory').get_group(2)
         result_id = list(cbf_result.sort_values('w_rating', ascending=False)['id']) # 추천 받은 책을 가중 평점으로 정렬 후 id => 리스트 
-        will_read = list(meeting.groupby('meetingCategory').get_group(2)['bookId']) # 같이 독서하는 모임의 book_id 리스트
+        meeting_cat = meeting.groupby('meetingCategory').get_group(2) # 같이 독서하는 모임의 book_id 리스트
+
+        will_read = []
+
+        for i in meeting_cat['currenMember'].index:
+            if memberId not in meeting_cat['currenMember'][i]:
+                will_read.append(meeting_cat['bookId'][i])
 
         wiimeetings = pd.DataFrame(columns = ['meetingId', 'bookId', 'bookTitle', 'cover', 
                                             'meetingtTitle', 'currenMember', 'maxCapacity', 'meetingCategory']) 
@@ -333,3 +349,16 @@ def get_recent_book_meeting(memberId: int):
     print(f"{end - start:.5f} sec")
 
     return response
+
+@app.get('/api/data/meeting/opposite/{memberId}')
+def get_opposite_book_meeting(memberId: int):
+
+    start = time.time() # 실행시간 계산 코드
+
+    meeting = opposite_meeting.reverse_meeting_data(book)
+
+    
+    end = time.time() # 실행 끝나는 시간 계산
+    print(f"{end - start:.5f} sec")
+
+    return opposite_meeting.opposite_meeting(memberId, booklog, review, meeting, df)
