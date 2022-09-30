@@ -48,7 +48,6 @@ class JWTBearer(HTTPBearer):
         payload_member_id = payload['id']
         query = "select count(*) from member where id = {}".format(payload_member_id)
         member_id = pd.read_sql(query, engine).iat[0,0]
-        print(member_id)
 
         if member_id == 1:
             isMemberIdValid = True

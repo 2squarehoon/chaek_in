@@ -320,7 +320,7 @@ def get_recent_book_meeting(memberId: int):
     return response
 
 
-@app.get('/api/data/bookcafe/{latitude}/{longitude}')
+@app.get('/api/data/bookcafe/{latitude}/{longitude}', dependencies=[Depends(JWTBearer())])
 def get_near_bookcafe(latitude: float, longitude: float):
 
     start = time.time() # 실행시간 계산 코드
@@ -333,7 +333,7 @@ def get_near_bookcafe(latitude: float, longitude: float):
     return response
 
 
-@app.get('/api/data/meeting/opposite/{memberId}')
+@app.get('/api/data/meeting/opposite/{memberId}', dependencies=[Depends(JWTBearer())])
 def get_opposite_book_meeting(memberId: int):
 
     start = time.time() # 실행시간 계산 코드
