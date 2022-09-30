@@ -49,6 +49,7 @@ public class Participant extends BaseTimeEntity {
     }
 
     public void leave() {
+        meeting.getParticipants().remove(this);
         isRemoved = true;
     }
 }

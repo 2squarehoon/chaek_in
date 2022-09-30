@@ -1,13 +1,13 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import MeetingHomeScreen from '../../screens/meeting/MeetingHomeScreen';
-import MeetingAllScreen from '../../screens/meeting/MeetingAllScreen';
-import MeetingMyBookScreen from '../../screens/meeting/MeetingMyBookScreen';
-import MeetingOppositeScreen from '../../screens/meeting/MeetingOppositeScreen';
-import MeetingSimilarScreen from '../../screens/meeting/MeetingSimilarScreen';
-import MeetingChallengeScreen from '../../screens/meeting/MeetingChallengeScreen';
-import MeetingCreateScreen from '../../screens/meeting/MeetingCreateScreen';
-import MeetingDetailScreen from '../../screens/meeting/MeetingDetailScreen';
+import MeetingHomeScreen from '../screens/meeting/MeetingHomeScreen';
+import MeetingAllScreen from '../screens/meeting/MeetingAllScreen';
+import MeetingMyBookScreen from '../screens/meeting/MeetingMyBookScreen';
+import MeetingOppositeScreen from '../screens/meeting/MeetingOppositeScreen';
+import MeetingSimilarScreen from '../screens/meeting/MeetingSimilarScreen';
+import MeetingChallengeScreen from '../screens/meeting/MeetingChallengeScreen';
+import MeetingCreateScreen from '../screens/meeting/MeetingCreateScreen';
+import MeetingDetailScreen from '../screens/meeting/MeetingDetailScreen';
 
 const MeetingStack = createStackNavigator();
 
