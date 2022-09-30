@@ -29,3 +29,4 @@ uvicorn==0.18.3
 watchfiles==0.17.0
 websockets==10.3
 redis==3.5.3
+haversine==2.7.0
