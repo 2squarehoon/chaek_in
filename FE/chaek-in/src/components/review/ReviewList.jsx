@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { Text, View } from 'react-native';
 import ReviewForm from './ReviewForm';
 import ReviewItem from './ReviewItem';
@@ -7,9 +7,13 @@ import { HOST } from '@env';
 import { useSelector } from 'react-redux';
 
 function ReviewList({ bookId }) {
+  console.log('2' + bookId);
   const { accessToken } = useSelector((state) => state.main);
-  const [reviews, setReviews] = useState([]);
-  useEffect(() => {
+  const [reviews, setReviews] = useState([
+    { comment: 'test', isMine: true, reviewId: '1', score: '0', writer: 'test' },
+  ]);
+  const [isWritten, setIsWritten] = useState(true);
+  useLayoutEffect(() => {
     Axios.get(`${HOST}/api/v1/books/${bookId}/reviews`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -17,15 +21,22 @@ function ReviewList({ bookId }) {
     })
       .then(function (response) {
         console.log(response.data);
+        setIsWritten(response.data.isWritten);
         setReviews(response.data.reviews);
+        // console.log(isWritten);
+        // console.log(reviews);
       })
       .catch(function (error) {
         console.log(error);
       });
   }, []);
+
+  useEffect(() => {
+    console.log(reviews);
+  }, [reviews]);
   return (
     <View style={{ marginTop: 5 }}>
-      <ReviewForm bookId={bookId} />
+      {!isWritten && <ReviewForm bookId={bookId} />}
       {reviews.map((review) => (
         <ReviewItem key={review.reviewId} item={review} bookId={bookId} />
       ))}

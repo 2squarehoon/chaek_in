@@ -62,35 +62,49 @@ function ReadScreen({ navigation }) {
   }
 
   return (
-    <>
+    <EntireContainer>
       <ScannerContainer>
         <BarCodeScanner
           onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
           style={StyleSheet.absoluteFillObject}
         />
       </ScannerContainer>
-      {scanned && <Button title={'다시 스캔하기'} onPress={() => setScanned(false)} />}
-      <ResultContainer>
-        <View>
-          <Text>타입 : {barcodeType}</Text>
-        </View>
-        <View>
-          <Text>데이터 : {barcodeData}</Text>
-        </View>
-      </ResultContainer>
-    </>
+      {scanned && (
+        <RetouchButton onPress={() => setScanned(false)}>
+          <ButtonText>다시 스캔하기</ButtonText>
+        </RetouchButton>
+      )}
+    </EntireContainer>
   );
 }
 
-const ScannerContainer = styled.View`
-  width: 60%
-  margin-left: 20%
-  margin-bottom: 5%
+const EntireContainer = styled.View`
   flex: 2;
+  background-color: #fcf9f0;
+  align-items: center;
 `;
 
-const ResultContainer = styled.View`
-  flex: 1;
+const ScannerContainer = styled.View`
+  margin-top : 15%
+  width: 300px
+  height: 300px
+  margin-bottom: 3%
+`;
+
+const RetouchButton = styled.TouchableOpacity`
+  margin: 10% 20% 0;
+  background-color: white;
+  width: 60%;
+  height: 8%;
+  border-radius: 15px;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: row;
+  border: 1px solid #000;
+`;
+
+const ButtonText = styled.Text`
+  font-size: 20px;
 `;
 
 export default ReadScreen;
