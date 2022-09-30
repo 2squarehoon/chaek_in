@@ -46,7 +46,7 @@ function MeetingCreateScreen({ navigation }) {
     })
       .then(function (response) {
         console.log(response.data);
-        navigation.navigate('MeetingDetail');
+        navigation.navigate('MeetingDetail', { meetingId: response.data.meetingId });
       })
       .catch(function (error) {
         console.log(error);
@@ -109,7 +109,7 @@ function MeetingCreateScreen({ navigation }) {
         onChangeText={setMeetingDescription}
       ></MeetingDescriptionInput>
       <MeetingCreateButton onPress={CreateMeeting}>
-        <MeetingCreateButtonText>모임 생성</MeetingCreateButtonText>
+        <MeetingCreateButtonText>독서 모임 만들기</MeetingCreateButtonText>
       </MeetingCreateButton>
     </MeetingCreateView>
   );
@@ -120,14 +120,13 @@ const MeetingCreateView = styled.View`
   flex: 1;
   background-color: #fcf9f0;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 `;
 
 const MeetingTitleInput = styled.TextInput`
   width: 80%;
   height: 50px;
-  background-color: #f8dfaa;
+  background-color: white;
   border-radius: 10px;
   border: 1px solid black;
   margin: 10px 0px;
@@ -138,7 +137,7 @@ const MeetingTitleInput = styled.TextInput`
 const MeetingNumInput = styled.TextInput`
   width: 80%;
   height: 50px;
-  background-color: #f8dfaa;
+  background-color: white;
   border-radius: 10px;
   border: 1px solid black;
   margin: 10px 0px;
@@ -149,7 +148,7 @@ const MeetingNumInput = styled.TextInput`
 const BookSearch = styled.TextInput`
   width: 80%;
   height: 50px;
-  background-color: #f8dfaa;
+  background-color: white;
   border-radius: 10px;
   border: 1px solid black;
   margin: 10px 0px;
@@ -160,7 +159,7 @@ const BookSearch = styled.TextInput`
 const MeetingDescriptionInput = styled.TextInput`
   width: 80%;
   height: 200px;
-  background-color: #f8dfaa;
+  background-color: white;
   border-radius: 10px;
   border: 1px solid black;
   margin: 10px 0px;
@@ -172,7 +171,7 @@ const MeetingCreateButton = styled.TouchableOpacity`
   width: 40%;
   height: 50px;
   background-color: #a8ca47;
-  border-radius: 10px;
+  border-radius: 15px;
   border: 1px solid black;
   margin: 10px 0px;
   justify-content: center;
@@ -180,8 +179,8 @@ const MeetingCreateButton = styled.TouchableOpacity`
 `;
 
 const MeetingCreateButtonText = styled.Text`
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 16px;
+  font-family: Medium;
   color: white;
 `;
 const styles = StyleSheet.create({
