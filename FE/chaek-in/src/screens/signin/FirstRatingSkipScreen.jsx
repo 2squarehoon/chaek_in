@@ -122,22 +122,26 @@ function FirstRatingSkipScreen({ navigation, route }) {
   );
 }
 
+const ScrollViewContainer = styled.ScrollView`
+  background-color: #fcf9f0;
+`;
+
 const EntireContainer = styled.View`
   background-color: #fcf9f0;
-  flex: 1;
 `;
 
 const TitleContainer = styled.View`
-  margin: 40% 10% 15%;
+  margin: 30% 10% 15%;
 `;
 
 const TitleText = styled.Text`
-  font-size: 40px;
+  font-size: 30px;
 `;
 
 const MiddleContainer = styled.View`
   margin-left: 10%;
-  margin-bottom: 10%;
+  margin-right: 10%;
+  margin-bottom: 1%;
 `;
 
 const MiddleText = styled.Text`
@@ -149,7 +153,7 @@ const NextButton = styled.TouchableOpacity`
   margin: 10% 20% 0;
   background-color: white;
   width: 60%;
-  height: 10%;
+  height: 8%;
   border-radius: 15px;
   justify-content: space-around;
   align-items: center;
@@ -162,11 +166,13 @@ const ButtonText = styled.Text`
 `;
 
 const SkipButton = styled.TouchableOpacity`
+  width: 50%
+  height:50%
   margin: 20% 10% 0;
 `;
 
 const SkipText = styled.Text`
-  font-size: 15px;
+  font-size: 20px;
   color: #979590;
 `;
 export default FirstRatingSkipScreen;

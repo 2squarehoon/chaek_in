@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface MeetingRepository extends JpaRepository<Meeting, Long>, MeetingRepositoryCustom {
     Page<Meeting> findByTitleContainingAndIsRemovedIsFalse(String title, Pageable pageable);
 
+    List<Meeting> findAllByIsRemovedIsFalse();
+
     Optional<Meeting> findByIdAndIsRemovedIsFalse(long id);
 
 }
