@@ -50,7 +50,7 @@ public class MeetingController {
 
     @DeleteMapping("/{meetingId}")
     public ResponseEntity<Void> deleteMeeting(@PathVariable long meetingId, @LoginMemberId long memberId) {
-        meetingService.deleteMeeting(meetingId);
+        meetingService.deleteMeeting(memberId, meetingId);
         return ResponseEntity.noContent().build();
     }
 }
