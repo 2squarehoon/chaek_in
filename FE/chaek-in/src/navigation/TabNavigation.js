@@ -6,7 +6,7 @@ import RecomNavigation from './RecomNavigation';
 import HomeNavigation from './HomeNavigation';
 import ReadScreen from '../screens/ReadScreen';
 import RecordNavigation from './RecordNavigation';
-import MeetingNavigation from './MeetingNav/MeetingNavigation';
+import MeetingNavigation from './MeetingNavigation';
 import UserInfoNavigation from './UserinfoNavigation';
 import RecordScreen from '../screens/bookRecord/RecordScreen';
 import { MaterialIcons } from '@expo/vector-icons';
