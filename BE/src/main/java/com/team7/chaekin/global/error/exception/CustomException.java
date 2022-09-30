@@ -11,7 +11,7 @@ public class CustomException extends RuntimeException {
     private final ErrorCode errorCode;
 
     public CustomException(ErrorCode errorCode) {
-        log.info(" <=== [Error Occur] : Error name = {}, message = {}", errorCode.name(), errorCode.getMessage());
+        log.info(" <<<< [Error Occur] : Error name = {}, message = {}", errorCode.name(), errorCode.getMessage());
         this.errorCode = errorCode;
     }
 }

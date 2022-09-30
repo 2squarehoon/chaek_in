@@ -91,8 +91,11 @@ public class MeetingService {
     }
 
     @Transactional
-    public void deleteMeeting(long meetingId) {
+    public void deleteMeeting(long memberId, long meetingId) {
         Meeting meeting = getMeeting(meetingId);
+        if (!meeting.getMeetingLeader().getId().equals(memberId)) {
+            throw new CustomException(DomainErrorCode.ONLY_LEADER_CAN_DELETE_MEETING);
+        }
         meeting.delete();
     }
 

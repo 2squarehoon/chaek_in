@@ -34,7 +34,7 @@ public class LoggingAspect {
             if (response != null) {
                 value = objectMapper.writeValueAsString(response.getBody());
             }
-            log.info(" <====== [Response] Response value = {}", value.length() > 50 ? value.substring(0, 50) : value);
+            log.info(" <<<<<<< [Response] Response value = {}", value.length() > 50 ? value.substring(0, 50) : value);
         }
     }
 
