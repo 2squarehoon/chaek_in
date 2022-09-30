@@ -35,38 +35,43 @@ function MeetingHomeScreen({ navigation }) {
     <MeetingHomeView>
       <ScrollViewContainer>
         <MeetingCreateButton onPress={goToMeetingCreate}>
-          <MeetingCreateText>모임 만들기</MeetingCreateText>
+          <MeetingCreateText>모임 시작하기</MeetingCreateText>
         </MeetingCreateButton>
+        <TitleTextView>
+          <TitleText>내가 속한 모임</TitleText>
+        </TitleTextView>
         <MyMeetingView>
-          <MyMeetingText>내 모임</MyMeetingText>
           {myMeetingList.map((meeting) => (
-            <MyMeetingText
+            <MyMeetingItem
               key={meeting.meetingId}
               item={meeting.meetingTitle}
               onPress={() => navigation.navigate('MeetingDetail', { meetingId: meeting.meetingId })}
             >
-              {meeting.meetingTitle}
-            </MyMeetingText>
+              <MyMeetingText>{meeting.meetingTitle}</MyMeetingText>
+              <MyMeetingText>
+                {meeting.currentMember}/{meeting.maxCapacity}
+              </MyMeetingText>
+              <BookCoverImage source={{ uri: meeting.bookCover }} />
+            </MyMeetingItem>
           ))}
         </MyMeetingView>
-        <MyMeeting></MyMeeting>
-        <AllMeetingText onPress={goToMeetingAll}>모든 모임 보기 ▷</AllMeetingText>
+        <TitleText onPress={goToMeetingAll}>모든 모임 보기 &gt;</TitleText>
         <RecomView>
           <RecomHalfView>
-            <MyBook>
+            <MeetingRecom>
               <MyBookText>내가 읽고 있는 책</MyBookText>
-            </MyBook>
-            <Similar>
+            </MeetingRecom>
+            <MeetingRecom>
               <SimilarText>{nickname}님과 비슷한 사람들</SimilarText>
-            </Similar>
+            </MeetingRecom>
           </RecomHalfView>
           <RecomHalfView>
-            <Challenge>
+            <MeetingRecom>
               <ChallengeText>도전! 완독 모임</ChallengeText>
-            </Challenge>
-            <Opposite>
+            </MeetingRecom>
+            <MeetingRecom>
               <OppositeText>이런 책도 같이 읽어봐요</OppositeText>
-            </Opposite>
+            </MeetingRecom>
           </RecomHalfView>
         </RecomView>
       </ScrollViewContainer>
@@ -75,68 +80,58 @@ function MeetingHomeScreen({ navigation }) {
 }
 
 // styled-components
+const MeetingHomeView = styled.View`
+  flex: 1;
+  background-color: #fcf9f0;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 0 5%;
+`;
+
 const MeetingCreateButton = styled.TouchableOpacity`
-  width: 100%;
-  height: 100px;
-  background-color: #f2f2f2;
-  border-radius: 10px;
-  margin: 10px 0px;
+  width: 40%;
+  height: 5%;
+  background-color: #a8ca47;
+  border: 1px solid black;
+  border-radius: 18px;
+  margin-bottom: 10px;
   justify-content: center;
   align-items: center;
+  align-self: flex-end;
 `;
 
 const MeetingCreateText = styled.Text`
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 14px;
+  font-family: 'Medium';
 `;
 
 const ScrollViewContainer = styled.ScrollView`
   flex: 1;
 `;
 
-const MeetingHomeView = styled.View`
-  flex: 1;
-  background-color: #fcf9f0;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: flex-start;
-`;
-
 const MyMeetingView = styled.View`
-  width: 100%;
-  height: 200px;
-  background-color: #f2f2f2;
-`;
-
-const MyMeetingText = styled.Text`
-  flex: 1;
-  font-size: 18px;
-  font-weight: bold;
-`;
-
-const MyMeetingList = styled.View`
-  flex: 1;
-  flex-direction: row;
+  flex; 1;
+  flex-direction: column;
   justify-content: space-around;
   align-items: center;
 `;
 
-const MyMeetingItem = styled.Text`
-  font-size: 15px;
-`;
-
-const MyMeeting = styled.View`
-  flex: 3;
-  background-color: #f2d8a7;
-  border-radius: 15px;
-  padding: 15px;
-  margin: 10px 10px;
-`;
-
-const AllMeetingText = styled.Text`
+const MyMeetingText = styled.Text`
   flex: 1;
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 16px;
+  font-family: 'Medium';
+`;
+
+const MyMeetingItem = styled.Text`
+  flex: 1;
+  width: 100%;
+  height: 100px;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 18px;
+  margin-bottom: 10px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const RecomView = styled.View`
@@ -150,34 +145,7 @@ const RecomHalfView = styled.View`
   align-items: center;
 `;
 
-const MyBook = styled.TouchableOpacity`
-  background-color: #f2d8a7;
-  width: 100px;
-  height: 150px;
-  border-radius: 15px;
-  padding: 15px;
-  margin: 10px 10px;
-`;
-
-const Similar = styled.TouchableOpacity`
-  background-color: #f2d8a7;
-  width: 100px;
-  height: 150px;
-  border-radius: 15px;
-  padding: 15px;
-  margin: 10px 10px;
-`;
-
-const Challenge = styled.TouchableOpacity`
-  background-color: #f2d8a7;
-  width: 100px;
-  height: 150px;
-  border-radius: 15px;
-  padding: 15px;
-  margin: 10px 10px;
-`;
-
-const Opposite = styled.TouchableOpacity`
+const MeetingRecom = styled.TouchableOpacity`
   background-color: #f2d8a7;
   width: 100px;
   height: 150px;
@@ -187,23 +155,41 @@ const Opposite = styled.TouchableOpacity`
 `;
 
 const MyBookText = styled.Text`
-  font-size: 15px;
-  font-weight: bold;
+  font-family: 'Medium';
+  font-size: 14px;
 `;
 
 const SimilarText = styled.Text`
-  font-size: 15px;
-  font-weight: bold;
+  font-family: 'Medium';
+  font-size: 14px;
 `;
 
 const ChallengeText = styled.Text`
-  font-size: 15px;
-  font-weight: bold;
+  font-family: 'Medium';
+  font-size: 14px;
 `;
 
 const OppositeText = styled.Text`
-  font-size: 15px;
-  font-weight: bold;
+  font-family: 'Medium';
+  font-size: 14px;
+`;
+
+const TitleTextView = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: flex-start;
+`;
+
+const TitleText = styled.Text`
+  flex: 1;
+  font-family: 'Medium';
+  font-size: 18px;
+  margin: 10px 0;
+`;
+
+const BookCoverImage = styled.Image`
+  width: 50px;
+  height: 50px;
 `;
 
 export default MeetingHomeScreen;
