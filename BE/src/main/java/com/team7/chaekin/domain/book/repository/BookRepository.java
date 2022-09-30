@@ -17,4 +17,6 @@ public interface BookRepository extends JpaRepository<Book, Long>, BookRepositor
     @Query("SELECT b FROM Book b WHERE b.id IN :bookIds " +
             "ORDER BY b.id")
     List<Book> findByBookIds(@Param("bookIds") List<Long> bookIds);
+
+    List<Book> findByIsbnIn(List<String> isbn);
 }

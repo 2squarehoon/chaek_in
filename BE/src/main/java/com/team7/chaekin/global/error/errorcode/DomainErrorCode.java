@@ -35,7 +35,9 @@ public enum DomainErrorCode implements ErrorCode {
     INVALID_BOOK_ID(HttpStatus.BAD_REQUEST, "Invalid bookId in request."),
 
     ALREADY_READ_BOOK(HttpStatus.BAD_REQUEST, "Already read this book."),
-    ;
+    ALREADY_JOIN_MEETING(HttpStatus.BAD_REQUEST, "You are leader of this meeting."),
+    MEETING_IS_FULL(HttpStatus.BAD_REQUEST, "Meeting participant is full."),
+    ONLY_LEADER_CAN_DELETE_MEETING(HttpStatus.FORBIDDEN, "Only leader can delete meeting.");
 
     private final HttpStatus httpStatus;
     private final String message;
