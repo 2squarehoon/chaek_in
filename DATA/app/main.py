@@ -5,6 +5,7 @@ from database import SessionLocal, engine
 
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordBearer
 
 import book_cf, recent_book_meeting, bookcafe, opposite_meeting
 
@@ -18,6 +19,7 @@ import random
 import os
 from dotenv import load_dotenv
 import redis
+from auth.auth_bearer import JWTBearer
 
 load_dotenv()
 
@@ -25,7 +27,6 @@ models.Base.metadata.create_all(bind=engine)
 
 # 서버 시작이 처음인지 아닌지 구분 코드
 server_run = False
-
 
 
 # 처음 서버시작이면
@@ -42,8 +43,8 @@ if not(server_run):
 
 try:
     REDIS_HOST = os.getenv("REDIS_HOST")
-    REDIS_PORT = integer = os.getenv("REDIS_PORT")
-    REDIS_DATABASE = integer = os.getenv("REDIS_DATABASE")
+    REDIS_PORT = os.getenv("REDIS_PORT")
+    REDIS_DATABASE = os.getenv("REDIS_DATABASE")
     pool = redis.ConnectionPool(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE)
     rd = redis.Redis(connection_pool=pool)
 except:
@@ -65,10 +66,11 @@ def get_db():
         db.close()
 
 
+
+
 # 일단 이부분만 보면 될듯
-@app.get('/api/data/books/cbf/{memberId}')
+@app.get('/api/data/books/cbf/{memberId}', dependencies=[Depends(JWTBearer())])
 def get_recommended(memberId: int):
-    
     # redis connection pool에서 연결 하나 갖고옴
     global rd
 
@@ -92,9 +94,6 @@ def get_recommended(memberId: int):
         response = dict()
         response['cbfBooks'] = random.sample(dict_list, 10)
 
-        # print(response)
-        print(type(response))
-        
         end = time.time() # 실행 끝나는 시간 계산
         print(f"use redis: {end - start:.5f} sec")
         
@@ -130,32 +129,9 @@ def get_recommended(memberId: int):
         # 필요한 컬럼만 다시 저장, 약 100개의 행을 가진 데이터 프레임
         cbf_result = cbf_result[['id', 'isbn', 'title', 'author', 'cover', 'rating_score', 'w_rating']]
         cbf_result = cbf_result.sort_values('w_rating', ascending=False)
-        
-        print("--------------------------------------------------result------------------------------------------------------------")
-        print(cbf_result)
-
-        print("--------------------------------------------------result.to_json(orient='records', force_ascii=False, indent=4)------------------------------------------------------------")
-        print(cbf_result.to_json(orient='records', force_ascii=False, indent=4))
 
         key = "user:" + str(memberId)
         json_value = cbf_result.to_json(orient='records', force_ascii=False, indent=4)
-        # json_value = json.dumps(value, ensure_ascii=False).encode('utf-8')
-        print("--------------------------------------------------json.dumps(value, ensure_axcii=False).encode('utf-8')------------------------------------------------------------")
-        print(json_value)
-        print(type(json_value))
-        rd.set(key, json_value)
-
-        # json_value_get = json_value.decode('utf-8')
-        json_value_get = rd.get("user:37").decode('utf-8')
-        print("--------------------------------------------------rd.get(user:37).decode('utf-8')------------------------------------------------------------")
-        print(json_value_get)
-        
-        # json_dict = dict(json.loads(json_value_get))
-
-        json_dict = dict(json.loads(json_value_get))
-        print("--------------------------------------------------dict(json.loads(value_get))------------------------------------------------------------")
-        print(json_dict)
-
 
         # json형태로 반환하기 위해 빈 딕셔너리 생성
         response = dict()
@@ -163,15 +139,14 @@ def get_recommended(memberId: int):
         # value: result에서 10개를 임의 추출 후 json으로 변환 to_json은 json형식으로 변환하려고 썼고
         # json.loads는 json으로 깔끔하게 만들어줘서 썼음
         response['cbfBooks'] = json.loads(cbf_result[:100].sample(10).to_json(orient='records', force_ascii=False, indent=4))
-        print("------------------------------------------------response['cbfBooks']------------------------------------------------")
-        print(response['cbfBooks'])
             
         end = time.time() # 실행 끝나는 시간 계산
         print(f"{end - start:.5f} sec")
         return response # 반환값
 
 
-@app.get('/api/data/meeting/will/{memberId}')
+
+@app.get('/api/data/meeting/will/{memberId}', dependencies=[Depends(JWTBearer())])
 def get_recommend_will_meeting(memberId: int):
     # 저장된 cbf 활용, 그래서 지금은 cbf 함수 실행시키고 cbf 가져와야함
     # 레디스되고 나서 추천 리스트 어떻게 가져올지 봐야함
@@ -183,6 +158,7 @@ def get_recommend_will_meeting(memberId: int):
         json_dict = rd.get(key).decode('utf-8')
         dict_list = json.loads(json_dict)
         cbf_result = pd.DataFrame(dict_list)
+        # print(cbf_result)
         # 추천 코드
         result_id = list(cbf_result.sort_values('w_rating', ascending=False)['id']) # 추천 받은 책을 가중 평점으로 정렬 후 id => 리스트 
         will_read = list(meeting.groupby('meetingCategory').get_group(2)['bookId']) # 같이 독서하는 모임의 book_id 리스트
@@ -235,14 +211,6 @@ def get_recommend_will_meeting(memberId: int):
         # json_value = json.dumps(value, ensure_ascii=False).encode('utf-8')
         rd.set(key, json_value)
 
-        # json_value_get = json_value.decode('utf-8')
-        json_value_get = rd.get("user:37").decode('utf-8')
-
-        
-        # json_dict = dict(json.loads(json_value_get))
-
-        json_dict = dict(json.loads(json_value_get))
-
         meeting_cat = meeting.groupby('meetingCategory').get_group(2)
         result_id = list(cbf_result.sort_values('w_rating', ascending=False)['id']) # 추천 받은 책을 가중 평점으로 정렬 후 id => 리스트 
         meeting_cat = meeting.groupby('meetingCategory').get_group(2) # 같이 독서하는 모임의 book_id 리스트
@@ -265,7 +233,7 @@ def get_recommend_will_meeting(memberId: int):
         return response
 
 
-@app.get('/api/data/books/cf/{memberId}')
+@app.get('/api/data/books/cf/{memberId}', dependencies=[Depends(JWTBearer())])
 def get_book_cf(memberId: int):
 
     start = time.time() # 실행시간 계산 코드
@@ -329,15 +297,16 @@ def booklog_update(memberId: int, result: bool = False):
     print(f"{end - start:.5f} sec")
     
     return
-@app.get('/api/data/meeting/similar/{memberId}')
+
+@app.get('/api/data/meeting/similar/{memberId}', dependencies=[Depends(JWTBearer())])
 def get_recommend_similar_meeting(memberId: int):
     global booklog, review, book
     
     meeting = crud.get_test_meeting_data(book)
     return crud.get_member_sim_meeting(memberId, booklog, review, meeting)
 
-
-@app.get('/api/data/meeting/recent-book/{memberId}')
+    
+@app.get('/api/data/meeting/recent-book/{memberId}', dependencies=[Depends(JWTBearer())])
 def get_recent_book_meeting(memberId: int):
 
     start = time.time() # 실행시간 계산 코드
@@ -351,7 +320,7 @@ def get_recent_book_meeting(memberId: int):
     return response
 
 
-@app.get('/api/data/bookcafe/{latitude}/{longitude}')
+@app.get('/api/data/bookcafe/{latitude}/{longitude}', dependencies=[Depends(JWTBearer())])
 def get_near_bookcafe(latitude: float, longitude: float):
 
     start = time.time() # 실행시간 계산 코드
@@ -364,7 +333,7 @@ def get_near_bookcafe(latitude: float, longitude: float):
     return response
 
 
-@app.get('/api/data/meeting/opposite/{memberId}')
+@app.get('/api/data/meeting/opposite/{memberId}', dependencies=[Depends(JWTBearer())])
 def get_opposite_book_meeting(memberId: int):
 
     start = time.time() # 실행시간 계산 코드
