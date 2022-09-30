@@ -361,7 +361,7 @@ def get_near_bookcafe(latitude: float, longitude: float):
     end = time.time() # 실행 끝나는 시간 계산
     print(f"{end - start:.5f} sec")
 
-    return responses
+    return response
 
 
 @app.get('/api/data/meeting/opposite/{memberId}')
