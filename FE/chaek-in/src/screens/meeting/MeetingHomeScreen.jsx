@@ -58,19 +58,49 @@ function MeetingHomeScreen({ navigation }) {
         <TitleText onPress={goToMeetingAll}>모든 모임 보기 &gt;</TitleText>
         <RecomView>
           <RecomHalfView>
-            <MeetingRecom>
-              <MyBookText>내가 읽고 있는 책</MyBookText>
+            <MeetingRecom
+              style={{
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <MeetingRecomImage source={require('../../../assets/image/meeting/current_book.png')} />
+              <MyBookText>내가 </MyBookText>
+              <MyBookText>읽고 있는 책</MyBookText>
             </MeetingRecom>
-            <MeetingRecom>
-              <SimilarText>{nickname}님과 비슷한 사람들</SimilarText>
+            <MeetingRecom
+              style={{
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <MeetingRecomImage source={require('../../../assets/image/meeting/similar_people.png')} />
+
+              <NicknameText>{nickname}</NicknameText>
+              <SimilarText>님과 비슷한 사람들</SimilarText>
             </MeetingRecom>
           </RecomHalfView>
           <RecomHalfView>
-            <MeetingRecom>
+            <MeetingRecom
+              style={{
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                justifyContent: 'flex-end',
+              }}
+            >
               <ChallengeText>도전! 완독 모임</ChallengeText>
             </MeetingRecom>
-            <MeetingRecom>
-              <OppositeText>이런 책도 같이 읽어봐요</OppositeText>
+            <MeetingRecom
+              style={{
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <OppositeText>이런 책도</OppositeText>
+              <OppositeText>같이 읽어봐요</OppositeText>
             </MeetingRecom>
           </RecomHalfView>
         </RecomView>
@@ -146,17 +176,26 @@ const RecomHalfView = styled.View`
 `;
 
 const MeetingRecom = styled.TouchableOpacity`
-  background-color: #f2d8a7;
-  width: 100px;
-  height: 150px;
+  background-color: white;
+  border: 1px solid black;
+  width: 45%;
+  height: 200px;
   border-radius: 15px;
   padding: 15px;
   margin: 10px 10px;
+  justify-content: space-around;
+  align-items: flex-start;
 `;
 
 const MyBookText = styled.Text`
   font-family: 'Medium';
   font-size: 14px;
+`;
+
+const NicknameText = styled.Text`
+  font-family: 'Medium';
+  font-size: 14px;
+  color: #a8ca47;
 `;
 
 const SimilarText = styled.Text`
@@ -190,6 +229,14 @@ const TitleText = styled.Text`
 const BookCoverImage = styled.Image`
   width: 50px;
   height: 50px;
+`;
+
+const MeetingRecomImage = styled.Image`
+  width: 85px;
+  height: 85px;
+  resize-mode: contain;
+  margin-bottom: 25px;
+  align-self: center;
 `;
 
 export default MeetingHomeScreen;
