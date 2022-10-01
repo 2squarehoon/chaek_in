@@ -41,6 +41,31 @@ def get_review():
 
     return review
 
+# meeting 테이블 불러오는 코드
+def get_meeting():
+    select_sql = 'SELECT * FROM meeting'
+    meeting = pd.read_sql(select_sql, engine)
+    meeting = meeting.set_index('id')
+
+    return meeting
+
+# participant 테이블 불러오는 코드
+def get_participant():
+    select_sql = 'SELECT * FROM participant'
+    participant = pd.read_sql(select_sql, engine)
+    participant = participant.set_index('id')
+
+    return participant
+
+
+def meeting_members(meeting, participant):
+    meetingMembers = []
+    for i in meeting.index:
+        meetingMembers.append(list(participant[participant['meeting_id'] == i]['member_id'].values))
+
+    meeting['meetingMembers'] = meetingMembers
+    return meeting
+    
 def clean_df(book, category):
     # 가중평점 계산 후 컬럼에 추가
     percentile = 0.8
@@ -123,66 +148,5 @@ def get_booklog_id(user_id: int):
     booklog = booklog.set_index('id')
 
     return booklog
-def get_test_meeting_data(book):
-    # 게시글 데이터가 없으니 임의로 생성
-    # 필요 컬럼 - id, title, book_id, users(id정보), 모임의 종류(다 읽은 책 => 1, 읽을 책 => 2)
-    # memberId 4가 읽은 책(5572819, 5795911. 1323591)으로 만든 모임
-    print(len(book))
-    titles = []
-    covers = []
-    maxCapacity = []
-    for bookid in [2431928, 1072294, 2396943, 1006570, 2155671, 1323591, 2396986, 2376187, 2037399, 2083728]:
-        # titles.append(list(book[book.index == bookid]['title'].values).pop())
-        # covers.append(list(book[book.index == bookid]['cover'].values).pop())
-        # print(book[book.index == bookid])
-        maxCapacity.append(6)
-
-    meeting = pd.DataFrame({'meetingId': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                        'bookId': [2431928, 1072294, 2396943, 1006570, 2155671, 1323591, 2396986, 2376187, 2037399, 2083728],
-                        # 'bookTitle': titles,
-                        # 'cover': covers,
-                        'meetingtTitle': ['완독을 위해 같이 책 읽을 분', '읽은 책에 대한 얘기 나누실 분', 
-                                '완독을 위해 같이 책 읽을 분', '읽은 책에 대한 얘기 나누실 분', 
-                                '완독을 위해 같이 책 읽을 분', '읽은 책에 대한 얘기 나누실 분', 
-                                '완독을 위해 같이 책 읽을 분', '읽은 책에 대한 얘기 나누실 분', 
-                                '완독을 위해 같이 책 읽을 분', '읽은 책에 대한 얘기 나누실 분'],
-                        'currenMember': [[42, 10], [35], [40, 26], [42, 32], [62, 9], [25, 39, 51], [47, 12], [21, 37], [57], [16, 48]],
-                        'maxCapacity':maxCapacity,
-                        'meetingCategory':[2, 1, 2, 1, 2, 1, 2, 1, 2, 1]
-                        })
-    return meeting
 
 
-def get_member_sim_meeting(memberId, booklog, review, meeting):
-    # 평점 DF 만들기
-    rating = pd.merge(booklog, review, left_on='id', right_on='booklog_id')
-    print(rating['member_id'])
-    rating = rating[['member_id', 'score', 'book_id']]
-    ratings = pd.pivot_table(rating, index='member_id', columns='book_id', values='score')
-    ratings = ratings.fillna(0)
-    
-    # member간 유사도 구하기
-    member_sim = cosine_similarity(ratings, ratings)
-    member_sim_df = pd.DataFrame(data = member_sim, index=ratings.index, columns=ratings.index)
-    
-    member_sim = []
-    
-    # meeting에 참여한 member들 유사도 평균 구하기
-    for i in meeting['currenMember'].index:
-        total_sim = 0
-        member_num = 0
-        for j in meeting['currenMember'][i]:
-            if  member_sim_df[memberId].sort_values(ascending=False)[1:][j] > 0:
-                member_num += 1
-                total_sim += member_sim_df[memberId].sort_values(ascending=False)[1:][j]
-        if member_num > 0 :
-            member_sim.append(total_sim/member_num)
-        else:
-            member_sim.append(0)
-    # json화
-    meeting['member_sim'] = member_sim
-    member_sim_meeting = meeting.sort_values('member_sim', ascending=False)
-    response = dict()
-    response['similarMeeting'] = json.loads(member_sim_meeting.to_json(orient='records', force_ascii=False, indent=4))
-    
-    return response

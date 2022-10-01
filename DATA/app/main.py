@@ -7,7 +7,8 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 
-import book_cf, recent_book_meeting, bookcafe, opposite_meeting
+import book_cf, recent_book_meeting, bookcafe, opposite_meeting, similar_meeting
+
 
 import sys
 import pandas as pd
@@ -36,7 +37,9 @@ if not(server_run):
     category = crud.get_category()
     booklog = crud.get_booklog()
     review = crud.get_review()
-
+    meeting = crud.get_meeting()
+    participant = crud.get_participant()
+    meeting_members = crud.meeting_members(meeting, participant)
     df = crud.clean_df(book, category)
     # 서버 시작 구분 상태 변경, 이후에는 실행 안되도록
     server_run = not(server_run)
@@ -153,7 +156,6 @@ def get_recommend_will_meeting(memberId: int):
     global rd, book
     key = "user:" + str(memberId)
     if rd.exists(key) == 1:
-        meeting = crud.get_test_meeting_data(book)
 
         json_dict = rd.get(key).decode('utf-8')
         dict_list = json.loads(json_dict)
@@ -161,7 +163,7 @@ def get_recommend_will_meeting(memberId: int):
         # print(cbf_result)
         # 추천 코드
         result_id = list(cbf_result.sort_values('w_rating', ascending=False)['id']) # 추천 받은 책을 가중 평점으로 정렬 후 id => 리스트 
-        will_read = list(meeting.groupby('meetingCategory').get_group(2)['bookId']) # 같이 독서하는 모임의 book_id 리스트
+        will_read = list(meeting_members.groupby('meetingCategory').get_group(2)['book_id']) # 같이 독서하는 모임의 book_id 리스트
 
         wiimeetings = pd.DataFrame(columns = ['meetingId', 'bookId', 'bookTitle', 'cover', 
                                             'meetingtTitle', 'currenMember', 'maxCapacity', 'meetingCategory']) 
@@ -300,10 +302,10 @@ def booklog_update(memberId: int, result: bool = False):
 
 @app.get('/api/data/meeting/similar/{memberId}', dependencies=[Depends(JWTBearer())])
 def get_recommend_similar_meeting(memberId: int):
-    global booklog, review, book
+    global booklog, review, book, meeting_members
     
-    meeting = crud.get_test_meeting_data(book)
-    return crud.get_member_sim_meeting(memberId, booklog, review, meeting)
+
+    return similar_meeting.get_member_sim_meeting(memberId, booklog, review, meeting_members)
 
     
 @app.get('/api/data/meeting/recent-book/{memberId}', dependencies=[Depends(JWTBearer())])
@@ -335,12 +337,11 @@ def get_near_bookcafe(latitude: float, longitude: float):
 
 @app.get('/api/data/meeting/opposite/{memberId}', dependencies=[Depends(JWTBearer())])
 def get_opposite_book_meeting(memberId: int):
-
+    global booklog, review, book, meeting_members
     start = time.time() # 실행시간 계산 코드
 
-    meeting = opposite_meeting.reverse_meeting_data(book)
 
     end = time.time() # 실행 끝나는 시간 계산
     print(f"{end - start:.5f} sec")
 
-    return opposite_meeting.opposite_meeting(memberId, booklog, review, meeting, df)
+    return opposite_meeting.opposite_meeting(memberId, booklog, review, meeting_members, df)
