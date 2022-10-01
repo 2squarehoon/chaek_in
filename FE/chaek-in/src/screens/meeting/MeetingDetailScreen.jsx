@@ -1,12 +1,12 @@
-import { StyleSheet, Text, View, Button, TextInput, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import { useIsFocused } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import Axios from 'axios';
 import { HOST } from '@env';
 import styled from 'styled-components/native';
 
-function MeetingDetailScreen({ route }) {
-  const { accessToken } = useSelector((state) => state.main);
+function MeetingDetailScreen({ route, navigation }) {
+  const { accessToken, email } = useSelector((state) => state.main);
   const [bookTitle, setBookTitle] = useState('');
   const [cover, setCover] = useState('');
   const [createdAt, setCreatedAt] = useState('');
@@ -18,12 +18,12 @@ function MeetingDetailScreen({ route }) {
   const [meetingTitle, setMeetingTitle] = useState('');
   // 참가 관련 state
   const [isParticipated, setIsParticipated] = useState(false);
-  // 찜하기 관련 state
-  const [isFavorited, setIsFavorited] = useState(false);
   // 댓글 관련 state
   const [comment, setComment] = useState('');
   const [replyComment, setReplyComment] = useState('');
   const [isReplyOpened, setIsReplyOpened] = useState(false);
+
+  const isFocused = useIsFocused();
   // MeetingDetail 가져오기
   useEffect(() => {
     Axios.get(`${HOST}/api/v1/meetings/${route.params.meetingId}`, {
@@ -38,6 +38,10 @@ function MeetingDetailScreen({ route }) {
         setCurrentMember(response.data.currentMember);
         setDescription(response.data.description);
         setIsMine(response.data.isMine);
+        // 만약 내가 속한 모임이면 isParticipated를 true로
+        if (response.data.isMine) {
+          setIsParticipated(true);
+        }
         setMaxCapacity(response.data.maxCapacity);
         setMeetingId(response.data.meetingId);
         setMeetingTitle(response.data.meetingTitle);
@@ -45,7 +49,25 @@ function MeetingDetailScreen({ route }) {
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [isFocused]);
+  // 모임 참가, /api/v1/meetings/{meetingId}/participants
+  function participateMeeting() {
+    Axios.post(
+      `${HOST}/api/v1/meetings/${route.params.meetingId}/participants`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    )
+      .then(function (response) {
+        setIsParticipated(true);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
   // 댓글 조회
   const [commentList, setCommentList] = useState([]);
@@ -56,6 +78,7 @@ function MeetingDetailScreen({ route }) {
       },
     })
       .then(function (response) {
+        console.log(response.data);
         setCommentList(response.data.comments);
       })
       .catch(function (error) {
@@ -73,7 +96,9 @@ function MeetingDetailScreen({ route }) {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-      .then(function (response) {})
+      .then(function (response) {
+        navigation.navigate('MeetingDetail', { meetingId: meetingId });
+      })
       .catch(function (error) {
         console.log(error);
       });
@@ -90,7 +115,9 @@ function MeetingDetailScreen({ route }) {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-      .then(function (response) {})
+      .then(function (response) {
+        console.log(response.data);
+      })
       .catch(function (error) {
         console.log(error);
       });
@@ -100,45 +127,47 @@ function MeetingDetailScreen({ route }) {
     <MeetingContainer>
       <MeetingHeader>
         <MeetingTitle>{meetingTitle}</MeetingTitle>
-        <EnterButton>
-          <EnterButtonText>참가하기</EnterButtonText>
-        </EnterButton>
-        <FavoriteButton>
-          <FavoriteButtonText>찜하기</FavoriteButtonText>
-        </FavoriteButton>
-        <CurrentMemberText>
-          {currentMember} / {maxCapacity}
-        </CurrentMemberText>
+        {/* 이미 참여한 모임이면 버튼 보여주지 않음 */}
+        <MeetingHeaderRight>
+          <CurrentMemberText>
+            {currentMember} / {maxCapacity}명
+          </CurrentMemberText>
+          <EnterButton>
+            <EnterButtonText>참가하기</EnterButtonText>
+          </EnterButton>
+        </MeetingHeaderRight>
       </MeetingHeader>
       <MeetingInfo>
         <MeetingInfoTitle>모임 소개</MeetingInfoTitle>
-        <Text>{createdAt}</Text>
-        <Text>{description}</Text>
+        <CreatedText>
+          {/* 시간 부분은 잘라내기 */}
+          since {createdAt.split(' ')[0]}
+        </CreatedText>
+        <DescriptionText>{description}</DescriptionText>
       </MeetingInfo>
       <BookInfo>
         <BookInfoTitle>이 책을 읽어요</BookInfoTitle>
-        <BookCover
-          style={{ width: 60, height: 80 }}
-          source={{
-            uri: cover,
-          }}
-        />
-        <BookTitleText>{bookTitle}</BookTitleText>
+        <BookContainer>
+          <BookCover
+            source={{
+              uri: cover,
+            }}
+          />
+          <BookTitleText>{bookTitle}</BookTitleText>
+        </BookContainer>
       </BookInfo>
-      {/* <Text>{isMine}</Text> */}
-      <CommentContainer>
+      <CommentMainView>
         <CommentScrollView>
           {commentList.map((comment) => (
             <CommentView key={comment}>
               <CommentText>{comment.parent.content}</CommentText>
-              <ReplyCommentText>{comment.child.content}</ReplyCommentText>
-              <ReplyCommentView>
-                {commentList.map((comment) => (
-                  <ReplyCommentText key={comment.children.meetingCommentId}>
-                    {comment.children.content}
-                  </ReplyCommentText>
-                ))}
-              </ReplyCommentView>
+              <ReplyCommentText>{comment.children.content}</ReplyCommentText>
+              {/* 대댓글 출력 */}
+              {comment.children.map((replyComment) => (
+                <ReplyCommentText key={replyComment.meetingCommentId}>
+                  {replyComment.content}
+                </ReplyCommentText>
+              ))}
               <OpenChildCommentInputButton
                 onPress={() => {
                   setIsReplyOpened(!isReplyOpened);
@@ -146,36 +175,39 @@ function MeetingDetailScreen({ route }) {
               >
                 <OpenChildCommentInputButtonText>대댓글 작성</OpenChildCommentInputButtonText>
               </OpenChildCommentInputButton>
-
               {isReplyOpened && (
-                <ChildCommentInput>
-                  <TextInput
-                    style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                    onChangeText={(text) => setReplyComment(text)}
-                    value={replyComment}
-                    onSubmitEditing={() => CreateReplyComment(comment.parent.meetingCommentId)}
-                  />
-                </ChildCommentInput>
+                <ChildCommentInput
+                  style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                  onChangeText={(text) => setReplyComment(text)}
+                  value={replyComment}
+                  onSubmitEditing={() => CreateReplyComment(comment.parent.meetingCommentId)}
+                ></ChildCommentInput>
               )}
             </CommentView>
           ))}
         </CommentScrollView>
-        <CommentInput
-          value={comment}
-          onChangeText={setComment}
-          onSubmitEditing={() => {
-            CreateComment();
-          }}
-        ></CommentInput>
-      </CommentContainer>
+      </CommentMainView>
+
+      <CommentInput
+        value={comment}
+        onChangeText={setComment}
+        onSubmitEditing={() => {
+          CreateComment();
+        }}
+      ></CommentInput>
+      <FakeView></FakeView>
     </MeetingContainer>
   );
 }
 
-const MeetingContainer = styled.View`
+const MeetingContainer = styled.ScrollView`
   flex: 1;
   background-color: #fcf9f0;
   padding: 0 5%;
+`;
+
+const BookContainer = styled.View`
+  flex-direction: column;
 `;
 
 const CommentInput = styled.TextInput`
@@ -184,11 +216,13 @@ const CommentInput = styled.TextInput`
   border: 1px solid #000;
   border-radius: 10px;
   padding: 10px;
+  font-family: Medium;
 `;
 
 const CommentScrollView = styled.ScrollView`
+  flex: 4;
   width: 100%;
-  height: 100px;
+  height: 500px;
   border: 1px solid #000;
   border-radius: 10px;
   padding: 10px;
@@ -204,14 +238,16 @@ const CommentView = styled.View`
 
 const CommentText = styled.Text`
   font-size: 20px;
+  font-family: Medium;
 `;
 
-const ChildCommentInput = styled.View`
+const ChildCommentInput = styled.TextInput`
   width: 100%;
   height: 50px;
   border: 1px solid #000;
   border-radius: 10px;
   padding: 10px;
+  font-family: Medium;
 `;
 
 const ReplyCommentView = styled.View`
@@ -224,6 +260,7 @@ const ReplyCommentView = styled.View`
 
 const ReplyCommentText = styled.Text`
   font-size: 20px;
+  font-family: Medium;
 `;
 
 const OpenChildCommentInputButton = styled.TouchableOpacity`
@@ -236,6 +273,7 @@ const OpenChildCommentInputButton = styled.TouchableOpacity`
 
 const OpenChildCommentInputButtonText = styled.Text`
   font-size: 14px;
+  font-family: Medium;
 `;
 
 const MeetingHeader = styled.View`
@@ -243,7 +281,14 @@ const MeetingHeader = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-top: 10px;
+  margin-bottom: 15px;
+`;
+
+const MeetingHeaderRight = styled.View`
+  flex: 2;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: 0px;
 `;
 
 const MeetingInfo = styled.View`
@@ -253,45 +298,29 @@ const MeetingInfo = styled.View`
 
 const BookInfo = styled.View`
   flex: 2;
-  flex-direction: row;
-  align-items: center;
-  margin-top: 10px;
-`;
-
-const CommentContainer = styled.View`
-  flex: 4;
-  margin-top: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 10% 0;
 `;
 
 const MeetingTitle = styled.Text`
-  font-size: 18px;
+  flex: 8;
+  font-size: 24px;
   font-family: Medium;
 `;
 
 const EnterButton = styled.TouchableOpacity`
   width: 80px;
   height: 30px;
-  background-color: #f2f2f2;
+  background-color: #a8ca47;
+  border: 1px solid #000;
   border-radius: 10px;
   justify-content: center;
   align-items: center;
+  margin-top: 10px;
 `;
 
 const EnterButtonText = styled.Text`
-  font-size: 14px;
-  font-family: Medium;
-`;
-
-const FavoriteButton = styled.TouchableOpacity`
-  width: 80px;
-  height: 30px;
-  background-color: #f2f2f2;
-  border-radius: 10px;
-  justify-content: center;
-  align-items: center;
-`;
-
-const FavoriteButtonText = styled.Text`
   font-size: 14px;
   font-family: Medium;
 `;
@@ -312,14 +341,35 @@ const BookInfoTitle = styled.Text`
 `;
 
 const BookCover = styled.Image`
-  width: 60px;
-  height: 80px;
+  width: 180px;
+  height: 250px;
   margin-right: 10px;
+  resize-mode: contain;
 `;
 
 const BookTitleText = styled.Text`
   font-size: 14px;
   font-family: Medium;
+`;
+
+const CreatedText = styled.Text`
+  font-size: 14px;
+  font-family: Medium;
+  margin-top: 10px;
+`;
+
+const DescriptionText = styled.Text`
+  font-size: 14px;
+  font-family: Medium;
+  margin-top: 10px;
+`;
+
+const FakeView = styled.View`
+  height: 100px;
+`;
+
+const CommentMainView = styled.View`
+  flex: 1;
 `;
 
 export default MeetingDetailScreen;

@@ -103,12 +103,16 @@ function MeetingHomeScreen({ navigation }) {
             </MeetingRecom>
           </RecomHalfView>
         </RecomView>
+        <FakeView></FakeView>
       </ScrollViewContainer>
     </MeetingHomeView>
   );
 }
 
 // styled-components
+const FakeView = styled.View`
+  height: 100px;
+`;
 const MeetingHomeView = styled.View`
   flex: 1;
   background-color: #fcf9f0;
@@ -143,6 +147,8 @@ const MyMeetingView = styled.View`
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+  width: 100%;
+  height: 100px;
 `;
 
 const MyMeetingText = styled.Text`
