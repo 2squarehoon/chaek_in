@@ -1,21 +1,26 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
 import styled from 'styled-components/native';
 
 function MeetingMyBookScreen() {
+  // 최근에 읽은 책 관련 모임 추천 가져오기(최근에 읽은 책이 없으면 추천 없음)
+  // /api/data/meeting/recent-book/{memberId}
+
   return (
-    <View style={styles.container}>
-      <Text>모임</Text>
-    </View>
+    <MyBookContainer>
+      <MyBookTitle>내가 읽은 책</MyBookTitle>
+    </MyBookContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+const MyBookContainer = styled.View`
+  flex: 1;
+  background-color: #fcf9f0;
+  padding: 0 5%;
+`;
+
+const MyBookTitle = styled.Text`
+  font-size: 20px;
+  font-family: 'Medium';
+`;
 
 export default MeetingMyBookScreen;

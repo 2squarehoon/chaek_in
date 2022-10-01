@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components/native';
 
 function MeetingHomeScreen({ navigation }) {
-  const { accessToken, nickname } = useSelector((state) => state.main);
+  const { accessToken, nickname, email } = useSelector((state) => state.main);
   const [myMeetingList, setMyMeetingList] = useState([]);
 
   const goToMeetingAll = (e) => {
@@ -50,7 +50,6 @@ function MeetingHomeScreen({ navigation }) {
               <MyMeetingText>
                 {meeting.currentMember}/{meeting.maxCapacity}
               </MyMeetingText>
-              <BookCoverImage source={{ uri: meeting.bookCover }} />
             </MyMeetingItem>
           ))}
         </MyMeetingView>
@@ -63,10 +62,10 @@ function MeetingHomeScreen({ navigation }) {
                 alignItems: 'flex-start',
                 justifyContent: 'flex-end',
               }}
+              onPress={() => navigation.navigate('MeetingMyBook', { memberId: email })}
             >
               <MeetingRecomImage source={require('../../../assets/image/meeting/current_book.png')} />
-              <MyBookText>내가 </MyBookText>
-              <MyBookText>읽고 있는 책</MyBookText>
+              <MyBookText>최근 읽은 책</MyBookText>
             </MeetingRecom>
             <MeetingRecom
               style={{
@@ -75,8 +74,7 @@ function MeetingHomeScreen({ navigation }) {
                 justifyContent: 'flex-end',
               }}
             >
-              <MeetingRecomImage source={require('../../../assets/image/meeting/similar_people.png')} />
-
+              <MeetingRecomImage source={require('../../../assets/image/meeting/similar.png')} />
               <NicknameText>{nickname}</NicknameText>
               <SimilarText>님과 비슷한 사람들</SimilarText>
             </MeetingRecom>
@@ -89,6 +87,7 @@ function MeetingHomeScreen({ navigation }) {
                 justifyContent: 'flex-end',
               }}
             >
+              <MeetingRecomImage source={require('../../../assets/image/meeting/finish.png')} />
               <ChallengeText>도전! 완독 모임</ChallengeText>
             </MeetingRecom>
             <MeetingRecom
@@ -98,6 +97,7 @@ function MeetingHomeScreen({ navigation }) {
                 justifyContent: 'flex-end',
               }}
             >
+              <MeetingRecomImage source={require('../../../assets/image/meeting/opposite.png')} />
               <OppositeText>이런 책도</OppositeText>
               <OppositeText>같이 읽어봐요</OppositeText>
             </MeetingRecom>
