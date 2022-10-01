@@ -8,6 +8,7 @@ import lombok.Data;
 public class MeetingDetailResponse {
     private long meetingId;
     private String bookTitle;
+    private String author;
     private String cover;
     private String meetingTitle;
     private String description;

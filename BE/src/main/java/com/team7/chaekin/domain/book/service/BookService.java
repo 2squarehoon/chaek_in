@@ -57,6 +57,7 @@ public class BookService {
                 .map(book -> BookListDto.builder()
                         .bookId(book.getId())
                         .title(book.getTitle())
+                        .author(book.getAuthor())
                         .cover(book.getCover())
                         .build()).collect(Collectors.toList()));
     }
