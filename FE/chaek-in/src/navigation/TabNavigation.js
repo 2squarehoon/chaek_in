@@ -107,13 +107,13 @@ function TabNavigation() {
         }}
       />
       {/* 아래 두 스크린은 주석처리 해야 합니다. */}
-      <Tab.Screen
+      {/* <Tab.Screen
         name='Record'
         component={RecordNavigation}
         options={{
           title: '나의 한 문장',
         }}
-      />
+      /> */}
       <Tab.Screen name='Userinfo' component={UserInfoNavigation} options={{ headerShown: false }} />
     </Tab.Navigator>
   );
