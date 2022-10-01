@@ -32,7 +32,6 @@ function MeetingDetailScreen({ route }) {
       },
     })
       .then(function (response) {
-        console.log(response.data);
         setBookTitle(response.data.bookTitle);
         setCover(response.data.cover);
         setCreatedAt(response.data.createdAt);
@@ -57,7 +56,6 @@ function MeetingDetailScreen({ route }) {
       },
     })
       .then(function (response) {
-        console.log(response.data.comments);
         setCommentList(response.data.comments);
       })
       .catch(function (error) {
@@ -75,9 +73,7 @@ function MeetingDetailScreen({ route }) {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-      .then(function (response) {
-        console.log(response.data);
-      })
+      .then(function (response) {})
       .catch(function (error) {
         console.log(error);
       });
@@ -94,10 +90,7 @@ function MeetingDetailScreen({ route }) {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-      .then(function (response) {
-        console.log(parentId);
-        console.log(response.data);
-      })
+      .then(function (response) {})
       .catch(function (error) {
         console.log(error);
       });
