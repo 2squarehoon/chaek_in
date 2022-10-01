@@ -8,5 +8,6 @@ import lombok.Data;
 public class BookListDto {
     private long bookId;
     private String title;
+    private String author;
     private String cover;
 }

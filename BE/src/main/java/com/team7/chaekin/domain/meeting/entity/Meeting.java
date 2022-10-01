@@ -64,6 +64,7 @@ public class Meeting extends BaseTimeEntity {
         return MeetingDetailResponse.builder()
                 .meetingId(id)
                 .bookTitle(book.getTitle())
+                .author(book.getAuthor())
                 .cover(book.getCover())
                 .meetingTitle(title)
                 .description(description)
