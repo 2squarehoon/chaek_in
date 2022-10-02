@@ -328,7 +328,7 @@ def get_recent_book_meeting(memberId: int):
 
 
 # @app.get('/api/data/bookcafe/{latitude}/{longitude}', dependencies=[Depends(JWTBearer())])
-@app.get('/api/data/bookcafe/{latitude}/{longitude}')
+@app.get('/api/data/bookcafe')
 def get_near_bookcafe(latitude: float, longitude: float):
 
     start = time.time() # 실행시간 계산 코드
