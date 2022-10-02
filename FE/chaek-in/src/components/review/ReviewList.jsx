@@ -7,7 +7,6 @@ import { HOST } from '@env';
 import { useSelector } from 'react-redux';
 
 function ReviewList({ bookId }) {
-  console.log('2' + bookId);
   const { accessToken } = useSelector((state) => state.main);
   const [reviews, setReviews] = useState([
     { comment: 'test', isMine: true, reviewId: '1', score: '0', writer: 'test' },
@@ -31,9 +30,9 @@ function ReviewList({ bookId }) {
       });
   }, []);
 
-  useEffect(() => {
-    console.log(reviews);
-  }, [reviews]);
+  // useEffect(() => {
+  //   console.log(reviews);
+  // }, [reviews, isWritten]);
   return (
     <View style={{ marginTop: 5 }}>
       {!isWritten && <ReviewForm bookId={bookId} />}
