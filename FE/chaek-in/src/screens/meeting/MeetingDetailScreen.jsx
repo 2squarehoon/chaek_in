@@ -49,7 +49,17 @@ function MeetingDetailScreen({ route, navigation }) {
       .catch(function (error) {
         console.log(error);
       });
-  }, [isFocused]);
+  }, [
+    isFocused,
+    currentMember,
+    accessToken,
+    route.params.meetingId,
+    isParticipated,
+    isMine,
+    isReplyOpened,
+    comment,
+    replyComment,
+  ]);
   // 모임 참가, /api/v1/meetings/{meetingId}/participants
   function participateMeeting() {
     Axios.post(
@@ -84,7 +94,18 @@ function MeetingDetailScreen({ route, navigation }) {
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [
+    isFocused,
+    currentMember,
+    accessToken,
+    route.params.meetingId,
+    isParticipated,
+    isMine,
+    isReplyOpened,
+    comment,
+    commentList,
+    replyComment,
+  ]);
 
   // 댓글 작성
   function CreateComment() {
@@ -132,7 +153,11 @@ function MeetingDetailScreen({ route, navigation }) {
           <CurrentMemberText>
             {currentMember} / {maxCapacity}명
           </CurrentMemberText>
-          <EnterButton>
+          <EnterButton
+            onPress={() => {
+              participateMeeting();
+            }}
+          >
             <EnterButtonText>참가하기</EnterButtonText>
           </EnterButton>
         </MeetingHeaderRight>
@@ -156,6 +181,7 @@ function MeetingDetailScreen({ route, navigation }) {
           <BookTitleText>{bookTitle}</BookTitleText>
         </BookContainer>
       </BookInfo>
+      {/* 댓글 부분 */}
       <CommentMainView>
         <CommentScrollView>
           {commentList.map((comment) => (
@@ -327,7 +353,7 @@ const EnterButtonText = styled.Text`
 
 const CurrentMemberText = styled.Text`
   font-size: 14px;
-  font-family: Medium;
+  font-family: Light;
 `;
 
 const MeetingInfoTitle = styled.Text`
@@ -343,7 +369,7 @@ const BookInfoTitle = styled.Text`
 const BookCover = styled.Image`
   width: 180px;
   height: 250px;
-  margin-right: 10px;
+  margin: 20px 0;
   resize-mode: contain;
 `;
 
@@ -360,7 +386,7 @@ const CreatedText = styled.Text`
 
 const DescriptionText = styled.Text`
   font-size: 14px;
-  font-family: Medium;
+  font-family: Light;
   margin-top: 10px;
 `;
 
@@ -370,6 +396,7 @@ const FakeView = styled.View`
 
 const CommentMainView = styled.View`
   flex: 1;
+  background-color: white;
 `;
 
 export default MeetingDetailScreen;
