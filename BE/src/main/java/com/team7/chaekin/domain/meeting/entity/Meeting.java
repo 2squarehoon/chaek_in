@@ -36,6 +36,9 @@ public class Meeting extends BaseTimeEntity {
 
     private int capacity;
 
+    @Enumerated(EnumType.STRING)
+    private MeetingStatus meetingStatus;
+
     @OneToMany(mappedBy = "meeting")
     private List<Participant> participants = new ArrayList<>();
 
@@ -70,6 +73,7 @@ public class Meeting extends BaseTimeEntity {
                 .currentMember(getCurrentParticipants())
                 .maxCapacity(capacity)
                 .createdAt(getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH.mm")))
+                .meetingStatus(meetingStatus.name())
                 .build();
     }
 
@@ -81,6 +85,7 @@ public class Meeting extends BaseTimeEntity {
                 .meetingTitle(title)
                 .currentMember(getCurrentParticipants())
                 .maxCapacity(capacity)
+                .meetingStatus(meetingStatus.name())
                 .createdAt(getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH.mm")))
                 .build();
     }

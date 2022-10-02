@@ -12,5 +12,6 @@ public class MeetingListDto {
     private String meetingTitle;
     private int currentMember;
     private int maxCapacity;
+    private String meetingStatus;
     private String createdAt;
 }
