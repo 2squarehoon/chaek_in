@@ -72,7 +72,8 @@ def get_db():
 
 
 # 일단 이부분만 보면 될듯
-@app.get('/api/data/books/cbf/{memberId}', dependencies=[Depends(JWTBearer())])
+# @app.get('/api/data/books/cbf/{memberId}', dependencies=[Depends(JWTBearer())])
+@app.get('/api/data/books/cbf/{memberId}')
 def get_recommended(memberId: int):
     # redis connection pool에서 연결 하나 갖고옴
     global rd
@@ -149,7 +150,8 @@ def get_recommended(memberId: int):
 
 
 
-@app.get('/api/data/meeting/will/{memberId}', dependencies=[Depends(JWTBearer())])
+# @app.get('/api/data/meeting/will/{memberId}', dependencies=[Depends(JWTBearer())])
+@app.get('/api/data/meeting/will/{memberId}')
 def get_recommend_will_meeting(memberId: int):
     # 저장된 cbf 활용, 그래서 지금은 cbf 함수 실행시키고 cbf 가져와야함
     # 레디스되고 나서 추천 리스트 어떻게 가져올지 봐야함
@@ -235,7 +237,8 @@ def get_recommend_will_meeting(memberId: int):
         return response
 
 
-@app.get('/api/data/books/cf/{memberId}', dependencies=[Depends(JWTBearer())])
+# @app.get('/api/data/books/cf/{memberId}', dependencies=[Depends(JWTBearer())])
+@app.get('/api/data/books/cf/{memberId}')
 def get_book_cf(memberId: int):
 
     start = time.time() # 실행시간 계산 코드
@@ -300,7 +303,8 @@ def booklog_update(memberId: int, result: bool = False):
     
     return
 
-@app.get('/api/data/meeting/similar/{memberId}', dependencies=[Depends(JWTBearer())])
+# @app.get('/api/data/meeting/similar/{memberId}', dependencies=[Depends(JWTBearer())])
+@app.get('/api/data/meeting/similar/{memberId}')
 def get_recommend_similar_meeting(memberId: int):
     global booklog, review, book, meeting_members
     
@@ -308,7 +312,8 @@ def get_recommend_similar_meeting(memberId: int):
     return similar_meeting.get_member_sim_meeting(memberId, booklog, review, meeting_members)
 
     
-@app.get('/api/data/meeting/recent-book/{memberId}', dependencies=[Depends(JWTBearer())])
+# @app.get('/api/data/meeting/recent-book/{memberId}', dependencies=[Depends(JWTBearer())])
+@app.get('/api/data/meeting/recent-book/{memberId}')
 def get_recent_book_meeting(memberId: int):
 
     start = time.time() # 실행시간 계산 코드
@@ -322,7 +327,8 @@ def get_recent_book_meeting(memberId: int):
     return response
 
 
-@app.get('/api/data/bookcafe/{latitude}/{longitude}', dependencies=[Depends(JWTBearer())])
+# @app.get('/api/data/bookcafe/{latitude}/{longitude}', dependencies=[Depends(JWTBearer())])
+@app.get('/api/data/bookcafe/{latitude}/{longitude}')
 def get_near_bookcafe(latitude: float, longitude: float):
 
     start = time.time() # 실행시간 계산 코드
@@ -335,7 +341,8 @@ def get_near_bookcafe(latitude: float, longitude: float):
     return response
 
 
-@app.get('/api/data/meeting/opposite/{memberId}', dependencies=[Depends(JWTBearer())])
+# @app.get('/api/data/meeting/opposite/{memberId}', dependencies=[Depends(JWTBearer())])
+@app.get('/api/data/meeting/opposite/{memberId}')
 def get_opposite_book_meeting(memberId: int):
     global booklog, review, book, meeting_members
     start = time.time() # 실행시간 계산 코드
