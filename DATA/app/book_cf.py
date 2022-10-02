@@ -7,6 +7,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 import random
 import json
 
+import bestseller
+
 def get_all_review():
     review = pd.read_sql_table('review', engine)
     review = review[["id", "booklog_id", "score"]]
@@ -28,7 +30,6 @@ def cal_item_based_collabor(review, booklog):
 def get_cf_books(member_id):
     review = get_all_review()
     booklog = get_all_booklog()
-    similarity = cal_item_based_collabor(review, booklog)
 
     member_booklog = booklog[booklog['member_id'] == member_id]
     member_books = set(member_booklog["book_id"])
@@ -37,6 +38,11 @@ def get_cf_books(member_id):
     rating = rating.sort_values(by='start_date', ascending=False)
     recent_books = rating[rating['score'].isnull()]["book_id"].values.tolist()
     recent_books.extend(rating[rating['score'] >= 3.0 ]["book_id"].values.tolist())
+
+    if len(recent_books) < 2:
+        return bestseller.bestseller()
+    
+    similarity = cal_item_based_collabor(review, booklog)
 
     simil_books = set()
     for book_id in recent_books:
