@@ -14,6 +14,7 @@ public class MeetingCreateRequest {
     @NotBlank(message = "Can not be null or blank.")
     @Size(min=1, max = 2000, message = "Must write at least one.")
     private String description;
+    private String meetingStatus;
     @Min(2) @Max(6)
     private int maxCapacity;
 }
