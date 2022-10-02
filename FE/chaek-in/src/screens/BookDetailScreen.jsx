@@ -5,9 +5,11 @@ import Axios from 'axios';
 import { HOST } from '@env';
 import ReviewList from '../components/review/ReviewList';
 import ReviewForm from '../components/review/ReviewForm';
+import ReviewItem from '../components/review/ReviewItem';
 import { useSelector } from 'react-redux';
 import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
+import * as Linking from 'expo-linking';
 
 function BookDetailScreen({ route, navigation }) {
   const { accessToken } = useSelector((state) => state.main);
@@ -19,8 +21,13 @@ function BookDetailScreen({ route, navigation }) {
   const [readStatus, setReadStatus] = useState('');
   // const [index, setIndex] = useState('');
   const [description, setDescription] = useState('');
+  const [reviews, setReviews] = useState([
+    { comment: 'test', isMine: true, reviewId: '1', score: '0', writer: 'test' },
+  ]);
+  const [isWritten, setIsWritten] = useState(true);
+  const [reload, setReload] = useState('');
+
   const bookId = route.params.bookId;
-  console.log(bookId);
   useEffect(() => {
     Axios.get(`${HOST}/api/v1/books/${route.params.bookId}`, {
       headers: {
@@ -87,6 +94,30 @@ function BookDetailScreen({ route, navigation }) {
     }
   }
 
+  const link = () => {
+    Linking.openURL('https://resilient-923.tistory.com/');
+  };
+
+  // 여기부터 댓글관련, 컴포넌트 나누는게 정석이긴 하지만...
+  useEffect(() => {
+    Axios.get(`${HOST}/api/v1/books/${bookId}/reviews`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then(function (response) {
+        console.log(response.data);
+        setIsWritten(response.data.isWritten);
+        setReviews(response.data.reviews);
+        // console.log(isWritten);
+        // console.log(reviews);
+        console.log(reload);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [reload]);
+
   return (
     <>
       <ScrollViewContainer>
@@ -127,7 +158,6 @@ function BookDetailScreen({ route, navigation }) {
           <Author>
             <AntDesign name='star' size={20} color='#ffce31' /> {score}
           </Author>
-          <StartTime>독서시작 : 2022.09.21 12:01</StartTime>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
             <View>
@@ -146,8 +176,12 @@ function BookDetailScreen({ route, navigation }) {
             <View style={{ flex: 1, height: 1, backgroundColor: 'gray' }} />
           </View>
         </MiddleContainer>
-        <ReviewList bookId={bookId} />
-        <BlackContainer></BlackContainer>
+        {/* <ReviewList bookId={bookId} /> */}
+        {!isWritten && <ReviewForm bookId={bookId} reload={setReload} />}
+        {reviews.map((review) => (
+          <ReviewItem key={review.reviewId} item={review} bookId={bookId} reload={setReload} />
+        ))}
+        <BlankContainer></BlankContainer>
       </ScrollViewContainer>
     </>
   );
@@ -223,7 +257,7 @@ const Intro = styled.View`
 const ScrollViewContainer = styled.ScrollView`
   flex: 7;
 `;
-const BlackContainer = styled.View`
+const BlankContainer = styled.View`
   height: 150px;
 `;
 

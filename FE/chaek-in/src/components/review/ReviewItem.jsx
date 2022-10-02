@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, Button, TouchableOpacity, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import Axios from 'axios';
@@ -6,9 +6,10 @@ import { HOST } from '@env';
 import { useSelector } from 'react-redux';
 import ReviewEditForm from './ReviewEditForm';
 
-function ReviewItem({ item, bookId }) {
+function ReviewItem({ item, bookId, reload }) {
   const { accessToken } = useSelector((state) => state.main);
   const [isEditing, setIsEditing] = useState(false);
+  const [editReload, setEditReload] = useState('');
   // useEffect(() => {
   //   console.log(isEditing);
   // }, [isEditing]);
@@ -21,11 +22,20 @@ function ReviewItem({ item, bookId }) {
     })
       .then(function () {
         Alert.alert('삭제되었습니다.');
+        reload('리뷰삭제');
       })
       .catch(function (error) {
         console.log(error);
       });
   };
+  const mountedReview = useRef(false);
+  useEffect(() => {
+    if (!mountedReview.current) {
+      mountedReview.current = true;
+    } else {
+      reload('리뷰수정');
+    }
+  }, [editReload]);
 
   // const EditPress = () => {
   //   Alert.alert('수정하시겠습니까?', '', [
@@ -56,6 +66,7 @@ function ReviewItem({ item, bookId }) {
           initialComment={item.comment}
           reviewId={item.reviewId}
           isEdit={setIsEditing}
+          reload={setEditReload}
         />
       )}
       <ReviewItemContainer>
@@ -72,7 +83,7 @@ function ReviewItem({ item, bookId }) {
           <TouchableOpacity onPress={() => setIsEditing(true)}>
             <Text>수정</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => deletePress}>
+          <TouchableOpacity onPress={deletePress}>
             <Text>삭제</Text>
           </TouchableOpacity>
         </ReviewControlContainer>

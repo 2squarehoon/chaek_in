@@ -6,32 +6,37 @@ import { HOST } from '@env';
 import { useSelector } from 'react-redux';
 import StarRating from 'react-native-star-rating-widget';
 
-function ReviewEditForm({ bookId, initialScore, initialComment, reviewId, isEdit }) {
+function ReviewEditForm({ bookId, initialScore, initialComment, reviewId, isEdit, reload }) {
   const { accessToken } = useSelector((state) => state.main);
   const [score, changeScore] = useState(initialScore);
   const [comment, changeComment] = useState(initialComment);
 
-  const createReview = () => {
+  const editReview = () => {
     const header = {
       Authorization: `Bearer ${accessToken}`,
     };
-    Axios.patch(
-      `${HOST}/api/v1/books/${bookId}/reviews/${reviewId}`,
-      {
-        score: score,
-        comment: comment,
-      },
-      {
-        headers: header,
-      },
-    )
-      .then(function (response) {
-        console.log(response.data);
-        isEdit(false);
-      })
-      .catch(function (error) {
-        console.log(error.message);
-      });
+    if (!score) {
+      Alert.alert('0점은 좀 너무하잖아요 ㅠㅠ');
+    } else {
+      Axios.patch(
+        `${HOST}/api/v1/books/${bookId}/reviews/${reviewId}`,
+        {
+          score: score,
+          comment: comment,
+        },
+        {
+          headers: header,
+        },
+      )
+        .then(function (response) {
+          console.log(response.data);
+          isEdit(false);
+          reload('댓글수정');
+        })
+        .catch(function (error) {
+          console.log(error.message);
+        });
+    }
   };
 
   const onChangeCommit = (e) => {
@@ -45,13 +50,13 @@ function ReviewEditForm({ bookId, initialScore, initialComment, reviewId, isEdit
   const editPress = () => {
     Alert.alert('수정하시겠습니까?', '', [
       { text: '아니오', style: 'cancel' },
-      { text: '네', onPress: createReview },
+      { text: '네', onPress: editReview },
     ]);
   };
   return (
     <>
       <RatingContainer>
-        <StarRating rating={score} onChange={() => changeScore()} />
+        <StarRating rating={score} onChange={changeScore} />
         <Text>{score}점</Text>
       </RatingContainer>
       <ReviewInputContainer>

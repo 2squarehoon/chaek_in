@@ -6,7 +6,7 @@ import { HOST } from '@env';
 import { useSelector } from 'react-redux';
 import StarRating from 'react-native-star-rating-widget';
 
-function ReviewForm({ bookId }) {
+function ReviewForm({ bookId, reload }) {
   const { accessToken } = useSelector((state) => state.main);
   const [score, changeScore] = useState(0);
   const [comment, changeComment] = useState(0);
@@ -27,6 +27,7 @@ function ReviewForm({ bookId }) {
     )
       .then(function (response) {
         console.log(response.data);
+        reload('리뷰작성');
       })
       .catch(function (error) {
         console.log(error.message);
