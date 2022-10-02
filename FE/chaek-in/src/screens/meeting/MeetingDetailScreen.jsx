@@ -21,7 +21,7 @@ function MeetingDetailScreen({ route, navigation }) {
   // 댓글 관련 state
   const [comment, setComment] = useState('');
   const [replyComment, setReplyComment] = useState('');
-  const [isReplyOpened, setIsReplyOpened] = useState(false);
+  const [isReplyOpened, setIsReplyOpened] = useState(0);
 
   const isFocused = useIsFocused();
   // MeetingDetail 가져오기
@@ -49,7 +49,17 @@ function MeetingDetailScreen({ route, navigation }) {
       .catch(function (error) {
         console.log(error);
       });
-  }, [isFocused]);
+  }, [
+    isFocused,
+    currentMember,
+    accessToken,
+    route.params.meetingId,
+    isParticipated,
+    isMine,
+    isReplyOpened,
+    comment,
+    replyComment,
+  ]);
   // 모임 참가, /api/v1/meetings/{meetingId}/participants
   function participateMeeting() {
     Axios.post(
@@ -84,7 +94,18 @@ function MeetingDetailScreen({ route, navigation }) {
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [
+    isFocused,
+    currentMember,
+    accessToken,
+    route.params.meetingId,
+    isParticipated,
+    isMine,
+    isReplyOpened,
+    comment,
+    commentList,
+    replyComment,
+  ]);
 
   // 댓글 작성
   function CreateComment() {
@@ -117,6 +138,7 @@ function MeetingDetailScreen({ route, navigation }) {
     })
       .then(function (response) {
         console.log(response.data);
+        setIsReplyOpened(0);
       })
       .catch(function (error) {
         console.log(error);
@@ -132,7 +154,11 @@ function MeetingDetailScreen({ route, navigation }) {
           <CurrentMemberText>
             {currentMember} / {maxCapacity}명
           </CurrentMemberText>
-          <EnterButton>
+          <EnterButton
+            onPress={() => {
+              participateMeeting();
+            }}
+          >
             <EnterButtonText>참가하기</EnterButtonText>
           </EnterButton>
         </MeetingHeaderRight>
@@ -156,10 +182,11 @@ function MeetingDetailScreen({ route, navigation }) {
           <BookTitleText>{bookTitle}</BookTitleText>
         </BookContainer>
       </BookInfo>
+      {/* 댓글 부분 */}
       <CommentMainView>
         <CommentScrollView>
           {commentList.map((comment) => (
-            <CommentView key={comment}>
+            <CommentView key={comment.parent.content}>
               <CommentText>{comment.parent.content}</CommentText>
               <ReplyCommentText>{comment.children.content}</ReplyCommentText>
               {/* 대댓글 출력 */}
@@ -170,19 +197,19 @@ function MeetingDetailScreen({ route, navigation }) {
               ))}
               <OpenChildCommentInputButton
                 onPress={() => {
-                  setIsReplyOpened(!isReplyOpened);
+                  setIsReplyOpened(comment.parent.meetingCommentId);
                 }}
               >
                 <OpenChildCommentInputButtonText>대댓글 작성</OpenChildCommentInputButtonText>
               </OpenChildCommentInputButton>
-              {isReplyOpened && (
+              {isReplyOpened === comment.parent.meetingCommentId ? (
                 <ChildCommentInput
                   style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
                   onChangeText={(text) => setReplyComment(text)}
                   value={replyComment}
                   onSubmitEditing={() => CreateReplyComment(comment.parent.meetingCommentId)}
                 ></ChildCommentInput>
-              )}
+              ) : null}
             </CommentView>
           ))}
         </CommentScrollView>
@@ -222,7 +249,7 @@ const CommentInput = styled.TextInput`
 const CommentScrollView = styled.ScrollView`
   flex: 4;
   width: 100%;
-  height: 500px;
+  height: 100%;
   border: 1px solid #000;
   border-radius: 10px;
   padding: 10px;
@@ -234,6 +261,7 @@ const CommentView = styled.View`
   border: 1px solid #000;
   border-radius: 10px;
   padding: 10px;
+  margin-bottom: 15px;
 `;
 
 const CommentText = styled.Text`
@@ -251,6 +279,7 @@ const ChildCommentInput = styled.TextInput`
 `;
 
 const ReplyCommentView = styled.View`
+  flex: 1;
   width: 100%;
   height: 100px;
   border: 1px solid #000;
@@ -327,7 +356,7 @@ const EnterButtonText = styled.Text`
 
 const CurrentMemberText = styled.Text`
   font-size: 14px;
-  font-family: Medium;
+  font-family: Light;
 `;
 
 const MeetingInfoTitle = styled.Text`
@@ -343,7 +372,7 @@ const BookInfoTitle = styled.Text`
 const BookCover = styled.Image`
   width: 180px;
   height: 250px;
-  margin-right: 10px;
+  margin: 20px 0;
   resize-mode: contain;
 `;
 
@@ -360,7 +389,7 @@ const CreatedText = styled.Text`
 
 const DescriptionText = styled.Text`
   font-size: 14px;
-  font-family: Medium;
+  font-family: Light;
   margin-top: 10px;
 `;
 
@@ -370,6 +399,7 @@ const FakeView = styled.View`
 
 const CommentMainView = styled.View`
   flex: 1;
+  background-color: white;
 `;
 
 export default MeetingDetailScreen;
