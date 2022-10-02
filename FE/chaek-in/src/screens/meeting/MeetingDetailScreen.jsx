@@ -22,6 +22,7 @@ function MeetingDetailScreen({ route, navigation }) {
   const [comment, setComment] = useState('');
   const [replyComment, setReplyComment] = useState('');
   const [isReplyOpened, setIsReplyOpened] = useState(0);
+  const [reload, setReload] = useState(false);
 
   const isFocused = useIsFocused();
   // MeetingDetail 가져오기
@@ -49,17 +50,7 @@ function MeetingDetailScreen({ route, navigation }) {
       .catch(function (error) {
         console.log(error);
       });
-  }, [
-    isFocused,
-    currentMember,
-    accessToken,
-    route.params.meetingId,
-    isParticipated,
-    isMine,
-    isReplyOpened,
-    comment,
-    replyComment,
-  ]);
+  }, [reload]);
   // 모임 참가, /api/v1/meetings/{meetingId}/participants
   function participateMeeting() {
     Axios.post(
@@ -94,18 +85,7 @@ function MeetingDetailScreen({ route, navigation }) {
       .catch(function (error) {
         console.log(error);
       });
-  }, [
-    isFocused,
-    currentMember,
-    accessToken,
-    route.params.meetingId,
-    isParticipated,
-    isMine,
-    isReplyOpened,
-    comment,
-    commentList,
-    replyComment,
-  ]);
+  }, [reload]);
 
   // 댓글 작성
   function CreateComment() {
@@ -118,7 +98,7 @@ function MeetingDetailScreen({ route, navigation }) {
       },
     })
       .then(function (response) {
-        navigation.navigate('MeetingDetail', { meetingId: meetingId });
+        setReload(!reload);
       })
       .catch(function (error) {
         console.log(error);
@@ -139,6 +119,8 @@ function MeetingDetailScreen({ route, navigation }) {
       .then(function (response) {
         console.log(response.data);
         setIsReplyOpened(0);
+        setReplyComment('');
+        setReload(!reload);
       })
       .catch(function (error) {
         console.log(error);
