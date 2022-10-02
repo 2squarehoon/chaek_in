@@ -19,7 +19,7 @@ import BookItem from '../../components/common/BookItem';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Feather } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 
 function MyPageScreen({ navigation }) {
   const { accessToken, nickname } = useSelector((state) => state.main);
@@ -143,7 +143,7 @@ function MyPageScreen({ navigation }) {
         </NextButton>
         <UserinfoContainer>
           <MenuButtonContainer onPress={openMenu}>
-            <Feather name='menu' size={24} color='black' />
+            <Entypo name='dots-three-vertical' size={24} color='black' />
           </MenuButtonContainer>
           <Modal
             animationType='slide'

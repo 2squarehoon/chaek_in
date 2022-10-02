@@ -157,15 +157,16 @@ const FormContainer = styled.View`
 `;
 
 const SubmitButton = styled.TouchableOpacity`
-  background-color: #b1d8e8;
+  background-color: #a8ca47;
+  border: 1px solid black;
+  border-radius: 18px;
   position: absolute;
-  right: 20px;
+  right: 5px;
   bottom: 20px;
   width: 50px;
   height: 50px;
   justify-content: space-around;
   align-items: center;
-  border-radius: 15px;
 `;
 
 export default ChangeUserinfoScreen;

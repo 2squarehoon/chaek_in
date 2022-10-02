@@ -49,12 +49,6 @@ function ReviewForm({ bookId, reload }) {
         <Text>{score}점</Text>
       </RatingContainer>
       <ReviewInputContainer>
-        {/* <ReviewInput
-          placeholder='평점을 입력하세요'
-          value={score}
-          onChangeText={changeScore}
-          keyboardType='number-pad'
-        /> */}
         <ReviewInput placeholder='리뷰를 입력하세요' value={comment} onChangeText={changeComment} />
         <ButtonContainer onPress={createPress} color='#ffce31'>
           <Text>입력</Text>
