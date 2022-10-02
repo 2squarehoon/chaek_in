@@ -2,14 +2,19 @@ package com.team7.chaekin.domain.meeting.controller;
 
 import com.team7.chaekin.domain.meeting.dto.*;
 import com.team7.chaekin.domain.meeting.service.MeetingService;
+import com.team7.chaekin.global.error.errorcode.DomainErrorCode;
+import com.team7.chaekin.global.error.errorcode.ValidationErrorCode;
+import com.team7.chaekin.global.error.exception.CustomException;
 import com.team7.chaekin.global.oauth.config.LoginMemberId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.BindException;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/meetings")
@@ -37,8 +42,20 @@ public class MeetingController {
     @PostMapping
     public ResponseEntity<MeetingIdResponse> createMeeting(@RequestBody @Valid MeetingCreateRequest meetingCreateRequest,
                                                            @LoginMemberId long memberId) {
+        checkMeetingStatus(meetingCreateRequest);
         long meetingId = meetingService.createMeeting(memberId, meetingCreateRequest);
         return ResponseEntity.ok(new MeetingIdResponse(meetingId));
+    }
+
+    private void checkMeetingStatus(MeetingCreateRequest meetingCreateRequest) {
+        if (!StringUtils.hasText(meetingCreateRequest.getMeetingStatus())) {
+            meetingCreateRequest.setMeetingStatus("NONE");
+        } else if (!meetingCreateRequest.getMeetingStatus().equals("COMPLETE")) {
+            throw new CustomException(ValidationErrorCode.builder()
+                    .message("Invalid Meeting status.")
+                    .parameter("meetingStatus")
+                    .build());
+        }
     }
 
     @PatchMapping("/{meetingId}")
