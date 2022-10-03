@@ -4,6 +4,8 @@ import { useSelector } from 'react-redux';
 import Axios from 'axios';
 import { HOST } from '@env';
 import styled from 'styled-components/native';
+import { AntDesign } from '@expo/vector-icons';
+import { EvilIcons } from '@expo/vector-icons';
 
 function MeetingDetailScreen({ route, navigation }) {
   const { accessToken, email } = useSelector((state) => state.main);
@@ -22,47 +24,35 @@ function MeetingDetailScreen({ route, navigation }) {
   const [comment, setComment] = useState('');
   const [replyComment, setReplyComment] = useState('');
   const [isReplyOpened, setIsReplyOpened] = useState(0);
+  const [reload, setReload] = useState(false);
 
   const isFocused = useIsFocused();
   // MeetingDetail 가져오기
-  useEffect(
-    () => {
-      Axios.get(`${HOST}/api/v1/meetings/${route.params.meetingId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+  useEffect(() => {
+    Axios.get(`${HOST}/api/v1/meetings/${route.params.meetingId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then(function (response) {
+        setBookTitle(response.data.bookTitle);
+        setCover(response.data.cover);
+        setCreatedAt(response.data.createdAt);
+        setCurrentMember(response.data.currentMember);
+        setDescription(response.data.description);
+        setIsMine(response.data.isMine);
+        // 만약 내가 속한 모임이면 isParticipated를 true로
+        if (response.data.isMine) {
+          setIsParticipated(true);
+        }
+        setMaxCapacity(response.data.maxCapacity);
+        setMeetingId(response.data.meetingId);
+        setMeetingTitle(response.data.meetingTitle);
       })
-        .then(function (response) {
-          setBookTitle(response.data.bookTitle);
-          setCover(response.data.cover);
-          setCreatedAt(response.data.createdAt);
-          setCurrentMember(response.data.currentMember);
-          setDescription(response.data.description);
-          setIsMine(response.data.isMine);
-          // 만약 내가 속한 모임이면 isParticipated를 true로
-          if (response.data.isMine) {
-            setIsParticipated(true);
-          }
-          setMaxCapacity(response.data.maxCapacity);
-          setMeetingId(response.data.meetingId);
-          setMeetingTitle(response.data.meetingTitle);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    },
-    [
-      // isFocused,
-      // currentMember,
-      // accessToken,
-      // route.params.meetingId,
-      // isParticipated,
-      // isMine,
-      // isReplyOpened,
-      // comment,
-      // replyComment,
-    ],
-  );
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [reload]);
   // 모임 참가, /api/v1/meetings/{meetingId}/participants
   function participateMeeting() {
     Axios.post(
@@ -97,18 +87,7 @@ function MeetingDetailScreen({ route, navigation }) {
       .catch(function (error) {
         console.log(error);
       });
-  }, [
-    // isFocused,
-    // currentMember,
-    // accessToken,
-    // route.params.meetingId,
-    // isParticipated,
-    // isMine,
-    // isReplyOpened,
-    comment,
-    // commentList,
-    // replyComment,
-  ]);
+  }, [reload]);
 
   // 댓글 작성
   function CreateComment() {
@@ -121,7 +100,7 @@ function MeetingDetailScreen({ route, navigation }) {
       },
     })
       .then(function (response) {
-        navigation.navigate('MeetingDetail', { meetingId: meetingId });
+        setReload(!reload);
       })
       .catch(function (error) {
         console.log(error);
@@ -142,6 +121,23 @@ function MeetingDetailScreen({ route, navigation }) {
       .then(function (response) {
         console.log(response.data);
         setIsReplyOpened(0);
+        setReplyComment('');
+        setReload(!reload);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  // 모임 삭제
+  function deleteMeeting() {
+    Axios.delete(`${HOST}/api/v1/meetings/${meetingId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then(function (response) {
+        setReload(!reload);
       })
       .catch(function (error) {
         console.log(error);
@@ -150,6 +146,9 @@ function MeetingDetailScreen({ route, navigation }) {
 
   return (
     <MeetingContainer>
+      <IconView>
+        <EvilIcons name='trash' size={30} color='black' />
+      </IconView>
       <MeetingHeader>
         <MeetingTitle>{meetingTitle}</MeetingTitle>
         {/* 이미 참여한 모임이면 버튼 보여주지 않음 */}
@@ -189,27 +188,28 @@ function MeetingDetailScreen({ route, navigation }) {
       <CommentMainView>
         <CommentScrollView>
           {commentList.map((comment) => (
-            <CommentView key={comment.parent.content}>
+            <CommentView key={comment.parent.meetingCommentId}>
               <CommentText>{comment.parent.content}</CommentText>
               <ReplyCommentText>{comment.children.content}</ReplyCommentText>
               {/* 대댓글 출력 */}
               {comment.children.map((replyComment) => (
-                <ReplyCommentText key={replyComment.meetingCommentId}>
-                  {replyComment.content}
-                </ReplyCommentText>
+                <ReplyCommentView key={replyComment.meetingCommentId}>
+                  <ReplyCommentText>{replyComment.content}</ReplyCommentText>
+                </ReplyCommentView>
               ))}
               <OpenChildCommentInputButton
                 onPress={() => {
                   setIsReplyOpened(comment.parent.meetingCommentId);
                 }}
               >
-                <OpenChildCommentInputButtonText>대댓글 작성</OpenChildCommentInputButtonText>
+                <AntDesign name='enter' size={14} color='black' />
               </OpenChildCommentInputButton>
               {isReplyOpened === comment.parent.meetingCommentId ? (
                 <ChildCommentInput
                   style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
                   onChangeText={(text) => setReplyComment(text)}
                   value={replyComment}
+                  placeholder='대댓글을 입력하세요'
                   onSubmitEditing={() => CreateReplyComment(comment.parent.meetingCommentId)}
                 ></ChildCommentInput>
               ) : null}
@@ -221,6 +221,7 @@ function MeetingDetailScreen({ route, navigation }) {
       <CommentInput
         value={comment}
         onChangeText={setComment}
+        placeholder='댓글을 입력하세요'
         onSubmitEditing={() => {
           CreateComment();
         }}
@@ -263,12 +264,13 @@ const CommentView = styled.View`
   height: 200px;
   border: 1px solid #000;
   border-radius: 10px;
-  padding: 10px;
+  padding: 15px;
   margin-bottom: 15px;
+  background-color: #f8dfaa;
 `;
 
 const CommentText = styled.Text`
-  font-size: 20px;
+  font-size: 16px;
   font-family: Medium;
 `;
 
@@ -279,28 +281,37 @@ const ChildCommentInput = styled.TextInput`
   border-radius: 10px;
   padding: 10px;
   font-family: Medium;
+  background-color: white;
 `;
 
 const ReplyCommentView = styled.View`
   flex: 1;
   width: 100%;
-  height: 100px;
-  border: 1px solid #000;
-  border-radius: 10px;
-  padding: 10px;
-`;
-
-const ReplyCommentText = styled.Text`
-  font-size: 20px;
-  font-family: Medium;
-`;
-
-const OpenChildCommentInputButton = styled.TouchableOpacity`
-  width: 20px;
   height: 20px;
   border: 1px solid #000;
   border-radius: 10px;
   padding: 10px;
+  margin-top: 10px;
+  background-color: white;
+`;
+
+const ReplyCommentText = styled.Text`
+  font-size: 14px;
+  font-family: Medium;
+`;
+
+const OpenChildCommentInputButton = styled.TouchableOpacity`
+  width: 40px;
+  height: 40px;
+  border: 1px solid #000;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #a8ca47;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: 10px;
+  top: 10px;
 `;
 
 const OpenChildCommentInputButtonText = styled.Text`
@@ -403,6 +414,13 @@ const FakeView = styled.View`
 const CommentMainView = styled.View`
   flex: 1;
   background-color: white;
+  margin-bottom: 10px;
+`;
+
+const IconView = styled.TouchableOpacity`
+  position: absolute;
+  right: 0px;
+  top: 70px;
 `;
 
 export default MeetingDetailScreen;
