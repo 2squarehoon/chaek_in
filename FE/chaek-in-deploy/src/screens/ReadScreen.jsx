@@ -32,10 +32,18 @@ function ReadScreen({ navigation }) {
   };
 
   if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return (
+      <EntireContainer>
+        <LoadingText>카메라 허가 요청중입니다.</LoadingText>
+      </EntireContainer>
+    );
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return (
+      <EntireContainer>
+        <LoadingText>카메라에 연결되지 않은 상태입니다.</LoadingText>
+      </EntireContainer>
+    );
   }
 
   async function RegistBook(barcode) {
@@ -105,6 +113,12 @@ const RetouchButton = styled.TouchableOpacity`
 
 const ButtonText = styled.Text`
   font-size: 20px;
+  font-family: Medium;
+`;
+
+const LoadingText = styled.Text`
+  font-family: Light;
+  font-size: 30px;
 `;
 
 export default ReadScreen;

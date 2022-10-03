@@ -1,11 +1,11 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import UserInfoScreen from '../screens/userinfo/UserInfoScreen';
 import ChangeUserinfoScreen from '../screens/userinfo/ChangeUserinfoScreen';
 import MyPageScreen from '../screens/userinfo/MyPageScreen';
 import LibraryScreen from '../screens/userinfo/LibraryScreen';
 import ReadBooksListScreen from '../screens/userinfo/ReadBooksListScreen';
 import LikeBooksListScreen from '../screens/userinfo/LikeBooksListScreen';
+import BookDetailScreen from '../screens/BookDetailScreen';
 
 const UserinfoStack = createStackNavigator();
 
@@ -29,7 +29,7 @@ function UserinfoNavigation() {
       <UserinfoStack.Screen
         name='MyPage'
         component={MyPageScreen}
-        options={{ title: '내 서재' }}
+        options={{ title: '마이페이지' }}
       ></UserinfoStack.Screen>
       <UserinfoStack.Screen
         name='ChangeUserinfo'
@@ -50,6 +50,11 @@ function UserinfoNavigation() {
         name='LikeBooks'
         component={LikeBooksListScreen}
         options={{ title: '내가 찜한 책' }}
+      ></UserinfoStack.Screen>
+      <UserinfoStack.Screen
+        name='BookDetail'
+        component={BookDetailScreen}
+        options={{ title: '책 상세보기' }}
       ></UserinfoStack.Screen>
     </UserinfoStack.Navigator>
   );

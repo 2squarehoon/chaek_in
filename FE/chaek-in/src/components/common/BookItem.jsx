@@ -11,7 +11,7 @@ function BookItem({ item }) {
 }
 
 const BookItemContainer = styled.View`
-  margin: 3% 5.5%;
+  margin: 3% 3%;
 `;
 
 export default BookItem;

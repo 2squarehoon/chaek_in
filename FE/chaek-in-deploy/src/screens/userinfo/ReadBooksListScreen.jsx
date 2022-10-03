@@ -30,15 +30,27 @@ function ReadBooksListScreen({ navigation }) {
   };
 
   return (
-    <View>
-      <Text>읽은 책 리스트 페이지</Text>
-      {readBooks.map((book) => (
-        <TouchableOpacity key={book.bookId} onPress={() => goBookDetail(book.bookId)}>
-          <BookItem item={book} />
-        </TouchableOpacity>
-      ))}
-    </View>
+    <ReadBooksContainer>
+      <BookItemsContainer>
+        {readBooks.map((book) => (
+          <TouchableOpacity key={book.bookId} onPress={() => goBookDetail(book.bookId)}>
+            <BookItem item={book} />
+          </TouchableOpacity>
+        ))}
+      </BookItemsContainer>
+    </ReadBooksContainer>
   );
 }
+
+const ReadBooksContainer = styled.ScrollView`
+  background-color: #fcf9f0;
+`;
+
+const BookItemsContainer = styled.View`
+  margin-top: 5%;
+  margin-left: 2%
+  display:flex
+  flex-flow: row wrap;
+`;
 
 export default ReadBooksListScreen;
