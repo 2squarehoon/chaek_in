@@ -24,14 +24,9 @@ public class LoggingAspect {
     public Object loggingController(ProceedingJoinPoint joinPoint) throws Throwable {
         String params = getParams(joinPoint);
         if (params.contains("password")) {
-            int startIndex = params.indexOf("password") + 9;
-            int lastIndex = params.substring(startIndex).indexOf(',');
-            if (lastIndex < 0)
-                lastIndex = params.length();
-            String substring = params.substring(startIndex, lastIndex);
-            params.replace(substring, "xxxxxxxxxxxxx");
+            changePasswordLog(params);
         }
-        log.info("[Controller] Method = {}, params = {}", joinPoint.getSignature().getName(), params);
+        log.info(" [Controller] Method = {}, params = {}", joinPoint.getSignature().getName(), params);
         Object result = null;
         try {
             result = joinPoint.proceed();
@@ -42,8 +37,18 @@ public class LoggingAspect {
             if (response != null) {
                 value = objectMapper.writeValueAsString(response.getBody());
             }
-            log.info(" <<<<<<< [Response] Response value = {}", value.length() > 50 ? value.substring(0, 50) : value);
+            log.info("<<<<<<< [Response] Response value = {}", value.length() > 50 ? value.substring(0, 50) : value);
         }
+    }
+
+    private void changePasswordLog(String params) {
+        int startIndex = params.indexOf("password") + 9;
+        String tmp = params.substring(startIndex);
+        int lastIndex = tmp.indexOf(",");
+        if (lastIndex < 0 || lastIndex < startIndex)
+            lastIndex = params.length();
+        String substring = params.substring(startIndex, lastIndex);
+        params.replace(substring, "xxxxxxxxxxxxx");
     }
 
     @Around("within(com.team7.chaekin.domain..service..*)")
@@ -53,7 +58,7 @@ public class LoggingAspect {
             return joinPoint.proceed();
         } finally {
             long end = System.currentTimeMillis();
-            log.info("[Service] {} : Execute Time = {}ms", joinPoint.getSignature().getName(), end - start);
+            log.info(" [Service] {} : Execute Time = {}ms", joinPoint.getSignature().getName(), end - start);
         }
     }
 
