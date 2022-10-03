@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { useSelector } from 'react-redux';
 
 function HomeScreen({ navigation }) {
-  const { accessToken, nickname } = useSelector((state) => state.main);
+  const { accessToken, nickname, userId } = useSelector((state) => state.main);
   const [bookNumber, changeBookNumber] = useState('');
 
   const goToBookLog = (e) => {
@@ -17,6 +17,7 @@ function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <View>
         <Text>{nickname}님의 서재</Text>
+        <Text>{userId}</Text>
       </View>
       <View>
         <Button onPress={goToBookLog} title='테스트용으로 만든 책 검색페이지'></Button>

@@ -4,17 +4,19 @@ import {
   SET_USER_ACCESSTOKEN,
   SET_USER_REFRESHTOKEN,
   SET_FAKE_ACCESSTOKEN,
+  SET_USER_ID,
 } from './actions';
 
-const initialState = {
-  nickname: '',
-  email: '',
-  accessToken: '',
-  refreshToken: '',
-};
+// const initialState = {
+//   nickname: '',
+//   email: '',
+//   accessToken: '',
+//   refreshToken: '',
+//   userId: '',
+// };
 
 function userReducer(
-  state = { nickname: '', email: '', accessToken: '', refreshToken: '', fakeAccessToken: '' },
+  state = { nickname: '', email: '', accessToken: '', refreshToken: '', fakeAccessToken: '', userId: '' },
   action,
 ) {
   switch (action.type) {
@@ -29,6 +31,8 @@ function userReducer(
     // 회원가입하고 초기평점 수집할 때 accessToken이 필요해서 따로 파둠
     case SET_FAKE_ACCESSTOKEN:
       return { ...state, fakeAccessToken: action.payload };
+    case SET_USER_ID:
+      return { ...state, userId: action.payload };
     default:
       return state;
   }
