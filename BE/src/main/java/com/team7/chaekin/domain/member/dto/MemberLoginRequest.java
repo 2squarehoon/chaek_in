@@ -9,5 +9,7 @@ import javax.validation.constraints.NotBlank;
 public class MemberLoginRequest {
     @Email(message = "Must email format.")
     @NotBlank
-    private String identifier;
+    private String id;
+    @NotBlank
+    private String password;
 }

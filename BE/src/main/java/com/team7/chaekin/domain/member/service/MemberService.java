@@ -14,6 +14,7 @@ import com.team7.chaekin.global.oauth.token.TokenProperties;
 import com.team7.chaekin.global.oauth.token.TokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -31,18 +32,21 @@ public class MemberService {
     private final TokenProperties tokenProperties;
     private final BookLogRepository bookLogRepository;
     private final TokenUtils tokenUtils;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
-    public MemberLoginResponse login(String identifier) {
+    public MemberLoginResponse login(String id, String password) {
         MemberLoginResponse memberLoginResponse = new MemberLoginResponse();
+        String encryptPassword = bCryptPasswordEncoder.encode(password);
 
-        memberRepository.findByIdentifier(identifier).ifPresentOrElse(
+        memberRepository.findByIdentifierAndPassword(id, encryptPassword).ifPresentOrElse(
                 member -> {
                     TokenSet issueTokens = issueNewTokenSet(member);
                     memberLoginResponse.setIsFirst(false);
                     memberLoginResponse.setAccessToken(issueTokens.getAccess());
                     memberLoginResponse.setRefreshToken(issueTokens.getRefresh());
                     memberLoginResponse.setNickname(member.getNickname());
+                    memberLoginResponse.setMemberId(member.getId());
                 },
                 () -> memberLoginResponse.setIsFirst(true));
         return memberLoginResponse;
@@ -75,12 +79,14 @@ public class MemberService {
 
     @Transactional
     public MemberTokenResponse saveAdditionalInformation(MemberCreateRequest memberCreateRequest) {
-        memberRepository.findByIdentifier(memberCreateRequest.getIdentifier())
+        memberCreateRequest.encryptPassword(bCryptPasswordEncoder);
+
+        memberRepository.findByIdentifierAndPassword(memberCreateRequest.getIdentifier(), memberCreateRequest.getPassword())
                 .ifPresent(m -> { throw new CustomException(DomainErrorCode.ALREADY_REGIST_MEMBER); });
         Member member = memberRepository.save(memberCreateRequest.toEntity());
 
         TokenSet issueTokens = issueNewTokenSet(member);
-        return new MemberTokenResponse(issueTokens.getAccess(), issueTokens.getRefresh());
+        return new MemberTokenResponse(issueTokens.getAccess(), issueTokens.getRefresh(), member.getId());
     }
 
     @Transactional
