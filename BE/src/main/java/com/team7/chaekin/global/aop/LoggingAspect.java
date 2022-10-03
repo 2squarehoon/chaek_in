@@ -24,7 +24,7 @@ public class LoggingAspect {
     public Object loggingController(ProceedingJoinPoint joinPoint) throws Throwable {
         String params = getParams(joinPoint);
         if (params.contains("password")) {
-            changePasswordLog(params);
+            params = changePasswordLog(params);
         }
         log.info(" [Controller] Method = {}, params = {}", joinPoint.getSignature().getName(), params);
         Object result = null;
@@ -41,14 +41,14 @@ public class LoggingAspect {
         }
     }
 
-    private void changePasswordLog(String params) {
+    private String changePasswordLog(String params) {
         int startIndex = params.indexOf("password") + 9;
         String tmp = params.substring(startIndex);
         int lastIndex = tmp.indexOf(",");
         if (lastIndex < 0 || lastIndex < startIndex)
             lastIndex = params.length();
         String substring = params.substring(startIndex, lastIndex);
-        params.replace(substring, "xxxxxxxxxxxxx");
+        return params.replace(substring, "xxxxxxxxxxxxx");
     }
 
     @Around("within(com.team7.chaekin.domain..service..*)")
