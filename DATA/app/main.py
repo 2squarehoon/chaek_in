@@ -20,7 +20,8 @@ import random
 import os
 from dotenv import load_dotenv
 import redis
-from auth.auth_bearer import JWTBearer
+# from auth.auth_bearer import JWTBearer
+from auth_bearer import JWTBearer
 
 load_dotenv()
 

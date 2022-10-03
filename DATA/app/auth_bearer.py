@@ -1,7 +1,9 @@
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-from .auth_handler import *
+# from .auth_handler import *
+from auth_handler import *
+
 
 from sqlalchemy.orm import Session
 import models, schemas
@@ -33,8 +35,10 @@ class JWTBearer(HTTPBearer):
         isTokenValid: bool = False
         try:
             payload = decodeJWT(jwtoken)
+            print("payload: ", payload)
         except:
             payload = None
+            print("payload: ", payload)
         if payload:
             isTokenValid = True
         return isTokenValid
