@@ -17,13 +17,15 @@ class JWTBearer(HTTPBearer):
     async def __call__(self, request: Request):
         credentials: HTTPAuthorizationCredentials = await super(JWTBearer, self).__call__(request)
         if credentials:
+            print(credentials)
             if not credentials.scheme == "Bearer":
                 raise HTTPException(status_code=403, detail="Invalid authentication scheme.")
             if not self.verify_jwt(credentials.credentials):
                 raise HTTPException(status_code=403, detail="Invalid token or expired token.")
             if not self.verify_member_id(credentials.credentials):
                 raise HTTPException(status_code=403 , detail="Invalid authentication member")
-            return credentials.credentials
+            member_id = self.get_member_id(credentials.credentials)
+            return member_id
         else:
             raise HTTPException(status_code=403, detail="Invalid authorization code.")
 
@@ -53,3 +55,6 @@ class JWTBearer(HTTPBearer):
             isMemberIdValid = True
 
         return isMemberIdValid
+    
+    def get_member_id(self, jwtoken: str):
+        return decodeJWT(jwtoken)['id']
