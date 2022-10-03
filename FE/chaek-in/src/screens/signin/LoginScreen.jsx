@@ -64,7 +64,6 @@ function LoginScreen({ navigation }) {
     user_sign_in
       .then((user) => {
         setSub(user.additionalUserInfo.profile.sub);
-        setId(`${user.additionalUserInfo.profile.sub}_${user.additionalUserInfo.profile.email}`);
         setUserEmail(user.additionalUserInfo.profile.email);
         Alert.alert(user.user.email);
       })
@@ -115,8 +114,8 @@ function LoginScreen({ navigation }) {
     dispatch(setNickname(nname));
     dispatch(setEmail(userEmail));
     dispatch(setRefreshToken(rToken));
-    dispatch(setAccessToken(aToken));
     dispatch(setUserId(id));
+    dispatch(setAccessToken(aToken));
   };
   // isFirst 값이 갱신되면 실행, 처음 로그인이면 추가정보입력으로 이동, 아닐 시 redux-secureStore에 토큰, 정보들 저장
   useEffect(() => {
@@ -129,15 +128,16 @@ function LoginScreen({ navigation }) {
 
   // state에 저장된 email을 identifier로 써서 백에 데이터 조회
   const requireBack = async (mail) => {
-    // console.log(`${sub}_${mail}`);
-    console.log(id);
-    const data = { id: mail, password: id };
+    console.log(`${sub}_${mail}`);
+    // console.log(id);
+    const data = { id: mail, password: `${sub}_${mail}` };
     await Axios.post(`${HOST}/api/v1/members/login`, data)
       .then(function (response) {
         console.log(response.data);
         setNname(response.data.nickname);
         setAToken(response.data.accessToken);
         setRToken(response.data.refreshToken);
+        setId(response.data.memberId);
         setIsFirst(response.data.isFirst);
         // Alert.alert('백으로 이메일 보내기');
       })
