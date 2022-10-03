@@ -22,35 +22,47 @@ function MeetingDetailScreen({ route, navigation }) {
   const [comment, setComment] = useState('');
   const [replyComment, setReplyComment] = useState('');
   const [isReplyOpened, setIsReplyOpened] = useState(0);
-  const [reload, setReload] = useState(false);
 
   const isFocused = useIsFocused();
   // MeetingDetail 가져오기
-  useEffect(() => {
-    Axios.get(`${HOST}/api/v1/meetings/${route.params.meetingId}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-      .then(function (response) {
-        setBookTitle(response.data.bookTitle);
-        setCover(response.data.cover);
-        setCreatedAt(response.data.createdAt);
-        setCurrentMember(response.data.currentMember);
-        setDescription(response.data.description);
-        setIsMine(response.data.isMine);
-        // 만약 내가 속한 모임이면 isParticipated를 true로
-        if (response.data.isMine) {
-          setIsParticipated(true);
-        }
-        setMaxCapacity(response.data.maxCapacity);
-        setMeetingId(response.data.meetingId);
-        setMeetingTitle(response.data.meetingTitle);
+  useEffect(
+    () => {
+      Axios.get(`${HOST}/api/v1/meetings/${route.params.meetingId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, [reload]);
+        .then(function (response) {
+          setBookTitle(response.data.bookTitle);
+          setCover(response.data.cover);
+          setCreatedAt(response.data.createdAt);
+          setCurrentMember(response.data.currentMember);
+          setDescription(response.data.description);
+          setIsMine(response.data.isMine);
+          // 만약 내가 속한 모임이면 isParticipated를 true로
+          if (response.data.isMine) {
+            setIsParticipated(true);
+          }
+          setMaxCapacity(response.data.maxCapacity);
+          setMeetingId(response.data.meetingId);
+          setMeetingTitle(response.data.meetingTitle);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    [
+      // isFocused,
+      // currentMember,
+      // accessToken,
+      // route.params.meetingId,
+      // isParticipated,
+      // isMine,
+      // isReplyOpened,
+      // comment,
+      // replyComment,
+    ],
+  );
   // 모임 참가, /api/v1/meetings/{meetingId}/participants
   function participateMeeting() {
     Axios.post(
@@ -85,7 +97,18 @@ function MeetingDetailScreen({ route, navigation }) {
       .catch(function (error) {
         console.log(error);
       });
-  }, [reload]);
+  }, [
+    // isFocused,
+    // currentMember,
+    // accessToken,
+    // route.params.meetingId,
+    // isParticipated,
+    // isMine,
+    // isReplyOpened,
+    comment,
+    // commentList,
+    // replyComment,
+  ]);
 
   // 댓글 작성
   function CreateComment() {
@@ -98,7 +121,7 @@ function MeetingDetailScreen({ route, navigation }) {
       },
     })
       .then(function (response) {
-        setReload(!reload);
+        navigation.navigate('MeetingDetail', { meetingId: meetingId });
       })
       .catch(function (error) {
         console.log(error);
@@ -119,8 +142,6 @@ function MeetingDetailScreen({ route, navigation }) {
       .then(function (response) {
         console.log(response.data);
         setIsReplyOpened(0);
-        setReplyComment('');
-        setReload(!reload);
       })
       .catch(function (error) {
         console.log(error);

@@ -14,7 +14,7 @@ import {
 import Axios from 'axios';
 import { HOST } from '@env';
 import { useSelector, useDispatch } from 'react-redux';
-import { setAccessToken, setEmail, setNickname, setRefreshToken } from '../../redux/actions';
+import { setAccessToken, setEmail, setNickname, setRefreshToken, setUserId } from '../../redux/actions';
 import BookItem from '../../components/common/BookItem';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
@@ -47,7 +47,7 @@ function MyPageScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    Axios.get(`${HOST}/api/v1/books/me?isReading=false`, {
+    Axios.get(`${HOST}/api/v1/books/me?isReading=true`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -62,11 +62,12 @@ function MyPageScreen({ navigation }) {
   }, []);
 
   const Logout = async () => {
-    // await GoogleSignin.revokeAccess();
-    // await auth().signOut();
+    await GoogleSignin.revokeAccess();
+    await auth().signOut();
     dispatch(setNickname(''));
     dispatch(setEmail(''));
     dispatch(setRefreshToken(''));
+    dispatch(setUserId(''));
     dispatch(setAccessToken(''));
     Alert.alert('로그아웃되었습니다.');
   };
@@ -83,6 +84,7 @@ function MyPageScreen({ navigation }) {
         dispatch(setNickname(''));
         dispatch(setEmail(''));
         dispatch(setRefreshToken(''));
+        dispatch(setUserId(''));
         dispatch(setAccessToken(''));
         Alert.alert('탈퇴되었습니다.');
       })
@@ -224,7 +226,7 @@ const TitleText = styled.Text`
 
 const BookItemsContainer = styled.View`
   margin-top: 5%;
-  margin-left: 2%
+  margin-left: 4%
   display:flex
   flex-flow: row wrap;
 `;

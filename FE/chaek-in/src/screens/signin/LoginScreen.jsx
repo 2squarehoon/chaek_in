@@ -65,7 +65,7 @@ function LoginScreen({ navigation }) {
       .then((user) => {
         setSub(user.additionalUserInfo.profile.sub);
         setUserEmail(user.additionalUserInfo.profile.email);
-        Alert.alert(user.user.email);
+        // Alert.alert(user.user.email);
       })
       .catch((error) => {
         console.log(error);

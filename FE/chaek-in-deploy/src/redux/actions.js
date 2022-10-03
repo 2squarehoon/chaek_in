@@ -2,6 +2,7 @@ export const SET_USER_NICKNAME = 'SET_USER_NICKNAME';
 export const SET_USER_EMAIL = 'SET_USER_EMAIL';
 export const SET_USER_ACCESSTOKEN = 'SET_USER_ACCESSTOKEN';
 export const SET_USER_REFRESHTOKEN = 'SET_USER_REFRESHTOKEN';
+export const SET_USER_ID = 'SET_USER_ID';
 export const SET_FAKE_ACCESSTOKEN = 'SET_FAKE_ACCESSTOKEN';
 
 export const setNickname = (userNickname) => (dispatch) => {
@@ -31,6 +32,14 @@ export const setRefreshToken = (rToken) => (dispatch) => {
     payload: rToken,
   });
 };
+
+export const setUserId = (id) => (dispatch) => {
+  dispatch({
+    type: SET_USER_ID,
+    payload: id,
+  });
+};
+
 // 회원가입하고 초기평점 수집할 때 accessToken이 필요해서 따로 파둠
 export const setFakeAccessToken = (fAToken) => (dispatch) => {
   dispatch({

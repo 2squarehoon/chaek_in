@@ -10,6 +10,7 @@ function GetAgeScreen({ navigation, route }) {
     await navigation.navigate('Gender', {
       age: age,
       email: route.params.email,
+      sub: route.params.sub,
       nickname: route.params.nickname,
       job: route.params.job,
     });
