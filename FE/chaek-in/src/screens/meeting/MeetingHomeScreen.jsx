@@ -75,6 +75,7 @@ function MeetingHomeScreen({ navigation }) {
                 alignItems: 'flex-start',
                 justifyContent: 'flex-end',
               }}
+              onPress={() => navigation.navigate('MeetingSimilar', { memberId: email })}
             >
               <MeetingRecomImage source={require('../../../assets/image/meeting/similar.png')} />
               <NicknameText>{nickname}</NicknameText>
@@ -88,6 +89,7 @@ function MeetingHomeScreen({ navigation }) {
                 alignItems: 'flex-start',
                 justifyContent: 'flex-end',
               }}
+              onPress={() => navigation.navigate('MeetingChallenge', { memberId: email })}
             >
               <MeetingRecomImage source={require('../../../assets/image/meeting/finish.png')} />
               <ChallengeText>도전! 완독 모임</ChallengeText>
@@ -98,6 +100,7 @@ function MeetingHomeScreen({ navigation }) {
                 alignItems: 'flex-start',
                 justifyContent: 'flex-end',
               }}
+              onPress={() => navigation.navigate('MeetingOpposite', { memberId: email })}
             >
               <MeetingRecomImage source={require('../../../assets/image/meeting/opposite.png')} />
               <OppositeText>이런 책도</OppositeText>
@@ -254,12 +257,6 @@ const MyMeetingItem = styled.Text`
   border-radius: 18px;
   margin-bottom: 10px;
   padding: 20px;
-`;
-
-const TextView = styled.View`
-  flex: 1;
-  width: 100%;
-  align-items: flex-start;
 `;
 
 export default MeetingHomeScreen;

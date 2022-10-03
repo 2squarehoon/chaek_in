@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import RecomHomeScreen from '../screens/recommendation/RecomHomeScreen';
 import SimilarPeopleScreen from '../screens/recommendation/SimilarPeopleScreen';
 import SimilarBookRecomScreen from '../screens/recommendation/SimilarBookRecomScreen';
+import MeetingDetailScreen from '../screens/meeting/MeetingDetailScreen';
 
 const BookRecomStack = createStackNavigator();
 
@@ -15,6 +16,7 @@ function BookRecomNavigation() {
         name='SimilarBookRecom'
         component={SimilarBookRecomScreen}
       ></BookRecomStack.Screen>
+      <BookRecomStack.Screen name='MeetingDetail' component={MeetingDetailScreen}></BookRecomStack.Screen>
     </BookRecomStack.Navigator>
   );
 }
