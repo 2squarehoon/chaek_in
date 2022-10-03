@@ -8,6 +8,7 @@ function GetGenderScreen({ navigation, route }) {
   const goToRating = async (gender) => {
     await navigation.navigate('RatingSkip', {
       email: route.params.email,
+      sub: route.params.sub,
       nickname: route.params.nickname,
       job: route.params.job,
       age: route.params.age,

@@ -6,7 +6,12 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 function GetJobScreen({ navigation, route }) {
   const [text, onChangeText] = useState('');
   const goToAge = () => {
-    navigation.navigate('Age', { email: route.params.email, nickname: route.params.nickname, job: text });
+    navigation.navigate('Age', {
+      email: route.params.email,
+      sub: route.params.sub,
+      nickname: route.params.nickname,
+      job: text,
+    });
   };
 
   return (

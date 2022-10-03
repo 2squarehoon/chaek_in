@@ -63,7 +63,7 @@ function MyPageScreen({ navigation }) {
 
   const Logout = async () => {
     // await GoogleSignin.revokeAccess();
-    await auth().signOut();
+    // await auth().signOut();
     dispatch(setNickname(''));
     dispatch(setEmail(''));
     dispatch(setRefreshToken(''));

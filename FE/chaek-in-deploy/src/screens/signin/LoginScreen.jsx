@@ -7,7 +7,7 @@ import Axios from 'axios';
 import styled from 'styled-components/native';
 import { HOST } from '@env';
 import { useDispatch } from 'react-redux';
-import { setAccessToken, setEmail, setNickname, setRefreshToken } from '../../redux/actions';
+import { setAccessToken, setEmail, setNickname, setRefreshToken, setUserId } from '../../redux/actions';
 import * as Font from 'expo-font';
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
@@ -17,10 +17,12 @@ WebBrowser.maybeCompleteAuthSession();
 function LoginScreen({ navigation }) {
   // const [reqError, setReqError] = useState('');
   const [userEmail, setUserEmail] = useState();
+  const [sub, setSub] = useState('');
   const [isFirst, setIsFirst] = useState('');
   const [nname, setNname] = useState('');
   const [aToken, setAToken] = useState('');
   const [rToken, setRToken] = useState('');
+  const [id, setId] = useState('');
 
   const dispatch = useDispatch();
 
@@ -46,13 +48,14 @@ function LoginScreen({ navigation }) {
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    console.log(user);
     return subscriber; // unsubscribe on unmount
   }, []);
 
   const onGoogleButtonPress = async () => {
     // Get the users ID token
     const { idToken } = await GoogleSignin.signIn();
-    Alert.alert('로그인!');
+    // Alert.alert('로그인!');
     // Create a Google credential with the token
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
@@ -60,14 +63,15 @@ function LoginScreen({ navigation }) {
     const user_sign_in = auth().signInWithCredential(googleCredential);
     user_sign_in
       .then((user) => {
-        setUserEmail(user.user.email);
-        Alert.alert(user.user.email);
-        console.log(user.user.email);
+        setSub(user.additionalUserInfo.profile.sub);
+        setUserEmail(user.additionalUserInfo.profile.email);
+        // Alert.alert(user.user.email);
       })
       .catch((error) => {
         console.log(error);
       });
-    await requireBack(userEmail);
+    console.log(userEmail);
+    // await requireBack(userEmail);
   };
 
   const signOut = async () => {
@@ -75,7 +79,7 @@ function LoginScreen({ navigation }) {
       await GoogleSignin.revokeAccess();
       await auth().signOut();
       setUser(null);
-      Alert.alert('로그아웃!');
+      // Alert.alert('로그아웃!');
     } catch (error) {
       console.log(error);
     }
@@ -106,53 +110,36 @@ function LoginScreen({ navigation }) {
 
   // redux state에 저장
   const saveReduxState = () => {
-    Alert.alert('리덕스 저장');
+    // Alert.alert('리덕스 저장');
     dispatch(setNickname(nname));
     dispatch(setEmail(userEmail));
     dispatch(setRefreshToken(rToken));
+    dispatch(setUserId(id));
     dispatch(setAccessToken(aToken));
   };
   // isFirst 값이 갱신되면 실행, 처음 로그인이면 추가정보입력으로 이동, 아닐 시 redux-secureStore에 토큰, 정보들 저장
   useEffect(() => {
     if (isFirst) {
-      navigation.navigate('Nickname', { email: userEmail });
+      navigation.navigate('Nickname', { email: userEmail, sub: sub });
     } else if (isFirst === false) {
       saveReduxState();
     }
-  }, [isFirst, navigation, saveReduxState, userEmail]);
+  }, [isFirst]);
 
-  // // 구글에 요청해서 email만 받아와서 state에 저장
-  // const getGoogleUser = async (accessToken) => {
-  //   try {
-  //     await Axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
-  //       headers: {
-  //         Authorization: `Bearer ${accessToken}`,
-  //       },
-  //     })
-  //       .then(function (response) {
-  //         setUserEmail(response.data.email);
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       });
-  //     // console.log(gUserReq.data);
-  //     // setGUser(gUserReq.data);
-  //     // storageData();
-  //   } catch (error) {
-  //     console.log('GoogleUserReq error: ', error.response.data);
-  //     setReqError(error.response.data);
-  //   }
-  // };
   // state에 저장된 email을 identifier로 써서 백에 데이터 조회
   const requireBack = async (mail) => {
-    await Axios.get(`${HOST}/api/v1/members/login?identifier=${mail}`)
+    console.log(`${sub}_${mail}`);
+    // console.log(id);
+    const data = { id: mail, password: `${sub}_${mail}` };
+    await Axios.post(`${HOST}/api/v1/members/login`, data)
       .then(function (response) {
         console.log(response.data);
-        Alert.alert('백으로 이메일 보내기');
         setNname(response.data.nickname);
         setAToken(response.data.accessToken);
         setRToken(response.data.refreshToken);
+        setId(response.data.memberId);
         setIsFirst(response.data.isFirst);
+        // Alert.alert('백으로 이메일 보내기');
       })
       .catch(function (error) {
         console.log(error);
@@ -176,8 +163,11 @@ function LoginScreen({ navigation }) {
         <MiddleText>책크인</MiddleText>
         {/* <MiddleText>{user.displayName}</MiddleText> */}
       </MiddleContainer>
-      <GoogleSigninButton style={{ width: 300, height: 65 }} onPress={onGoogleButtonPress} />
-      <Button title='로그아웃' onPress={signOut} />
+      <GoogleSigninButton
+        style={{ width: 250, height: 65, fontFamily: 'Medium', marginLeft: 'auto', marginRight: 'auto' }}
+        onPress={onGoogleButtonPress}
+      />
+      {/* <Button title='로그아웃' onPress={signOut} /> */}
       {/* <GoogleLogin
         disabled={!request}
         title='Login'
@@ -214,9 +204,10 @@ const GoogleLogin = styled.TouchableOpacity`
 `;
 
 const MiddleContainer = styled.View`
-margin-top: 35%;
+  margin-top: 40%;
   margin-left: 20%
   margin-right: auto
+  margin-Bottom: 10%;
 `;
 
 const MiddleText = styled.Text`

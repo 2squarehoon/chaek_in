@@ -43,13 +43,22 @@ def get_cf_books(member_id):
         return bestseller.bestseller()
     
     similarity = cal_item_based_collabor(review, booklog)
+    print(type(similarity))
 
     simil_books = set()
     for book_id in recent_books:
-        books = list(similarity[book_id].sort_values(ascending=False).iloc[:10].index)
-        simil_books.update(books)
+        if book_id in similarity.columns:
+            books = list(similarity[book_id].sort_values(ascending=False).iloc[:10].index)
+            simil_books.update(books)
 
-    ids = tuple(random.sample(simil_books - member_books, 10))
+
+
+    ids = simil_books - member_books
+    if len(ids) < 10:
+        return bestseller.bestseller()
+
+    ids = tuple(random.sample(ids, 10))
+
     query = "select id, isbn, title, author, cover from book where id IN {}".format(ids)
     cf_books = pd.read_sql(query, engine)
 

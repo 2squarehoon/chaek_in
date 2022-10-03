@@ -6,7 +6,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 function GetNicknameScreen({ navigation, route }) {
   const [text, onChangeText] = useState('');
   const goToJob = () => {
-    navigation.navigate('Job', { email: route.params.email, nickname: text });
+    navigation.navigate('Job', { email: route.params.email, sub: route.params.sub, nickname: text });
   };
 
   return (
