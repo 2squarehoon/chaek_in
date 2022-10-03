@@ -47,7 +47,7 @@ function MyPageScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    Axios.get(`${HOST}/api/v1/books/me?isReading=false`, {
+    Axios.get(`${HOST}/api/v1/books/me?isReading=true`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -62,8 +62,8 @@ function MyPageScreen({ navigation }) {
   }, []);
 
   const Logout = async () => {
-    // await GoogleSignin.revokeAccess();
-    // await auth().signOut();
+    await GoogleSignin.revokeAccess();
+    await auth().signOut();
     dispatch(setNickname(''));
     dispatch(setEmail(''));
     dispatch(setRefreshToken(''));
@@ -78,8 +78,8 @@ function MyPageScreen({ navigation }) {
       },
     })
       .then(async function () {
-        // await GoogleSignin.revokeAccess();
-        // await auth().signOut();
+        await GoogleSignin.revokeAccess();
+        await auth().signOut();
         dispatch(setNickname(''));
         dispatch(setEmail(''));
         dispatch(setRefreshToken(''));

@@ -69,6 +69,7 @@ function FirstRatingScreen() {
         },
       })
         .then(function (response) {
+          console.log(response);
           console.log(response.data.books);
           var test1 = response.data.books;
           // var test = test1.map((book) => {

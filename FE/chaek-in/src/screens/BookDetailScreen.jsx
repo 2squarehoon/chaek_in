@@ -155,15 +155,15 @@ function BookDetailScreen({ route, navigation }) {
       <ScrollViewContainer>
         {readStatus === 'NONE' && (
           <BeforeContainer>
-            <LogoContainer>
+            <BeforeLogoContainer>
               <Image
                 source={require('../../assets/image/bookStatus/not_reading.png')}
                 style={{ width: 24, height: 30, marginLeft: 'auto', marginRight: 'auto' }}
               />
               <LogoText>읽기 전</LogoText>
-            </LogoContainer>
+            </BeforeLogoContainer>
             {isLiked ? (
-              <LogoContainer>
+              <LikeLogoContainer>
                 <Entypo
                   name='heart'
                   size={30}
@@ -172,9 +172,9 @@ function BookDetailScreen({ route, navigation }) {
                   onPress={DislikeBook}
                 />
                 <LogoText>취소</LogoText>
-              </LogoContainer>
+              </LikeLogoContainer>
             ) : (
-              <LogoContainer>
+              <LikeLogoContainer>
                 <Entypo
                   name='heart-outlined'
                   size={30}
@@ -183,7 +183,7 @@ function BookDetailScreen({ route, navigation }) {
                   onPress={LikeBook}
                 />
                 <LogoText>찜하기</LogoText>
-              </LogoContainer>
+              </LikeLogoContainer>
             )}
           </BeforeContainer>
         )}
@@ -192,7 +192,7 @@ function BookDetailScreen({ route, navigation }) {
             <LogoContainer>
               <Image
                 source={require('../../assets/image/bookStatus/reading.png')}
-                style={{ width: 24, height: 30, marginLeft: 'auto', marginRight: 'auto' }}
+                style={{ width: 40, height: 30, marginLeft: 'auto', marginRight: 'auto' }}
               />
               <LogoText>읽는 중</LogoText>
             </LogoContainer>
@@ -227,7 +227,7 @@ function BookDetailScreen({ route, navigation }) {
           <BorderLineText>------------------ 책 리뷰 ------------------</BorderLineText>
         </MiddleContainer>
         {/* <ReviewList bookId={bookId} /> */}
-        {isWritten === false && (
+        {isWritten === false && readStatus !== 'NONE' && (
           <ReviewCreateContainer>
             <RatingContainer>
               <StarRating rating={rating} onChange={changeRating} />
@@ -259,7 +259,6 @@ const styles = StyleSheet.create({
 const BeforeContainer = styled.View`
   flex-direction: row;
   align-items: center;
-  justify-content: space-around;
 `;
 
 const ReadingContainer = styled.View`
@@ -272,6 +271,18 @@ const AfterContainer = styled.View`
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+`;
+
+const BeforeLogoContainer = styled.View`
+  margin: 5% auto 5% 5%;
+  aligh-items: center;
+  justify-content: center;
+`;
+
+const LikeLogoContainer = styled.View`
+  margin: 5% 5% 5% auto;
+  aligh-items: center;
+  justify-content: center;
 `;
 
 const LogoContainer = styled.View`
