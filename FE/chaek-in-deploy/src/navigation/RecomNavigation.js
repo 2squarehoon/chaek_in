@@ -1,17 +1,22 @@
 import React from 'react';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import CFScreen from '../screens/recommendation/SimilarPeopleScreen';
-import CBFScreen from '../screens/recommendation/SimilarBookRecomScreen';
+import { createStackNavigator } from '@react-navigation/stack';
+import RecomHomeScreen from '../screens/recommendation/RecomHomeScreen';
+import SimilarPeopleScreen from '../screens/recommendation/SimilarPeopleScreen';
+import SimilarBookRecomScreen from '../screens/recommendation/SimilarBookRecomScreen';
 
-const RecomTab = createMaterialTopTabNavigator();
+const BookRecomStack = createStackNavigator();
 
-function MemoNavigation() {
+function BookRecomNavigation() {
   return (
-    <RecomTab.Navigator initialRouteName='OurRecomScreen'>
-      <RecomTab.Screen name='CFScreen' component={CFScreen}></RecomTab.Screen>
-      <RecomTab.Screen name='CBFScreen' component={CBFScreen}></RecomTab.Screen>
-    </RecomTab.Navigator>
+    <BookRecomStack.Navigator initialRouteName='RecomHome' screenOptions={{ headerShown: false }}>
+      <BookRecomStack.Screen name='RecomHome' component={RecomHomeScreen} />
+      <BookRecomStack.Screen name='SimilarPeople' component={SimilarPeopleScreen}></BookRecomStack.Screen>
+      <BookRecomStack.Screen
+        name='SimilarBookRecom'
+        component={SimilarBookRecomScreen}
+      ></BookRecomStack.Screen>
+    </BookRecomStack.Navigator>
   );
 }
 
-export default MemoNavigation;
+export default BookRecomNavigation;

@@ -225,7 +225,7 @@ const ScrollViewContainer = styled.ScrollView`
 
 const BookItemsContainer = styled.View`
   margin-top: 5%;
-  margin-left: 4%
+  margin-left: 2%
   display:flex
   flex-flow: row wrap;
 `;
@@ -249,7 +249,9 @@ const ModalText = styled.Text`
 `;
 
 const SubmitButton = styled.TouchableOpacity`
-  background-color: #b1d8e8;
+  background-color: #a8ca47;
+  border: 1px solid black;
+  border-radius: 18px;
   position: absolute;
   right: 20px;
   bottom: 20px;
@@ -257,7 +259,6 @@ const SubmitButton = styled.TouchableOpacity`
   height: 50px;
   justify-content: space-around;
   align-items: center;
-  border-radius: 15px;
 `;
 
 export default FirstRatingScreen;

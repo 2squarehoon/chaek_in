@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
+import { View } from 'react-native';
 import { HOST } from '@env';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components/native';
@@ -43,12 +44,13 @@ function MeetingHomeScreen({ navigation }) {
           {myMeetingList.map((meeting) => (
             <MyMeetingItem
               key={meeting.meetingId}
-              item={meeting.meetingTitle}
               onPress={() => navigation.navigate('MeetingDetail', { meetingId: meeting.meetingId })}
             >
-              <MyMeetingText>{meeting.meetingTitle}</MyMeetingText>
-              <MyMeetingText>
-                {meeting.currentMember}/{meeting.maxCapacity}
+              {/* <MyMeetingCoverImage source={{ uri: meeting.cover }} /> */}
+
+              <MyMeetingTitleText>{meeting.meetingTitle}</MyMeetingTitleText>
+              <MyMeetingText numberOfLines={2} elipseMode='tail'>
+                {meeting.bookTitle}
               </MyMeetingText>
             </MyMeetingItem>
           ))}
@@ -103,12 +105,16 @@ function MeetingHomeScreen({ navigation }) {
             </MeetingRecom>
           </RecomHalfView>
         </RecomView>
+        <FakeView></FakeView>
       </ScrollViewContainer>
     </MeetingHomeView>
   );
 }
 
 // styled-components
+const FakeView = styled.View`
+  height: 100px;
+`;
 const MeetingHomeView = styled.View`
   flex: 1;
   background-color: #fcf9f0;
@@ -136,31 +142,6 @@ const MeetingCreateText = styled.Text`
 
 const ScrollViewContainer = styled.ScrollView`
   flex: 1;
-`;
-
-const MyMeetingView = styled.View`
-  flex; 1;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-`;
-
-const MyMeetingText = styled.Text`
-  flex: 1;
-  font-size: 16px;
-  font-family: 'Medium';
-`;
-
-const MyMeetingItem = styled.Text`
-  flex: 1;
-  width: 100%;
-  height: 100px;
-  background-color: white;
-  border: 1px solid black;
-  border-radius: 18px;
-  margin-bottom: 10px;
-  justify-content: center;
-  align-items: center;
 `;
 
 const RecomView = styled.View`
@@ -225,17 +206,60 @@ const TitleText = styled.Text`
   margin: 10px 0;
 `;
 
-const BookCoverImage = styled.Image`
-  width: 50px;
-  height: 50px;
-`;
-
 const MeetingRecomImage = styled.Image`
   width: 85px;
   height: 85px;
   resize-mode: contain;
   margin-bottom: 25px;
   align-self: center;
+`;
+
+// const MyMeetingCoverImage = styled.Image`
+//   flex: 3;
+//   width: 50px;
+//   height: 50px;
+//   resize-mode: contain;
+//   margin-right: 10px;
+// `;
+
+const MyMeetingView = styled.View`
+  flex; 1;
+  flex-direction: column;
+  align-items: center;
+  width: 95%;
+  height: 250px;
+  
+`;
+
+const MyMeetingTitleText = styled.Text`
+  font-size: 18px;
+  font-family: 'Medium';
+  margin-bottom: 5px;
+  flex-wrap: wrap;
+`;
+
+const MyMeetingText = styled.Text`
+  font-size: 14px;
+  font-family: 'Light';
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+`;
+
+const MyMeetingItem = styled.Text`
+  flex-direction: column;
+  width: 100%;
+  height: 100px;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 18px;
+  margin-bottom: 10px;
+  padding: 20px;
+`;
+
+const TextView = styled.View`
+  flex: 1;
+  width: 100%;
+  align-items: flex-start;
 `;
 
 export default MeetingHomeScreen;

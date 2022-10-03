@@ -25,7 +25,7 @@ function BookRatingItem({ item }) {
 }
 
 const BookItemContainer = styled.View`
-  margin: 3% 5% 2%;
+  margin: 3% 3%;
 `;
 
 export default BookRatingItem;

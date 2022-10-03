@@ -225,7 +225,7 @@ const ScrollViewContainer = styled.ScrollView`
 
 const BookItemsContainer = styled.View`
   margin-top: 5%;
-  margin-left: 4%
+  margin-left: 2%
   display:flex
   flex-flow: row wrap;
 `;
