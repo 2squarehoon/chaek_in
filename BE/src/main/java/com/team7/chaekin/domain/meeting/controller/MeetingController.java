@@ -48,9 +48,10 @@ public class MeetingController {
     }
 
     private void checkMeetingStatus(MeetingCreateRequest meetingCreateRequest) {
-        if (!StringUtils.hasText(meetingCreateRequest.getMeetingStatus())) {
-            meetingCreateRequest.setMeetingStatus("NONE");
-        } else if (!meetingCreateRequest.getMeetingStatus().equals("COMPLETE")) {
+        String meetingStatus = meetingCreateRequest.getMeetingStatus();
+        if (!StringUtils.hasText(meetingStatus)) {
+            meetingCreateRequest.setMeetingStatus("COMPLETE");
+        } else if (!meetingStatus.equals("COMPLETE") && !meetingStatus.equals("NONE")) {
             throw new CustomException(ValidationErrorCode.builder()
                     .message("Invalid Meeting status.")
                     .parameter("meetingStatus")

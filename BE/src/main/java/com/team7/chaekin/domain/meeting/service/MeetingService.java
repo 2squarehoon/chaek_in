@@ -9,7 +9,6 @@ import com.team7.chaekin.domain.member.entity.Member;
 import com.team7.chaekin.domain.member.repository.MemberRepository;
 import com.team7.chaekin.domain.participant.entity.Participant;
 import com.team7.chaekin.domain.participant.repository.ParticipantRepository;
-import com.team7.chaekin.global.error.errorcode.DomainErrorCode;
 import com.team7.chaekin.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,8 +20,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.*;
-import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.BOOK_IS_NOT_EXIST;
-import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.MEMBER_IS_NOT_EXIST;
 
 @RequiredArgsConstructor
 @Service
@@ -73,6 +70,7 @@ public class MeetingService {
                 .book(book)
                 .title(meetingCreateRequest.getTitle())
                 .description(meetingCreateRequest.getDescription())
+                .meetingStatus(meetingCreateRequest.getMeetingStatus())
                 .capacity(meetingCreateRequest.getMaxCapacity()).build());
 
         participantRepository.save(Participant.makeParticipant(meeting, member, true));
@@ -82,7 +80,6 @@ public class MeetingService {
     @Transactional
     public void updateMeeting(long meetingId, long memberId, MeetingUpdateRequest meetingUpdateRequest) {
         Meeting meeting = getMeeting(meetingId);
-        Member member = getMember(memberId);
         Book book = getBook(meetingUpdateRequest.getBookId());
 
         if (meetingUpdateRequest.getMaxCapacity() < meeting.getCurrentParticipants()) {
