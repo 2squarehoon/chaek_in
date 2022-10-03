@@ -55,7 +55,7 @@ function LoginScreen({ navigation }) {
   const onGoogleButtonPress = async () => {
     // Get the users ID token
     const { idToken } = await GoogleSignin.signIn();
-    Alert.alert('로그인!');
+    // Alert.alert('로그인!');
     // Create a Google credential with the token
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
@@ -139,7 +139,7 @@ function LoginScreen({ navigation }) {
         setRToken(response.data.refreshToken);
         setId(response.data.memberId);
         setIsFirst(response.data.isFirst);
-        Alert.alert('백으로 이메일 보내기');
+        // Alert.alert('백으로 이메일 보내기');
       })
       .catch(function (error) {
         console.log(error);

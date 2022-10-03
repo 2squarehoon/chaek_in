@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "책크인",
-    "slug": "chaek-in",
+    "name": "chaek-in-test",
+    "slug": "chaek-in-test",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/image/icon.png",
@@ -9,18 +9,13 @@
     "splash": {
       "image": "./assets/image/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#FCF9F0"
+      "backgroundColor": "#ffffff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
     "plugins": [
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "The app accesses your photos to let you share them with your friends."
-        }
-      ]
+      "@react-native-google-signin/google-signin"
     ],
     "assetBundlePatterns": [
       "**/*"
@@ -29,15 +24,21 @@
       "supportsTablet": true
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/image/icon.png",
+        "foregroundImage": "",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.chaek_in"
+      "package": "com.a107.chaekintest"
     },
     "web": {
-      "favicon": "./assets/image/favicon.png"
+      "favicon": ""
     },
-    "scheme": "chaek-in"
+    "scheme": "chaek-in-test",
+    "extra": {
+      "eas": {
+        "projectId": "09935a8d-0d83-4b12-85ee-2660a4d88f5e"
+      }
+    }
   }
 }
