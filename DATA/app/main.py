@@ -20,8 +20,6 @@ import random
 import os
 from dotenv import load_dotenv
 import redis
-# from auth.auth_bearer import JWTBearer
-from auth_bearer import JWTBearer
 
 load_dotenv()
 
@@ -72,10 +70,8 @@ def get_db():
 
 
 
-# 일단 이부분만 보면 될듯
-# @app.get('/api/data/books/cbf/{memberId}', dependencies=[Depends(JWTBearer())])
-@app.get('/api/data/books/cbf')
-def get_recommended(memberId: int = Depends(JWTBearer())):
+@app.get('/api/data/books/cbf/{memberId}')
+def get_recommended(memberId: int):
     # redis connection pool에서 연결 하나 갖고옴
     global rd
 
@@ -153,9 +149,8 @@ def get_recommended(memberId: int = Depends(JWTBearer())):
 
 
 
-# @app.get('/api/data/meeting/will/{memberId}', dependencies=[Depends(JWTBearer())])
-@app.get('/api/data/meeting/will')
-def get_recommend_will_meeting(memberId: int = Depends(JWTBearer())):
+@app.get('/api/data/meeting/will/{memberId}')
+def get_recommend_will_meeting(memberId: int):
     # 저장된 cbf 활용, 그래서 지금은 cbf 함수 실행시키고 cbf 가져와야함
     # 레디스되고 나서 추천 리스트 어떻게 가져올지 봐야함
     global rd, book
@@ -233,9 +228,8 @@ def get_recommend_will_meeting(memberId: int = Depends(JWTBearer())):
         return response
 
 
-# @app.get('/api/data/books/cf/{memberId}', dependencies=[Depends(JWTBearer())])
-@app.get('/api/data/books/cf')
-def get_book_cf(memberId: int = Depends(JWTBearer())):
+@app.get('/api/data/books/cf/{memberId}')
+def get_book_cf(memberId: int):
 
     start = time.time() # 실행시간 계산 코드
 
@@ -248,8 +242,8 @@ def get_book_cf(memberId: int = Depends(JWTBearer())):
 
 
 # booklog 업데이트 시 유사도 행렬 갱신 후 추천 목록 업데이트 후 redis에 저장
-@app.get('/api/data/booklogs/update', status_code=status.HTTP_200_OK)
-def booklog_update(memberId: int = Depends(JWTBearer()), result: bool = False):
+@app.get('/api/data/booklogs/update/{memberId}', status_code=status.HTTP_200_OK)
+def booklog_update(memberId: int, result: bool = False):
     # redis connection pool에서 연결 하나 갖고옴
     global rd
 
@@ -299,18 +293,18 @@ def booklog_update(memberId: int = Depends(JWTBearer()), result: bool = False):
     
     return
 
-# @app.get('/api/data/meeting/similar/{memberId}', dependencies=[Depends(JWTBearer())])
-@app.get('/api/data/meeting/similar')
-def get_recommend_similar_meeting(memberId: int = Depends(JWTBearer())):
+
+@app.get('/api/data/meeting/similar/{memberId}')
+def get_recommend_similar_meeting(memberId: int):
     global booklog, review, book, meeting_members
     
 
     return similar_meeting.get_member_sim_meeting(memberId, booklog, review, meeting_members)
 
     
-# @app.get('/api/data/meeting/recent-book/{memberId}', dependencies=[Depends(JWTBearer())])
-@app.get('/api/data/meeting/recent-book')
-def get_recent_book_meeting(memberId: int = Depends(JWTBearer())):
+
+@app.get('/api/data/meeting/recent-book/{memberId}')
+def get_recent_book_meeting(memberId: int):
 
     start = time.time() # 실행시간 계산 코드
 
@@ -323,7 +317,7 @@ def get_recent_book_meeting(memberId: int = Depends(JWTBearer())):
     return response
 
 
-# @app.get('/api/data/bookcafe/{latitude}/{longitude}', dependencies=[Depends(JWTBearer())])
+
 @app.get('/api/data/bookcafe')
 def get_near_bookcafe(latitude: float, longitude: float):
 
@@ -337,9 +331,9 @@ def get_near_bookcafe(latitude: float, longitude: float):
     return response
 
 
-# @app.get('/api/data/meeting/opposite/{memberId}', dependencies=[Depends(JWTBearer())])
-@app.get('/api/data/meeting/opposite')
-def get_opposite_book_meeting(memberId: int = Depends(JWTBearer())):
+
+@app.get('/api/data/meeting/opposite/{memberId}')
+def get_opposite_book_meeting(memberId: int):
     global booklog, review, book, meeting_members
     start = time.time() # 실행시간 계산 코드
 
