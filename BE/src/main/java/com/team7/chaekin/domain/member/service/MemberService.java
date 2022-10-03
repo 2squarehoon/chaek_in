@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -37,18 +38,21 @@ public class MemberService {
     @Transactional
     public MemberLoginResponse login(String id, String password) {
         MemberLoginResponse memberLoginResponse = new MemberLoginResponse();
-        String encryptPassword = bCryptPasswordEncoder.encode(password);
 
-        memberRepository.findByIdentifierAndPassword(id, encryptPassword).ifPresentOrElse(
-                member -> {
-                    TokenSet issueTokens = issueNewTokenSet(member);
-                    memberLoginResponse.setIsFirst(false);
-                    memberLoginResponse.setAccessToken(issueTokens.getAccess());
-                    memberLoginResponse.setRefreshToken(issueTokens.getRefresh());
-                    memberLoginResponse.setNickname(member.getNickname());
-                    memberLoginResponse.setMemberId(member.getId());
-                },
-                () -> memberLoginResponse.setIsFirst(true));
+        memberRepository.findByIdentifier(id)
+                .ifPresent(member -> {
+                            if (bCryptPasswordEncoder.matches(password, member.getPassword())) {
+                                TokenSet issueTokens = issueNewTokenSet(member);
+                                memberLoginResponse.setIsFirst(false);
+                                memberLoginResponse.setAccessToken(issueTokens.getAccess());
+                                memberLoginResponse.setRefreshToken(issueTokens.getRefresh());
+                                memberLoginResponse.setNickname(member.getNickname());
+                                memberLoginResponse.setMemberId(member.getId());
+                            }
+                });
+        if (!StringUtils.hasText(memberLoginResponse.getAccessToken())) {
+            memberLoginResponse.setIsFirst(true);
+        }
         return memberLoginResponse;
     }
 
@@ -81,8 +85,13 @@ public class MemberService {
     public MemberTokenResponse saveAdditionalInformation(MemberCreateRequest memberCreateRequest) {
         memberCreateRequest.encryptPassword(bCryptPasswordEncoder);
 
-        memberRepository.findByIdentifierAndPassword(memberCreateRequest.getIdentifier(), memberCreateRequest.getPassword())
-                .ifPresent(m -> { throw new CustomException(DomainErrorCode.ALREADY_REGIST_MEMBER); });
+        memberRepository.findByIdentifier(memberCreateRequest.getIdentifier())
+                .ifPresent(m -> {
+                    if (bCryptPasswordEncoder.matches(memberCreateRequest.getPassword(), m.getPassword())) {
+                        throw new CustomException(DomainErrorCode.ALREADY_REGIST_MEMBER);
+                    }
+                    throw new CustomException(DO_NOT_HAVE_AUTHORIZATION);
+                });
         Member member = memberRepository.save(memberCreateRequest.toEntity());
 
         TokenSet issueTokens = issueNewTokenSet(member);
