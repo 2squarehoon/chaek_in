@@ -11,7 +11,7 @@ function ReadBooksListScreen({ navigation }) {
   const [readBooks, setreadBooks] = useState([]);
 
   useEffect(() => {
-    Axios.get(`${HOST}/api/v1/books/me?isReading=true`, {
+    Axios.get(`${HOST}/api/v1/books/me?isReading=false`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

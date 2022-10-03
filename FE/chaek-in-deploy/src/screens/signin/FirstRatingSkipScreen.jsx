@@ -9,22 +9,25 @@ import {
   setNickname,
   setRefreshToken,
   setFakeAccessToken,
+  setUserId,
 } from '../../redux/actions';
 
 function FirstRatingSkipScreen({ navigation, route }) {
   const dispatch = useDispatch();
   const nickname = route.params.nickname;
   const email = route.params.email;
+  const sub = route.params.sub;
   const job = route.params.job;
   const age = route.params.age;
   const gender = route.params.gender;
 
   // 그냥 일반적인 로그인
   function SkipSignin() {
-    console.log(age);
-    console.log(gender);
+    // console.log(sub);
+    // console.log(email);
     Axios.post(`${HOST}/api/v1/members/me`, {
       identifier: email,
+      password: `${sub}_${email}`,
       nickname: nickname,
       job: job,
       age: age,
@@ -36,12 +39,14 @@ function FirstRatingSkipScreen({ navigation, route }) {
         dispatch(setNickname(nickname));
         dispatch(setRefreshToken(response.data.refreshToken));
         dispatch(setAccessToken(response.data.accessToken));
+        dispatch(setUserId(response.data.memberId));
         console.log('SecureStore 저장됨');
       })
       .catch(function (error) {
         if (error.response) {
           // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
-          console.log(email);
+          // console.log(email);
+          console.log(error);
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
@@ -62,6 +67,7 @@ function FirstRatingSkipScreen({ navigation, route }) {
   async function Signin() {
     Axios.post(`${HOST}/api/v1/members/me`, {
       identifier: email,
+      password: `${sub}_${email}`,
       nickname: nickname,
       job: job,
       age: age,
@@ -73,6 +79,7 @@ function FirstRatingSkipScreen({ navigation, route }) {
         dispatch(setEmail(email));
         dispatch(setNickname(nickname));
         dispatch(setRefreshToken(response.data.refreshToken));
+        dispatch(setUserId(response.data.memberId));
         // dispatch(setAccessToken(response.data.accessToken));
         console.log('SecureStore 저장됨(AccessToken 빼고)');
       })
