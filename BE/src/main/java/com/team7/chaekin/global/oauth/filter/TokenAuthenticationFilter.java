@@ -33,15 +33,15 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info(" >>>>>>> [Request URI] {} {}", request.getMethod(), request.getRequestURI());
+        log.info(">>>>>>> [Request URI] {} {}", request.getMethod(), request.getRequestURI());
         String accessToken = getAccessTokenInRequestHeader(request);
-        log.info("[Request Token] Access-Token = {}", accessToken);
+        log.info(" [Request Token] Access-Token = {}", accessToken);
         try {
             if (StringUtils.hasText(accessToken) && tokenUtils.validateToken(accessToken, tokenProperties.getAccess().getName())) {
                 long memberId = tokenUtils.getTokenMemberId(accessToken);
                 UserDetails userDetails = customUserDetailsService.loadMemberById(memberId);
                 MemberPrincipal memberPrincipal = (MemberPrincipal) userDetails;
-                log.info("[Request Member Information] MemberId = {}, identifier = {}", memberPrincipal.getMemberId(), memberPrincipal.getUsername());
+                log.info(" [Request Member Information] MemberId = {}, identifier = {}", memberPrincipal.getMemberId(), memberPrincipal.getUsername());
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
