@@ -20,6 +20,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.*;
 import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.BOOK_IS_NOT_EXIST;
 import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.MEMBER_IS_NOT_EXIST;
 
@@ -65,8 +66,7 @@ public class MeetingService {
 
     @Transactional
     public long createMeeting(long memberId, MeetingCreateRequest meetingCreateRequest) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
+        Member member = getMember(memberId);
         Book book = getBook(meetingCreateRequest.getBookId());
 
         Meeting meeting = meetingRepository.save(Meeting.builder()
@@ -80,12 +80,16 @@ public class MeetingService {
     }
 
     @Transactional
-    public void updateMeeting(long meetingId, MeetingUpdateRequest meetingUpdateRequest) {
+    public void updateMeeting(long meetingId, long memberId, MeetingUpdateRequest meetingUpdateRequest) {
         Meeting meeting = getMeeting(meetingId);
+        Member member = getMember(memberId);
         Book book = getBook(meetingUpdateRequest.getBookId());
 
         if (meetingUpdateRequest.getMaxCapacity() < meeting.getCurrentParticipants()) {
-            throw new CustomException(DomainErrorCode.IMPOSSIBLE_CAPACITY_LESS_THAN_CURRENT_MEMBERS);
+            throw new CustomException(IMPOSSIBLE_CAPACITY_LESS_THAN_CURRENT_MEMBERS);
+        }
+        if (!meeting.getMeetingLeader().getId().equals(memberId)) {
+            throw new CustomException(DO_NOT_HAVE_AUTHORIZATION);
         }
         meeting.update(book, meetingUpdateRequest);
     }
@@ -94,7 +98,7 @@ public class MeetingService {
     public void deleteMeeting(long memberId, long meetingId) {
         Meeting meeting = getMeeting(meetingId);
         if (!meeting.getMeetingLeader().getId().equals(memberId)) {
-            throw new CustomException(DomainErrorCode.ONLY_LEADER_CAN_DELETE_MEETING);
+            throw new CustomException(ONLY_LEADER_CAN_DELETE_MEETING);
         }
         meeting.delete();
     }
@@ -106,8 +110,12 @@ public class MeetingService {
 
     private Meeting getMeeting(long meetingId) {
         return meetingRepository.findByIdAndIsRemovedIsFalse(meetingId)
-                .orElseThrow(() -> new CustomException(DomainErrorCode.MEETING_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomException(MEETING_IS_NOT_EXIST));
     }
 
-
+    private Member getMember(long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
+        return member;
+    }
 }

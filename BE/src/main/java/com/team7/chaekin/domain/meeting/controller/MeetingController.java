@@ -61,7 +61,7 @@ public class MeetingController {
     @PatchMapping("/{meetingId}")
     public ResponseEntity<MeetingIdResponse> updateMeeting(@PathVariable long meetingId, @LoginMemberId long memberId,
                                            @RequestBody @Valid MeetingUpdateRequest meetingUpdateRequest) {
-        meetingService.updateMeeting(meetingId, meetingUpdateRequest);
+        meetingService.updateMeeting(meetingId, memberId, meetingUpdateRequest);
         return ResponseEntity.ok(new MeetingIdResponse(meetingId));
     }
 
