@@ -39,4 +39,5 @@ out/
 ### config file ###
 application-server.yml
 application-token.yml
+application-fcm.yml
 firebase/

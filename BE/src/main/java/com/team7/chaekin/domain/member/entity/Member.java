@@ -27,7 +27,7 @@ public class Member extends BaseTimeEntity {
     @Column(length = 45, nullable = false)
     private String nickname;
 
-    @Column(length = 500, nullable = false)
+    @Column(length = 255, nullable = false)
     private String password;
 
     @Column(length = 45)
@@ -48,6 +48,7 @@ public class Member extends BaseTimeEntity {
     @Builder
     public Member(String identifier, String password, String nickname, String job, int age, Gender gender) {
         this.identifier = identifier;
+        this.password = password;
         this.nickname = nickname;
         this.job = job;
         this.age = age;
