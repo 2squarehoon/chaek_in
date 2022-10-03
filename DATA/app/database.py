@@ -7,14 +7,14 @@ import pymysql
 
 
 pymysql.install_as_MySQLdb()
-host = "chaekin.cvg3ycl5pbuo.ap-northeast-2.rds.amazonaws.com"
-user = "admin"
-password = "chrlghk1!"
-database = "testdb"
+host = "j7a107.p.ssafy.io"
+user = "chaekin"
+password = "xBpIRi%O1q"
+database = "chaekin"
 
 engine = create_engine(
     f"mysql+mysqldb://{user}:{password}"\
-                    f"@{host}:3306/{database}",
+                    f"@{host}:3741/{database}",
                     encoding="utf-8"
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
