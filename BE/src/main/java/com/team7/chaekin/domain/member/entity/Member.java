@@ -27,6 +27,9 @@ public class Member extends BaseTimeEntity {
     @Column(length = 45, nullable = false)
     private String nickname;
 
+    @Column(length = 255, nullable = false)
+    private String password;
+
     @Column(length = 45)
     private String job;
 
@@ -43,8 +46,9 @@ public class Member extends BaseTimeEntity {
     private List<FcmToken> fcmTokens;
 
     @Builder
-    public Member(String identifier, String nickname, String job, int age, Gender gender) {
+    public Member(String identifier, String password, String nickname, String job, int age, Gender gender) {
         this.identifier = identifier;
+        this.password = password;
         this.nickname = nickname;
         this.job = job;
         this.age = age;

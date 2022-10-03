@@ -19,9 +19,9 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("/login")
-    public ResponseEntity<MemberLoginResponse> login(@Valid MemberLoginRequest memberLoginRequest) {
-        return ResponseEntity.ok(memberService.login(memberLoginRequest.getIdentifier()));
+    @PostMapping("/login")
+    public ResponseEntity<MemberLoginResponse> login(@Valid @RequestBody MemberLoginRequest memberLoginRequest) {
+        return ResponseEntity.ok(memberService.login(memberLoginRequest.getId(), memberLoginRequest.getPassword()));
     }
 
     @GetMapping("/logout")

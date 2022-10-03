@@ -26,9 +26,12 @@ def get_member_sim_meeting(memberId, booklog, review, meeting):
         member_num = 0
         for j in meeting['meetingMembers'][i]:
             if j != memberId:
-                if member_sim_df[memberId].sort_values(ascending=False)[1:][j] > 0:
-                    member_num += 1
-                    total_sim += member_sim_df[memberId].sort_values(ascending=False)[1:][j]
+                try:
+                    if member_sim_df[memberId].sort_values(ascending=False)[1:][j] > 0:
+                        member_num += 1
+                        total_sim += member_sim_df[memberId].sort_values(ascending=False)[1:][j]
+                except:
+                    print(j, ' 번 사용자는 평점 데이터가 없네요')
         if member_num > 0 :
             member_sim.append(total_sim/member_num)
         else:
