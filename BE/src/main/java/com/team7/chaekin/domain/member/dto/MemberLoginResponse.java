@@ -10,4 +10,5 @@ public class MemberLoginResponse {
     private String accessToken;
     private String refreshToken;
     private String nickname;
+    private long memberId;
 }
