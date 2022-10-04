@@ -21,7 +21,7 @@ def get_meetings(member_id):
         raise HTTPException(status_code = 404, detail= "NO_BOOKLOG")
 
     book_id = book_id.iat[0,0]
-    query = "SELECT m.id AS meetingId, b.title AS bookTitle, b.cover AS cover, m.title AS meetingTitle, (SELECT COUNT(*) FROM participant p WHERE p.meeting_id = m.id AND p.is_removed = 0) AS currentMember, m.capacity AS maxCapacity, m.created_at AS createdAt FROM meeting m, book b WHERE m.is_removed = 0 AND m.book_id = {} AND m.book_id = b.id".format(book_id)
+    query = "SELECT m.id AS meetingId, b.title AS bookTitle, b.cover AS cover, m.title AS meetingTitle, (SELECT COUNT(*) FROM participant p WHERE p.meeting_id = m.id AND p.is_removed = 0) AS currentMember, m.capacity AS maxCapacity, m.meeting_status AS meetingStatus, m.created_at AS createdAt FROM meeting m, book b WHERE m.is_removed = 0 AND m.book_id = {} AND m.book_id = b.id".format(book_id)
     meetings = pd.read_sql(query, engine)
 
     # currentMember < maxCapacity 인 미팅만 남기기
@@ -34,6 +34,11 @@ def get_meetings(member_id):
 
     if len(meetings) == 0 :
         raise HTTPException(status_code = 404, detail= "NO_MEETING")
+
+    meetings['createdAt'] = pd.to_datetime(meetings['createdAt'], errors='coerce')
+    meetings['createdAt'] = meetings['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
+
+    print(meetings)
 
     response = dict()
     response['meetings'] = json.loads(meetings.to_json(orient='records', force_ascii=False, indent=4))
