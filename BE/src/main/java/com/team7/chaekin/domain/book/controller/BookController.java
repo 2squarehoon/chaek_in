@@ -36,8 +36,8 @@ public class BookController {
     }
 
     @GetMapping("/calender")
-    public ResponseEntity<?> getCalenderData(@LoginMemberId long memberId) {
-        return ResponseEntity.ok(bookService.getCalenderData(memberId));
+    public ResponseEntity<?> getCalendarData(@Valid BookCalenderRequest bookCalendarRequest, @LoginMemberId long memberId) {
+        return ResponseEntity.ok(bookService.getCalendarData(bookCalendarRequest.getMonth(), memberId));
     }
 
     @GetMapping("/{bookId}/people")

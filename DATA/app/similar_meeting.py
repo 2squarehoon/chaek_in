@@ -9,6 +9,7 @@ import json
 
 def get_member_sim_meeting(memberId, booklog, review, meeting):
     # 평점 DF 만들기
+    meeting.rename(columns = {'created_at':'createdAt','updatedAt':'updatedAt'},inplace=True)
     rating = pd.merge(booklog, review, left_on='id', right_on='booklog_id')
     rating = rating[['member_id', 'score', 'book_id']]
     ratings = pd.pivot_table(rating, index='member_id', columns='book_id', values='score')
@@ -40,6 +41,8 @@ def get_member_sim_meeting(memberId, booklog, review, meeting):
     meeting['member_sim'] = member_sim
     member_sim_meeting = meeting.sort_values('member_sim', ascending=False)
     member_sim_meeting = member_sim_meeting[member_sim_meeting['member_sim'] > 0]
+    member_sim_meeting['createdAt'] = pd.to_datetime(member_sim_meeting['createdAt'], errors='coerce')
+    member_sim_meeting['createdAt'] = member_sim_meeting['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
     response = dict()
     response['similarMeetings'] = json.loads(member_sim_meeting.to_json(orient='records', force_ascii=False, indent=4))
     

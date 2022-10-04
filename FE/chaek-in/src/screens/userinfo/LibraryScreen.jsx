@@ -6,10 +6,12 @@ import { HOST } from '@env';
 import { useSelector } from 'react-redux';
 import BookItem from '../../components/common/BookItem';
 import { MaterialIcons } from '@expo/vector-icons';
+import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 
 function LibraryScreen({ navigation }) {
   const { accessToken } = useSelector((state) => state.main);
   const [likeBooks, setLikeBooks] = useState([]);
+  const currentMonth = new Date().getMonth() + 1;
 
   useEffect(() => {
     Axios.get(`${HOST}/api/v1/wishlist`, {
@@ -20,6 +22,20 @@ function LibraryScreen({ navigation }) {
       .then(function (response) {
         console.log(response.data);
         setLikeBooks(response.data.wishlist);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    Axios.get(`${HOST}/api/v1/books/calendar?month=${currentMonth}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then(function (response) {
+        console.log(response.data);
       })
       .catch(function (error) {
         console.log(error);
@@ -46,6 +62,30 @@ function LibraryScreen({ navigation }) {
           <MaterialIcons name='navigate-next' size={20} color='grey' />
         </ButtonContainer>
       </NextButton>
+      <Calendar
+        // Handler which gets executed on day press. Default = undefined
+        onDayPress={(day) => {
+          console.log('selected day', day);
+        }}
+        // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
+        monthFormat={'yyyy년 M월'}
+        // Handler which gets executed when visible month changes in calendar. Default = undefined
+        onMonthChange={(month) => {
+          console.log('month changed', month);
+        }}
+        // day from another month that is visible in calendar page. Default = false
+        disableMonthChange={true}
+        // Handler which gets executed when press arrow icon left. It receive a callback can go back month
+        onPressArrowLeft={(subtractMonth) => subtractMonth()}
+        // Handler which gets executed when press arrow icon right. It receive a callback can go next month
+        onPressArrowRight={(addMonth) => addMonth()}
+        // Disable all touch events for disabled days. can be override with disableTouchEvent in markedDates
+        disableAllTouchEventsForDisabledDays={true}
+        // Enable the option to swipe between months. Default = false
+        enableSwipeMonths={true}
+        style={{ width: '90%', margin: '5%', borderRadius: 10, borderWidth: 1 }}
+      />
+
       <NextButton onPress={goLikeBooks}>
         <ButtonContainer>
           <ButtonText>내가 찜한 책</ButtonText>
@@ -73,6 +113,7 @@ function LibraryScreen({ navigation }) {
             </TouchableOpacity>
           ))}
       </BookItemsContainer>
+      <BlankContainer></BlankContainer>
     </LibraryContainer>
   );
 }
@@ -103,6 +144,10 @@ const BookItemsContainer = styled.View`
   margin-left: 2%
   display:flex
   flex-flow: row wrap;
+`;
+
+const BlankContainer = styled.View`
+  height: 150px;
 `;
 
 export default LibraryScreen;

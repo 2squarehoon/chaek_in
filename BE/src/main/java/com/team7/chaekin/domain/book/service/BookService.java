@@ -103,24 +103,23 @@ public class BookService {
 
 
     @Transactional
-    public BookCalenderResponse getCalenderData(long memberId) {
+    public BookCalendarResponse getCalendarData(int month, long memberId) {
         Member member = getMember(memberId);
 
         LocalDate now = LocalDate.now();
-        int month = now.getMonthValue();
-        int lastDay = now.lengthOfMonth();
-        int today = now.getDayOfMonth();
+        LocalDate requestDate = LocalDate.of(now.getYear(), month, 1);
+        int lastDay = requestDate.lengthOfMonth();
+        int today = requestDate.getDayOfMonth();
 
-        LocalDate firstDate = now.withDayOfMonth(1);
-        LocalDate lastDate = now.withDayOfMonth(lastDay);
+        LocalDate firstDate = requestDate.withDayOfMonth(1);
+        LocalDate lastDate = requestDate.withDayOfMonth(lastDay);
         List<BookLog> bookLogs = bookLogRepository
                 .findByMemberAndStartDateBetweenOrderByStartDate(member, firstDate, lastDate);
 
-        BookCalenderListDto[] calenderList = new BookCalenderListDto[lastDay];
+        BookCalendarListDto[] calenderList = new BookCalendarListDto[lastDay];
         for (int i = 0; i < lastDay; i++) {
-            calenderList[i] = BookCalenderListDto.builder()
+            calenderList[i] = BookCalendarListDto.builder()
                     .day(i + 1)
-                    .isExist(false)
                     .books(new ArrayList<>()).build();
         }
         bookLogs.stream().forEach(bookLog -> {
@@ -128,13 +127,15 @@ public class BookService {
             int last = bookLog.getEndDate() == null ? today : bookLog.getEndDate().getDayOfMonth();
 
             for (int i = start - 1; i < last; i++) {
-                calenderList[i].getBooks().add(BookCalenderDto.builder()
+                calenderList[i].getBooks().add(BookCalendarDto.builder()
                                 .bookId(bookLog.getBook().getId())
-                                .title(bookLog.getBook().getTitle()).build());
+                                .title(bookLog.getBook().getTitle())
+                                .isStartDay(i == start - 1 ? true : false)
+                                .isEndDay(i == last - 1 ? true : false).build());
             }
         });
 
-        return new BookCalenderResponse(month, calenderList);
+        return new BookCalendarResponse(calenderList);
     }
 
     @Transactional
