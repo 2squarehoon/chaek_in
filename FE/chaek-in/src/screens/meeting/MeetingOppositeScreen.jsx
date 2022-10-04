@@ -11,7 +11,7 @@ function MeetingOppositeScreen({ navigation }) {
 
   // /api/data/meeting/opposite/{memberId} : 반대 모임
   useEffect(() => {
-    Axios.get(`${HOST}/api/data/meeting/opposite/${userId}`, {
+    Axios.get(`${HOST}/api/data/meeting/opposite/70`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

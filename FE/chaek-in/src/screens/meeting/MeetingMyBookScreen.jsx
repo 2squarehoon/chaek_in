@@ -11,7 +11,7 @@ function MeetingMyBookScreen({ navigation }) {
   // 최근에 읽은 책 관련 모임 추천 가져오기(최근에 읽은 책이 없으면 추천 없음)
   // /api/data/meeting/recent-book/{memberId}
   useEffect(() => {
-    Axios.get(`${HOST}/api/data/meeting/recent-book/${userId}`, {
+    Axios.get(`${HOST}/api/data/meeting/recent-book/70`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
