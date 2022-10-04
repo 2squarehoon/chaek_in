@@ -8,6 +8,5 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class BookCalenderResponse {
-    private int month;
     private BookCalenderListDto[] calenderList;
 }
