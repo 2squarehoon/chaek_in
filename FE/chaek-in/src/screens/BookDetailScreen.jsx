@@ -363,6 +363,7 @@ const ReviewCreateContainer = styled.View`
 margin: 2% 5%
 border: 1px solid #000;
 border-radius: 5px;
+background-color: #ffffff;
 `;
 
 const RatingContainer = styled.View`
