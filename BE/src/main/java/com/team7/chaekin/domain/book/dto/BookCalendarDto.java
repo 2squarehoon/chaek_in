@@ -10,4 +10,11 @@ public class BookCalendarDto {
     private String title;
     private Boolean isStartDay;
     private Boolean isEndDay;
+
+    public boolean isEmpty() {
+        if (bookId == 0L) {
+            return true;
+        }
+        return false;
+    }
 }
