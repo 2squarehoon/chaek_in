@@ -37,6 +37,7 @@ function MeetingHomeScreen({ navigation }) {
         <MeetingCreateButton onPress={goToMeetingCreate}>
           <MeetingCreateText>모임 시작하기</MeetingCreateText>
         </MeetingCreateButton>
+        <TitleText onPress={goToMeetingAll}>모든 모임 보기 &gt;</TitleText>
         <TitleTextView>
           <TitleText>내가 속한 모임</TitleText>
         </TitleTextView>
@@ -55,7 +56,6 @@ function MeetingHomeScreen({ navigation }) {
             </MyMeetingItem>
           ))}
         </MyMeetingView>
-        <TitleText onPress={goToMeetingAll}>모든 모임 보기 &gt;</TitleText>
         <RecomView>
           <RecomHalfView>
             <MeetingRecom
