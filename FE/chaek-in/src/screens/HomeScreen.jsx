@@ -2,10 +2,13 @@ import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import { useSelector } from 'react-redux';
+import * as Location from 'expo-location';
 
 function HomeScreen({ navigation }) {
   const { accessToken, nickname, userId } = useSelector((state) => state.main);
   const [bookNumber, changeBookNumber] = useState('');
+
+  // 위도, 경도 받아오기
 
   const goToBookLog = (e) => {
     navigation.navigate('BookLogs');

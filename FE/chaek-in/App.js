@@ -10,6 +10,7 @@ import { useSelector, Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import styled from 'styled-components/native';
 import { useFonts } from 'expo-font';
+import * as Location from 'expo-location';
 
 const Stack = createStackNavigator();
 
@@ -38,6 +39,30 @@ function AppInner({ navigation }) {
 }
 
 export default function App() {
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      console.log(location);
+      setLocation(location);
+    })();
+  }, []);
+
+  let text = 'Waiting..';
+  if (errorMsg) {
+    text = errorMsg;
+  } else if (location) {
+    text = JSON.stringify(location);
+  }
+
   return (
     <Provider store={Store}>
       <PersistGate persistor={Persistor}>
