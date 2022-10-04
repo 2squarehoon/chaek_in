@@ -19,7 +19,7 @@ function RecomHomeScreen({ navigation }) {
       </CFView>
       <BestSellerView onPress={() => navigation.navigate('BestSellerRecom')}>
         <BestSellerImage source={require('../../../assets/image/bookRecom/BestSellerRecom.png')} />
-        <BestSellerText>베스트셀러</BestSellerText>
+        <BestSellerText>요즘 많이{'\n'}책크인 된 책</BestSellerText>
       </BestSellerView>
     </BookRecomView>
   );
