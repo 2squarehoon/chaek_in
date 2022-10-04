@@ -25,7 +25,7 @@ function MeetingMyBookScreen({ navigation }) {
   }, [accessToken, userId]);
 
   return (
-    <View style={styles.container}>
+    <MyBookView>
       {myMeetingList ? (
         <MyMeetingView>
           {myMeetingList.map((meeting) => (
@@ -43,25 +43,36 @@ function MeetingMyBookScreen({ navigation }) {
           ))}
         </MyMeetingView>
       ) : (
-        <Text>추천할 만한 책이 없습니다.</Text>
+        <Text>추천할 만한 모임이 없습니다.</Text>
       )}
-    </View>
+      {/* 모임 형태 */}
+      <MyMeetingView>
+        <MyMeetingItem>
+          <MyMeetingCoverImage source={{ uri: 'https://picsum.photos/200/300' }} />
+          <MyMeetingLeftView>
+            <MyMeetingTitleText>모임 제목</MyMeetingTitleText>
+            <MyMeetingText numberOfLines={2} elipseMode='tail'>
+              모임에 대한 설명
+            </MyMeetingText>
+          </MyMeetingLeftView>
+        </MyMeetingItem>
+      </MyMeetingView>
+    </MyBookView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+const MyBookView = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  background-color: #fcf9f0;
+`;
 
 const MyMeetingView = styled.View`
   flex; 1;
   flex-direction: column;
   align-items: center;
-  width: 95%;
+  width: 90%;
   height: 250px;
   
 `;
@@ -80,8 +91,11 @@ const MyMeetingText = styled.Text`
   flex-wrap: wrap;
 `;
 
-const MyMeetingItem = styled.Text`
-  flex-direction: column;
+const MyMeetingItem = styled.TouchableOpacity`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
   width: 100%;
   height: 100px;
   background-color: white;
@@ -89,6 +103,21 @@ const MyMeetingItem = styled.Text`
   border-radius: 18px;
   margin-bottom: 10px;
   padding: 20px;
+`;
+
+const MyMeetingCoverImage = styled.Image`
+  flex: 3;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  margin-right: 10px;
+`;
+
+const MyMeetingLeftView = styled.View`
+  flex: 7;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 `;
 
 export default MeetingMyBookScreen;

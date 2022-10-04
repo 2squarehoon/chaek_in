@@ -3,7 +3,6 @@ import Axios from 'axios';
 import { HOST } from '@env';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components/native';
-import { StyleSheet, Text, View, TextInput } from 'react-native';
 
 function MeetingAllScreen() {
   const { accessToken } = useSelector((state) => state.main);
@@ -30,10 +29,9 @@ function MeetingAllScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <MeetingSearchView>
       {/* 모임 검색 */}
-      <TextInput
-        style={styles.input}
+      <SearchTextInput
         placeholder='모임 검색'
         placeholderTextColor='#aaaaaa'
         onChangeText={(text) => setSearch(text)}
@@ -44,19 +42,30 @@ function MeetingAllScreen() {
       />
       {/* 모임 출력 */}
       {meeting.map((item) => (
-        <Text key={item.meetingId}>{item.bookTitle}</Text>
+        <MeetingText key={item.meetingId}>{item.bookTitle}</MeetingText>
       ))}
-    </View>
+    </MeetingSearchView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fcf9f0',
-  },
-});
+const MeetingSearchView = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const SearchTextInput = styled.TextInput`
+  margin: 10px;
+  width: 300px;
+  height: 50px;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #ffffff;
+`;
+
+const MeetingText = styled.Text`
+  margin: 10px;
+  font-size: 20px;
+`;
 
 export default MeetingAllScreen;

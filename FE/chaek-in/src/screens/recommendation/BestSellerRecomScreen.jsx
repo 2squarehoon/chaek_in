@@ -39,6 +39,7 @@ function BestSellerRecomScreen({ navigation }) {
           <Text>추천할 만한 책이 없습니다.</Text>
         )}
       </CFItemView>
+      <FakeView></FakeView>
     </CFBooksView>
   );
 }
@@ -86,6 +87,10 @@ const CFBookAuthorText = styled.Text`
   font-family: Medium;
   color: #999999;
   margin-top: 5px;
+`;
+
+const FakeView = styled.View`
+  height: 100px;
 `;
 
 export default BestSellerRecomScreen;

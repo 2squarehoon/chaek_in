@@ -43,7 +43,7 @@ function MeetingDetailScreen({ route, navigation }) {
         setIsMine(response.data.isMine);
         // 만약 내가 속한 모임이면 isParticipated를 true로
         if (response.data.isMine) {
-          setIsParticipated(true);
+          setIsParticipated(false);
         }
         setMaxCapacity(response.data.maxCapacity);
         setMeetingId(response.data.meetingId);
@@ -122,7 +122,7 @@ function MeetingDetailScreen({ route, navigation }) {
         console.log(response.data);
         setIsReplyOpened(0);
         setReplyComment('');
-        navigation.navigate('MeetingDetail');
+        setReload(!reload);
       })
       .catch(function (error) {
         console.log(error);
@@ -156,13 +156,15 @@ function MeetingDetailScreen({ route, navigation }) {
           <CurrentMemberText>
             {currentMember} / {maxCapacity}명
           </CurrentMemberText>
-          <EnterButton
-            onPress={() => {
-              participateMeeting();
-            }}
-          >
-            <EnterButtonText>참가하기</EnterButtonText>
-          </EnterButton>
+          {isParticipated ? (
+            <EnterButton
+              onPress={() => {
+                participateMeeting();
+              }}
+            >
+              <EnterButtonText>참가하기</EnterButtonText>
+            </EnterButton>
+          ) : null}
         </MeetingHeaderRight>
       </MeetingHeader>
       <MeetingInfo>
@@ -176,47 +178,48 @@ function MeetingDetailScreen({ route, navigation }) {
       <BookInfo>
         <BookInfoTitle>이 책을 읽어요</BookInfoTitle>
         <BookContainer>
-          <BookCover
-            source={{
-              uri: cover,
-            }}
-          />
+          <BookCover source={cover ? { uri: cover } : null} />
           <BookTitleText>{bookTitle}</BookTitleText>
         </BookContainer>
       </BookInfo>
       {/* 댓글 부분 */}
-      <CommentMainView>
-        <CommentScrollView>
-          {commentList.map((comment) => (
-            <CommentView key={comment.parent.meetingCommentId}>
+      {commentList.map((comment) => (
+        <CommentView key={comment.parent.meetingCommentId}>
+          <CommentHeaderView>
+            <CommentContentView>
               <CommentText>{comment.parent.content}</CommentText>
-              <ReplyCommentText>{comment.children.content}</ReplyCommentText>
-              {/* 대댓글 출력 */}
-              {comment.children.map((replyComment) => (
-                <ReplyCommentView key={replyComment.meetingCommentId}>
-                  <ReplyCommentText>{replyComment.content}</ReplyCommentText>
-                </ReplyCommentView>
-              ))}
-              <OpenChildCommentInputButton
-                onPress={() => {
-                  setIsReplyOpened(comment.parent.meetingCommentId);
-                }}
-              >
-                <AntDesign name='enter' size={14} color='black' />
-              </OpenChildCommentInputButton>
-              {isReplyOpened === comment.parent.meetingCommentId ? (
-                <ChildCommentInput
-                  style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                  onChangeText={(text) => setReplyComment(text)}
-                  value={replyComment}
-                  placeholder='대댓글을 입력하세요'
-                  onSubmitEditing={() => CreateReplyComment(comment.parent.meetingCommentId)}
-                ></ChildCommentInput>
-              ) : null}
-            </CommentView>
+              <CommentDateText>{comment.parent.createdAt}</CommentDateText>
+              <CommentWriterText>{comment.parent.writer}</CommentWriterText>
+            </CommentContentView>
+            <OpenChildCommentInputButton
+              onPress={() => {
+                setIsReplyOpened(comment.parent.meetingCommentId);
+              }}
+            >
+              <AntDesign name='enter' size={14} color='black' />
+            </OpenChildCommentInputButton>
+          </CommentHeaderView>
+          <ReplyCommentText>{comment.children.content}</ReplyCommentText>
+          {/* 대댓글 출력 */}
+          {comment.children.map((replyComment) => (
+            <ReplyCommentView key={replyComment.meetingCommentId}>
+              <CommentText>{replyComment.content}</CommentText>
+              <CommentDateText>{replyComment.createdAt}</CommentDateText>
+              <CommentWriterText>{replyComment.writer}</CommentWriterText>
+            </ReplyCommentView>
           ))}
-        </CommentScrollView>
-      </CommentMainView>
+          {/* 대댓글 입력 */}
+          {isReplyOpened === comment.parent.meetingCommentId ? (
+            <ChildCommentInput
+              style={{ height: 40, borderColor: '#5f5f5f', borderWidth: 1, marginTop: 10 }}
+              onChangeText={(text) => setReplyComment(text)}
+              value={replyComment}
+              placeholder='대댓글을 입력하세요'
+              onSubmitEditing={() => CreateReplyComment(comment.parent.meetingCommentId)}
+            ></ChildCommentInput>
+          ) : null}
+        </CommentView>
+      ))}
 
       <CommentInput
         value={comment}
@@ -250,18 +253,18 @@ const CommentInput = styled.TextInput`
   font-family: Medium;
 `;
 
-const CommentScrollView = styled.ScrollView`
-  flex: 4;
-  width: 100%;
-  height: 100%;
-  border: 1px solid #000;
-  border-radius: 10px;
-  padding: 10px;
-`;
+// const CommentScrollView = styled.ScrollView`
+//   flex: 4;
+//   width: 100%;
+//   height: 100%;
+//   border: 1px solid #000;
+//   border-radius: 10px;
+//   padding: 10px;
+// `;
 
 const CommentView = styled.View`
+  flex: 5;
   width: 100%;
-  height: 200px;
   border: 1px solid #000;
   border-radius: 10px;
   padding: 15px;
@@ -269,25 +272,20 @@ const CommentView = styled.View`
   background-color: #f8dfaa;
 `;
 
-const CommentText = styled.Text`
-  font-size: 16px;
-  font-family: Medium;
-`;
-
 const ChildCommentInput = styled.TextInput`
+  flex: 1;
   width: 100%;
   height: 50px;
   border: 1px solid #000;
   border-radius: 10px;
   padding: 10px;
   font-family: Medium;
-  background-color: white;
+  background-color: '#b2b2b2';
 `;
 
 const ReplyCommentView = styled.View`
   flex: 1;
   width: 100%;
-  height: 20px;
   border: 1px solid #000;
   border-radius: 10px;
   padding: 10px;
@@ -300,27 +298,8 @@ const ReplyCommentText = styled.Text`
   font-family: Medium;
 `;
 
-const OpenChildCommentInputButton = styled.TouchableOpacity`
-  width: 40px;
-  height: 40px;
-  border: 1px solid #000;
-  border-radius: 10px;
-  padding: 10px;
-  background-color: #a8ca47;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  right: 10px;
-  top: 10px;
-`;
-
-const OpenChildCommentInputButtonText = styled.Text`
-  font-size: 14px;
-  font-family: Medium;
-`;
-
 const MeetingHeader = styled.View`
-  flex: 1;
+  flex: 3;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -335,7 +314,7 @@ const MeetingHeaderRight = styled.View`
 `;
 
 const MeetingInfo = styled.View`
-  flex: 3;
+  flex: 4;
   margin-top: 10px;
 `;
 
@@ -411,16 +390,50 @@ const FakeView = styled.View`
   height: 100px;
 `;
 
-const CommentMainView = styled.View`
-  flex: 1;
-  background-color: white;
-  margin-bottom: 10px;
-`;
-
 const IconView = styled.TouchableOpacity`
   position: absolute;
   right: 0px;
   top: 70px;
+`;
+
+const CommentHeaderView = styled.View`
+  flex: 1;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const CommentText = styled.Text`
+  flex: 8;
+  font-size: 14px;
+  font-family: Medium;
+`;
+
+const OpenChildCommentInputButton = styled.TouchableOpacity`
+  flex: 1;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #000;
+  border-radius: 15px;
+  background-color: #a8ca47;
+  align-items: center;
+  justify-content: center;
+`;
+
+const CommentWriterText = styled.Text`
+  font-size: 10px;
+  font-family: Medium;
+`;
+
+const CommentDateText = styled.Text`
+  font-size: 10px;
+  font-family: Light;
+`;
+
+const CommentContentView = styled.View`
+  flex: 8;
+  flex-direction: column;
+  margin-right: 10px;
 `;
 
 export default MeetingDetailScreen;
