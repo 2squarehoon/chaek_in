@@ -8,6 +8,6 @@ import java.util.List;
 @Builder
 @Data
 public class BookCalendarListDto {
-    private int day;
+    private String date;
     private List<BookCalendarDto> books;
 }
