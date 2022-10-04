@@ -103,7 +103,7 @@ public class BookService {
 
 
     @Transactional
-    public BookCalenderResponse getCalenderData(int month, long memberId) {
+    public BookCalendarResponse getCalendarData(int month, long memberId) {
         Member member = getMember(memberId);
 
         LocalDate now = LocalDate.now();
@@ -116,9 +116,9 @@ public class BookService {
         List<BookLog> bookLogs = bookLogRepository
                 .findByMemberAndStartDateBetweenOrderByStartDate(member, firstDate, lastDate);
 
-        BookCalenderListDto[] calenderList = new BookCalenderListDto[lastDay];
+        BookCalendarListDto[] calenderList = new BookCalendarListDto[lastDay];
         for (int i = 0; i < lastDay; i++) {
-            calenderList[i] = BookCalenderListDto.builder()
+            calenderList[i] = BookCalendarListDto.builder()
                     .day(i + 1)
                     .books(new ArrayList<>()).build();
         }
@@ -127,7 +127,7 @@ public class BookService {
             int last = bookLog.getEndDate() == null ? today : bookLog.getEndDate().getDayOfMonth();
 
             for (int i = start - 1; i < last; i++) {
-                calenderList[i].getBooks().add(BookCalenderDto.builder()
+                calenderList[i].getBooks().add(BookCalendarDto.builder()
                                 .bookId(bookLog.getBook().getId())
                                 .title(bookLog.getBook().getTitle())
                                 .isStartDay(i == start - 1 ? true : false)
@@ -135,7 +135,7 @@ public class BookService {
             }
         });
 
-        return new BookCalenderResponse(calenderList);
+        return new BookCalendarResponse(calenderList);
     }
 
     @Transactional

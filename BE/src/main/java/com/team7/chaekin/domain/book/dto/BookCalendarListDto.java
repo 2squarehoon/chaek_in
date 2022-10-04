@@ -7,7 +7,7 @@ import java.util.List;
 
 @Builder
 @Data
-public class BookCalenderListDto {
+public class BookCalendarListDto {
     private int day;
-    private List<BookCalenderDto> books;
+    private List<BookCalendarDto> books;
 }
