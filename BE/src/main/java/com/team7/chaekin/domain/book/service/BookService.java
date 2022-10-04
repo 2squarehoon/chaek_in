@@ -135,7 +135,7 @@ public class BookService {
             }
         });
 
-        return new BookCalenderResponse(month, calenderList);
+        return new BookCalenderResponse(calenderList);
     }
 
     @Transactional
