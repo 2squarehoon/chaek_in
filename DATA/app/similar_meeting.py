@@ -41,6 +41,6 @@ def get_member_sim_meeting(memberId, booklog, review, meeting):
     member_sim_meeting = meeting.sort_values('member_sim', ascending=False)
     member_sim_meeting = member_sim_meeting[member_sim_meeting['member_sim'] > 0]
     response = dict()
-    response['memberSimMeeting'] = json.loads(member_sim_meeting.to_json(orient='records', force_ascii=False, indent=4))
+    response['similarMeetings'] = json.loads(member_sim_meeting.to_json(orient='records', force_ascii=False, indent=4))
     
     return response
