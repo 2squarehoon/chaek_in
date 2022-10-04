@@ -347,3 +347,14 @@ def get_opposite_book_meeting(memberId: int):
     print(f"{end - start:.5f} sec")
 
     return opposite_meeting.opposite_meeting(memberId, booklog, review, meeting_members, df)
+
+
+@app.get('/api/data/books/bestseller')
+def get_bestseller():
+    start = time.time() # 실행시간 계산 코드
+    response = bestseller.bestseller('bestseller')
+
+    end = time.time() # 실행 끝나는 시간 계산
+    print(f"{end - start:.5f} sec")
+
+    return response
