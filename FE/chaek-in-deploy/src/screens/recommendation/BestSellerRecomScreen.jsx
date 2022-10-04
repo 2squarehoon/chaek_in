@@ -5,20 +5,19 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components/native';
 import { StyleSheet, Text, View } from 'react-native';
 
-function SimilarPeopleScreen({ navigation }) {
+function BestSellerRecomScreen({ navigation }) {
   const { accessToken, userId } = useSelector((state) => state.main);
   const [bookList, setBookList] = useState([]);
 
-  // /api/data/books/cf/{memberId} : 나와 비슷한 사람들이 좋아하는 책 추천
   useEffect(() => {
-    Axios.get(`${HOST}/api/data/books/cf/70`, {
+    Axios.get(`${HOST}/api/data/books/bestseller`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
       .then(function (response) {
         console.log(response);
-        setBookList(response.data.cfBooks);
+        setBookList(response.data.bestseller);
       })
       .catch(function (error) {
         console.log(error);
@@ -40,6 +39,7 @@ function SimilarPeopleScreen({ navigation }) {
           <Text>추천할 만한 책이 없습니다.</Text>
         )}
       </CFItemView>
+      <FakeView></FakeView>
     </CFBooksView>
   );
 }
@@ -89,4 +89,8 @@ const CFBookAuthorText = styled.Text`
   margin-top: 5px;
 `;
 
-export default SimilarPeopleScreen;
+const FakeView = styled.View`
+  height: 100px;
+`;
+
+export default BestSellerRecomScreen;

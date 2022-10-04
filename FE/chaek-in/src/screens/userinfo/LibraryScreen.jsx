@@ -64,15 +64,9 @@ function LibraryScreen({ navigation }) {
         obj.color = colors[index % 4];
         periods.push(obj);
       });
-      if (i < 9) {
-        markedDates[`2022-${month}-0${i + 1}`] = {
-          periods,
-        };
-      } else {
-        markedDates[`2022-${month}-${i + 1}`] = {
-          periods,
-        };
-      }
+      markedDates[`2022-${month}-${i + 1}`] = {
+        periods,
+      };
     }
     // console.log(markedDates);
     setMarking(markedDates);
@@ -91,7 +85,7 @@ function LibraryScreen({ navigation }) {
   };
 
   const pressDay = (day) => {
-    console.log(booklogs[day].books);
+    // console.log(booklogs[day].books);
     if (booklogs[day].books) {
       setbooklogId(day);
       setBooks(booklogs[day].books);
@@ -150,7 +144,7 @@ function LibraryScreen({ navigation }) {
             </ModalTitleText>
             <ModalTitleText>읽은 책 리스트</ModalTitleText>
             {books.map((book) => (
-              <TouchableOpacity onPress={() => goBookDetail(book.bookId)}>
+              <TouchableOpacity key={book.bookId} onPress={() => goBookDetail(book.bookId)}>
                 <ModalText>{book.title}</ModalText>
               </TouchableOpacity>
             ))}

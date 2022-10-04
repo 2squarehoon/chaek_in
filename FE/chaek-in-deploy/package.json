@@ -1,6 +1,7 @@
 {
-  "name": "chaek-in",
+  "name": "chaek-in-test",
   "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start --dev-client",
     "android": "expo run:android",
@@ -41,6 +42,7 @@
     "expo-image-manipulator": "^10.4.0",
     "expo-image-picker": "^13.3.1",
     "expo-linear-gradient": "^11.4.0",
+    "expo-linking": "^3.2.2",
     "expo-permissions": "^13.2.0",
     "expo-random": "^12.3.0",
     "expo-secure-store": "~11.3.0",
@@ -54,6 +56,7 @@
     "react-dom": "18.0.0",
     "react-native": "0.69.5",
     "react-native-base64": "^0.2.1",
+    "react-native-calendars": "^1.1289.0",
     "react-native-dotenv": "^3.3.1",
     "react-native-gesture-handler": "~2.5.0",
     "react-native-image-picker": "^4.10.0",
@@ -79,7 +82,8 @@
     "tailwind-rn": "^4.2.0",
     "tmpl": "^1.0.5",
     "xhr2": "^0.2.1",
-    "xmlhttprequest": "^1.8.0"
+    "xmlhttprequest": "^1.8.0",
+    "expo-location": "~14.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

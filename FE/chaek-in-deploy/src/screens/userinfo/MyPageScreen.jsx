@@ -62,8 +62,8 @@ function MyPageScreen({ navigation }) {
   }, []);
 
   const Logout = async () => {
-    await GoogleSignin.revokeAccess();
-    await auth().signOut();
+    // await GoogleSignin.revokeAccess();
+    // await auth().signOut();
     dispatch(setNickname(''));
     dispatch(setEmail(''));
     dispatch(setRefreshToken(''));
@@ -79,8 +79,8 @@ function MyPageScreen({ navigation }) {
       },
     })
       .then(async function () {
-        await GoogleSignin.revokeAccess();
-        await auth().signOut();
+        // await GoogleSignin.revokeAccess();
+        // await auth().signOut();
         dispatch(setNickname(''));
         dispatch(setEmail(''));
         dispatch(setRefreshToken(''));

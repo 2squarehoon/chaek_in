@@ -1,4 +1,14 @@
-import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity, ScrollView, Image, Dimensions } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Dimensions,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import { useSelector } from 'react-redux';
@@ -8,7 +18,6 @@ import BookItem from '../components/common/BookItem';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
-
 
 function HomeScreen({ navigation }) {
   const { accessToken, nickname, userId } = useSelector((state) => state.main);
@@ -44,67 +53,55 @@ function HomeScreen({ navigation }) {
     navigation.navigate('BookDetail', { bookId: bookNumber });
   };
   const printBook = (book) => {
-    console.log(book)
-  }
+    console.log(book);
+  };
   const onchange = (nativeEvent) => {
-    if(nativeEvent) {
+    if (nativeEvent) {
       const slide = Math.ceil(nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width);
       if (slide != bookActive) {
-        setbookActive(slide)
+        setbookActive(slide);
       }
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
-      <View>
+      {/* <View>
         <Text>{nickname}님의 서재</Text>
         <Text>{userId}</Text>
-      </View>
+      </View> */}
       <BookItemsContainer>
-      <TitleText>{nickname}님이 읽고있는 책</TitleText>
-        <ScrollView 
-          onScroll={({nativeEvent}) => onchange(nativeEvent)}
+        <TitleText>{nickname}님이 읽고있는 책</TitleText>
+        <ScrollView
+          onScroll={({ nativeEvent }) => onchange(nativeEvent)}
           showsHorizontalScrollIndicator={false}
           pagingEnabled
           horizontal
-          >
+        >
           {readingBooks.map((book) => (
-            <TouchableOpacity
-            key={book.bookId}
-            onPress={() => goBookDetail(book.bookId)}
-            >
+            <TouchableOpacity key={book.bookId} onPress={() => goBookDetail(book.bookId)}>
               <View style={styles.wrap}>
-              <Image
-                source={{ uri: book.cover}}
-                resizeMode='stretch'
-                style={styles.cover}
-              >
-              </Image>
-              <View style={styles.textView}>
-                <Text style={styles.title}>{book.title}</Text>
-                <Text style={styles.author}>{book.author}</Text>
-              </View>
+                <Image source={{ uri: book.cover }} resizeMode='stretch' style={styles.cover}></Image>
+                <View style={styles.textView}>
+                  <Text style={styles.title}>{book.title}</Text>
+                  <Text style={styles.author}>{book.author}</Text>
+                </View>
               </View>
             </TouchableOpacity>
-            // <TouchableOpacity 
-            //   key={book.bookId} 
+            // <TouchableOpacity
+            //   key={book.bookId}
             //   onPress={() => goBookDetail(book.bookId)}>
             //     <BookItem item={book} />
             // </TouchableOpacity>
           ))}
-          </ScrollView>
-          <View
-            style={styles.wrapDot}>
-            {readingBooks.map((book, index) => (
-              <Text
-                key={book.bookId}
-                style={bookActive == index ? styles.dotActive : styles.dot}
-              >
+        </ScrollView>
+        <View style={styles.wrapDot}>
+          {readingBooks.map((book, index) => (
+            <Text key={book.bookId} style={bookActive == index ? styles.dotActive : styles.dot}>
               ●
-              </Text>
-            ))}
-          </View>
+            </Text>
+          ))}
+        </View>
       </BookItemsContainer>
       <View style={styles.bottomSpace}></View>
       {/* <View>
@@ -124,7 +121,7 @@ function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fcf9f0'
+    backgroundColor: '#fcf9f0',
     // justifyContent: 'center',
     // alignItems: 'center',
   },
@@ -137,9 +134,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     left: 360,
-    bottom: 90,
+    // bottom: 90,
     flexDirection: 'column',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   dotActive: {
     margin: 3,
@@ -150,7 +147,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   cover: {
-    width: WIDTH* 0.2,
+    width: WIDTH * 0.2,
     height: HEIGHT * 0.15,
     marginLeft: 15,
     marginRight: 15,
@@ -161,25 +158,25 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 10,
-    fontFamily: "Cochin",
+    fontFamily: 'Cochin',
     fontSize: 15,
-    fontWeight: "bold"
+    fontWeight: 'bold',
   },
   author: {
     marginTop: 10,
-    fontFamily: "Cochin",
+    fontFamily: 'Cochin',
     fontSize: 13,
-    fontWeight: "bold"
+    fontWeight: 'bold',
   },
   bottomSpace: {
-    left: 40,
+    left: 45,
     width: WIDTH * 0.75,
     height: 8,
     borderWidth: 0.5,
     backgroundColor: '#728EA6',
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-  }
+  },
 });
 
 const ChangeInput = styled.TextInput`
@@ -199,9 +196,9 @@ const TitleText = styled.Text`
 
 const BookItemsContainer = styled.View`
   margin-top: 5%;
-  margin-left: 5%;
-  margin-right: 10%;
-  display:flex;
+  margin-left: 7.5%;
+  margin-right: 7.5%;
+  display: flex;
   border: 1px solid #000;
   border-radius: 20px;
   background-color: white;

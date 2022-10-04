@@ -12,10 +12,11 @@ import RecordScreen from '../screens/bookRecord/RecordScreen';
 import { MaterialIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
-function TabNavigation() {
+function TabNavigation({ navigation }) {
   return (
     <Tab.Navigator
       initialRouteName='Library'
@@ -63,6 +64,15 @@ function TabNavigation() {
               <MaterialIcons name='home' size={30} color={focused ? '#728EA6' : 'white'} />
             </View>
           ),
+          headerRight: () => (
+            <FontAwesome5
+              name='user-circle'
+              size={25}
+              style={{ right: 20 }}
+              color='#728EA6'
+              onPress={() => navigation.navigate('MyPage')}
+            />
+          ),
         }}
       />
       <Tab.Screen
@@ -79,6 +89,15 @@ function TabNavigation() {
               />
             </View>
           ),
+          headerRight: () => (
+            <FontAwesome5
+              name='user-circle'
+              size={25}
+              style={{ right: 20 }}
+              color='#728EA6'
+              onPress={() => navigation.navigate('MyPage')}
+            />
+          ),
         }}
       />
       <Tab.Screen
@@ -90,6 +109,15 @@ function TabNavigation() {
             <View>
               <MaterialCommunityIcons name='barcode-scan' size={30} color={focused ? '#728EA6' : 'white'} />
             </View>
+          ),
+          headerRight: () => (
+            <FontAwesome5
+              name='user-circle'
+              size={25}
+              style={{ right: 20 }}
+              color='#728EA6'
+              onPress={() => navigation.navigate('MyPage')}
+            />
           ),
         }}
       />
@@ -104,6 +132,15 @@ function TabNavigation() {
               <Ionicons name='people-circle-outline' size={30} color={focused ? '#728EA6' : 'white'} />
             </View>
           ),
+          headerRight: () => (
+            <FontAwesome5
+              name='user-circle'
+              size={25}
+              style={{ right: 20 }}
+              color='#728EA6'
+              onPress={() => navigation.navigate('MyPage')}
+            />
+          ),
         }}
       />
       {/* 아래 두 스크린은 주석처리 해야 합니다. */}
@@ -114,7 +151,7 @@ function TabNavigation() {
           title: '나의 한 문장',
         }}
       /> */}
-      <Tab.Screen name='Userinfo' component={UserInfoNavigation} options={{ headerShown: false }} />
+      {/* <Tab.Screen name='Userinfo' component={UserInfoNavigation} options={{ headerShown: false }} /> */}
     </Tab.Navigator>
   );
 }

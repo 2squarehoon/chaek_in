@@ -28,6 +28,7 @@ function BookDetailScreen({ route, navigation }) {
   const [reload, setReload] = useState('');
   const [rating, changeRating] = useState(0);
   const [comment, changeComment] = useState(0);
+  const [peopleCount, setPeopleCount] = useState(0);
 
   useEffect(() => {
     Axios.get(`${HOST}/api/v1/books/${route.params.bookId}`, {
@@ -50,6 +51,21 @@ function BookDetailScreen({ route, navigation }) {
         console.log(error);
       });
   }, [isLiked, readStatus, reload]);
+
+  useEffect(() => {
+    Axios.get(`${HOST}/api/v1/books/${route.params.bookId}/people`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then(function (response) {
+        console.log(response.data);
+        setPeopleCount(response.data.numberOfPeople);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
 
   function LikeBook() {
     Axios.post(`${HOST}/api/v1/wishlist/books/${bookId}`, '', {
@@ -222,6 +238,7 @@ function BookDetailScreen({ route, navigation }) {
           <AuthorText>
             <AntDesign name='star' size={20} color='#ffce31' /> {score}
           </AuthorText>
+          <AuthorText>지금 이 책을 {peopleCount}명이 읽고 있어요!</AuthorText>
           <BorderLineText>------------------ 책 소개 ------------------</BorderLineText>
           <AuthorText>{description}</AuthorText>
           <BorderLineText>------------------ 책 리뷰 ------------------</BorderLineText>

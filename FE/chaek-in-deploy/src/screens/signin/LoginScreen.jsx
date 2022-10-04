@@ -133,6 +133,8 @@ function LoginScreen({ navigation }) {
     const data = { id: mail, password: `${sub}_${mail}` };
     await Axios.post(`${HOST}/api/v1/members/login`, data)
       .then(function (response) {
+        GoogleSignin.revokeAccess();
+        auth().signOut();
         console.log(response.data);
         setNname(response.data.nickname);
         setAToken(response.data.accessToken);
@@ -167,17 +169,6 @@ function LoginScreen({ navigation }) {
         style={{ width: 250, height: 65, fontFamily: 'Medium', marginLeft: 'auto', marginRight: 'auto' }}
         onPress={onGoogleButtonPress}
       />
-      {/* <Button title='로그아웃' onPress={signOut} /> */}
-      {/* <GoogleLogin
-        disabled={!request}
-        title='Login'
-        onPress={() => {
-          promptAsync();
-        }}
-      >
-        <Image source={require('../../../assets/image/google.png')} style={{ width: '12%', height: '40%' }} />
-        <ButtonText>Google로 로그인</ButtonText>
-      </GoogleLogin> */}
     </LoginContainer>
   );
 }
