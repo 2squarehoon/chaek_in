@@ -9,6 +9,5 @@ import java.util.List;
 @Data
 public class BookCalenderListDto {
     private int day;
-    private Boolean isExist;
     private List<BookCalenderDto> books;
 }
