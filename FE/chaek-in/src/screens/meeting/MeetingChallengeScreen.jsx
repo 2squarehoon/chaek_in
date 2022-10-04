@@ -11,7 +11,7 @@ function MeetingChallengeScreen({ navigation }) {
 
   // /api/data/meeting/will/{memberId}: 완독 모임
   useEffect(() => {
-    Axios.get(`${HOST}/api/data/meeting/will/${userId}`, {
+    Axios.get(`${HOST}/api/data/meeting/will/70`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
