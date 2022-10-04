@@ -11,7 +11,7 @@ function MeetingSimilarScreen({ navigation }) {
 
   // /api/data/meeting/similar/{memberId} : 나와 비슷한 책을 좋아하는 사람들이 만든 모임
   useEffect(() => {
-    Axios.get(`${HOST}/api/data/meeting/similar/${userId}`, {
+    Axios.get(`${HOST}/api/data/meeting/similar/70`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

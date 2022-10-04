@@ -122,7 +122,7 @@ function MeetingDetailScreen({ route, navigation }) {
         console.log(response.data);
         setIsReplyOpened(0);
         setReplyComment('');
-        setReload(!reload);
+        navigation.navigate('MeetingDetail');
       })
       .catch(function (error) {
         console.log(error);
