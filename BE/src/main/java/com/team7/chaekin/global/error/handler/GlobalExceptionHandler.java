@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -34,6 +35,13 @@ public class GlobalExceptionHandler {
         log.info("[Binding Error] : Field = {}, Message = {}", fieldError.getDefaultMessage(), fieldError.getField());
 
         return ErrorResponse.toResponseEntity(validationErrorCode);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpHeaderException(HttpMediaTypeNotAcceptableException e){
+        return ResponseEntity.badRequest().body(ErrorResponse.builder()
+                .name("Http Header : Accept Error")
+                .message(e.getMessage()).build());
     }
 
 }
