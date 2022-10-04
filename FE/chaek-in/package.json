@@ -82,7 +82,8 @@
     "tailwind-rn": "^4.2.0",
     "tmpl": "^1.0.5",
     "xhr2": "^0.2.1",
-    "xmlhttprequest": "^1.8.0"
+    "xmlhttprequest": "^1.8.0",
+    "expo-location": "~14.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

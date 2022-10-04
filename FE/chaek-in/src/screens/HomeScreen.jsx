@@ -26,6 +26,8 @@ function HomeScreen({ navigation }) {
       });
   }, []);
 
+  // 위도, 경도 받아오기
+
   const goToBookLog = (e) => {
     navigation.navigate('BookLogs');
   };

@@ -3,10 +3,8 @@ package com.team7.chaekin.domain.book.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.List;
-
 @AllArgsConstructor
 @Data
-public class BookCalenderResponse {
-    private BookCalenderListDto[] calenderList;
+public class BookCalendarResponse {
+    private BookCalendarListDto[] calendarList;
 }
