@@ -25,39 +25,6 @@ function FirstRatingScreen() {
   const [idx, setIdx] = useState('');
   const [ratingArray, setRatingArray] = useState([]);
 
-  var lst = [];
-  // // 계속 바뀌는 state라서 useReducer 사용 시도 실패..
-  // function ratingReducer(userRating, action) {
-  //   if (action.type === 'SET') {
-  //     return action.rating;
-  //   } else if (action.type === 'RESET') {
-  //     return 0;
-  //   }
-  // }
-
-  // function idReducer(bookId, action) {
-  //   if (action.type === 'SET') {
-  //     return action.id;
-  //   } else if (action.type === 'RESET') {
-  //     return '';
-  //   }
-  // }
-
-  // const [rating, ratingDispatch] = useReducer(ratingReducer, 0);
-  // const [id, idDispatch] = useReducer(idReducer, '');
-
-  // function setRating() {
-  //   ratingDispatch({ type: 'SET', rating: score });
-  // }
-  // function resetRating() {
-  //   ratingDispatch({ type: 'RESET', rating: score });
-  // }
-  // function setId(userId) {
-  //   idDispatch({ type: 'SET', id: userId });
-  // }
-  // function resetId() {
-  //   idDispatch({ type: 'RESET' });
-  // }
   useEffect(() => {}, [books]);
 
   function SearchBooks() {
@@ -72,11 +39,6 @@ function FirstRatingScreen() {
           console.log(response);
           console.log(response.data.books);
           var test1 = response.data.books;
-          // var test = test1.map((book) => {
-          //   console.log(book);
-          //   book.rating = 0;
-          //   console.log(book);
-          // });
           for (let i = 0; i < test1.length; i++) {
             test1[i].rating = 0;
             console.log(test1[i]);

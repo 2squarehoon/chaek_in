@@ -119,23 +119,53 @@ public class BookService {
         BookCalendarListDto[] calenderList = new BookCalendarListDto[lastDay];
         for (int i = 0; i < lastDay; i++) {
             calenderList[i] = BookCalendarListDto.builder()
-                    .day(i + 1)
+                    .date(now.getYear() + "-" + month + "-" + i + 1)
                     .books(new ArrayList<>()).build();
         }
-        bookLogs.stream().forEach(bookLog -> {
-            int start = bookLog.getStartDate().getDayOfMonth();
-            int last = bookLog.getEndDate() == null ? today : bookLog.getEndDate().getDayOfMonth();
 
-            for (int i = start - 1; i < last; i++) {
-                calenderList[i].getBooks().add(BookCalendarDto.builder()
-                                .bookId(bookLog.getBook().getId())
-                                .title(bookLog.getBook().getTitle())
-                                .isStartDay(i == start - 1 ? true : false)
-                                .isEndDay(i == last - 1 ? true : false).build());
+        bookLogs.stream().forEach(bookLog -> {
+            boolean startFlag = false;
+            int startDay = bookLog.getStartDate().getDayOfMonth();
+            if (bookLog.getStartDate().getMonthValue() != month) {
+                startDay = 1;
+                startFlag = true;
+            }
+            boolean endFlag = false;
+            int endDay = bookLog.getEndDate() == null ? today : bookLog.getEndDate().getDayOfMonth();
+            if (bookLog.getEndDate().getMonthValue() != month) {
+                endDay = today;
+                endFlag = true;
+            }
+
+            boolean isStart = true;
+            int index = 0;
+            for (int i = startDay - 1; i < endDay; i++) {
+                if (isStart) {
+                    isStart = false;
+                    index = findFirstIndex(calenderList[startDay - 1].getBooks());
+                }
+
+                List<BookCalendarDto> calendarDtos = calenderList[i].getBooks();
+                while (calendarDtos.size() <= index) {
+                    calendarDtos.add(BookCalendarDto.builder().build());
+                }
+                calendarDtos.add(index, BookCalendarDto.builder()
+                        .bookId(bookLog.getBook().getId())
+                        .title(bookLog.getBook().getTitle())
+                        .isStartDay((i == startDay - 1) && !startFlag ? true : false)
+                        .isEndDay((i == endDay - 1) && !endFlag ? true : false).build());
             }
         });
 
         return new BookCalendarResponse(calenderList);
+    }
+
+    private int findFirstIndex(List<BookCalendarDto> books) {
+        int index = 0;
+        while (index < books.size() && !books.get(index).isEmpty()) {
+            index++;
+        }
+        return index;
     }
 
     @Transactional
