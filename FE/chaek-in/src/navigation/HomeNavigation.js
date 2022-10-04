@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { View, Text, Image, Button } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/HomeScreen';
 import BookDetailScreen from '../screens/BookDetailScreen';
-import BookLogScreen from '../screens/BookLogScreen';
+import MyPageScreen from '../screens/userinfo/MyPageScreen';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 function LogoTitle() {
   return (
@@ -16,9 +16,23 @@ function LogoTitle() {
 
 const HomeStack = createStackNavigator();
 
-function HomeNavigation() {
+function HomeNavigation({ navigation }) {
   return (
-    <HomeStack.Navigator>
+    <HomeStack.Navigator
+      initialRouteName='LibraryMain'
+      screenOptions={{
+        headerTitleAlign: 'center',
+        headerTintColor: '#010811',
+        headerStyle: {
+          backgroundColor: '#FCF9F0',
+          shadowColor: '#FCF9F0',
+          elevation: 0,
+        },
+        headerTitleStyle: {
+          fontFamily: 'Medium',
+        },
+      }}
+    >
       <HomeStack.Screen
         name='LibraryMain'
         component={HomeScreen}
@@ -26,32 +40,38 @@ function HomeNavigation() {
           // headerShown: false,
           headerTitle: (props) => <LogoTitle {...props} />,
           title: '서재',
-          headerTitleAlign: 'center',
-          headerTintColor: '#010811',
-          headerStyle: {
-            backgroundColor: '#FCF9F0',
-            shadowColor: '#FCF9F0',
-            elevation: 0,
-          },
-          headerTitleStyle: {
-            fontFamily: 'Medium',
-          },
-        }}
-        screenOptions={{
-          headerTitleAlign: 'center',
-          headerTintColor: '#010811',
-          headerStyle: {
-            backgroundColor: '#FCF9F0',
-            shadowColor: '#FCF9F0',
-            elevation: 0,
-          },
-          headerTitleStyle: {
-            fontFamily: 'Medium',
-          },
+          headerRight: () => (
+            <FontAwesome5
+              name='user-circle'
+              size={25}
+              style={{ right: 20 }}
+              color='#728EA6'
+              onPress={() => navigation.navigate('MyPage')}
+            />
+          ),
         }}
       ></HomeStack.Screen>
-      <HomeStack.Screen name='BookLogs' component={BookLogScreen}></HomeStack.Screen>
-      <HomeStack.Screen name='BookDetail' component={BookDetailScreen}></HomeStack.Screen>
+      <HomeStack.Screen
+        name='BookDetail'
+        component={BookDetailScreen}
+        options={{
+          title: '책 상세보기',
+          headerRight: () => (
+            <FontAwesome5
+              name='user-circle'
+              size={25}
+              style={{ right: 20 }}
+              color='#728EA6'
+              onPress={() => navigation.navigate('MyPage')}
+            />
+          ),
+        }}
+      ></HomeStack.Screen>
+      <HomeStack.Screen
+        name='MyPage'
+        component={MyPageScreen}
+        options={{ title: '마이페이지' }}
+      ></HomeStack.Screen>
     </HomeStack.Navigator>
   );
 }
