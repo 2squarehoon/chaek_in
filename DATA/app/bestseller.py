@@ -8,7 +8,7 @@ import json
 def bestseller(objectName):
     
     print("bestseller")
-    query = "SELECT id, isbn, title, author, cover FROM book WHERE rating_count > (SELECT AVG(rating_count) FROM book) ORDER BY rating_score DESC LIMIT 100"
+    query = "SELECT id, isbn, title, author, cover FROM book WHERE rating_count > (SELECT AVG(rating_count) FROM book) AND rating_score >= 4.5"
     bestseller = pd.read_sql(query, engine)
 
     bestseller = bestseller.sample(10)
