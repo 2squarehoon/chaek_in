@@ -17,6 +17,10 @@ function RecomHomeScreen({ navigation }) {
         <CFImage source={require('../../../assets/image/bookRecom/PeopleRecom.png')} />
         <CFText>{nickname}님과 비슷한 사람들이 좋아할 책</CFText>
       </CFView>
+      <BestSellerView onPress={() => navigation.navigate('BestSellerRecom')}>
+        <BestSellerImage source={require('../../../assets/image/bookRecom/BestSellerRecom.png')} />
+        <BestSellerText>요즘 많이{'\n'}책크인 된 책</BestSellerText>
+      </BestSellerView>
     </BookRecomView>
   );
 }
@@ -26,7 +30,7 @@ const CBFView = styled.TouchableOpacity`
   flex-direction: column;
   position: absolute;
   width: 150px;
-  top: 100px;
+  top: 70px;
   left: 30px;
   align-items: center;
 `;
@@ -35,9 +39,31 @@ const CFView = styled.TouchableOpacity`
   flex-direction: column;
   position: absolute;
   width: 150px;
-  bottom: 200px;
+  top: 200px;
   right: 30px;
   align-items: center;
+`;
+
+const BestSellerView = styled.TouchableOpacity`
+  flex: 1;
+  flex-direction: column;
+  position: absolute;
+  width: 150px;
+  top: 350px;
+  left: 30px;
+  align-items: center;
+`;
+const BestSellerImage = styled.Image`
+  height: 90px;
+  width: 90px;
+  resize-mode: contain;
+  margin-bottom: 10px;
+`;
+
+const BestSellerText = styled.Text`
+  font-size: 14px;
+  font-family: 'Medium';
+  text-align: center;
 `;
 
 const BookRecomView = styled.View`
@@ -59,15 +85,15 @@ const CFText = styled.Text`
 `;
 
 const CBFImage = styled.Image`
-  height: 120px;
-  width: 120px;
+  height: 90px;
+  width: 90px;
   resize-mode: contain;
   margin-bottom: 10px;
 `;
 
 const CFImage = styled.Image`
-  height: 120px;
-  width: 120px;
+  height: 90px;
+  width: 90px;
   resize-mode: contain;
   margin-bottom: 10px;
 `;
