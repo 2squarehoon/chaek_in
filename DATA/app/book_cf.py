@@ -40,7 +40,7 @@ def get_cf_books(member_id):
     recent_books.extend(rating[rating['score'] >= 3.0 ]["book_id"].values.tolist())
 
     if len(recent_books) < 2:
-        return bestseller.bestseller()
+        return bestseller.bestseller('cfBooks')
     
     similarity = cal_item_based_collabor(review, booklog)
     print(type(similarity))
@@ -55,7 +55,7 @@ def get_cf_books(member_id):
 
     ids = simil_books - member_books
     if len(ids) < 10:
-        return bestseller.bestseller()
+        return bestseller.bestseller('cfBooks')
 
     ids = tuple(random.sample(ids, 10))
 
