@@ -8,7 +8,7 @@ import crud
 def opposite_meeting(memberId, booklog, review, meeting, df):
     cat_sim_resorted_ind = crud.count_sim(df)
     user_book = crud.get_user_read(memberId, booklog, review)
-
+    meeting.rename(columns = {'created_at':'createdAt','updatedAt':'updatedAt'},inplace=True)
     # 빈 데이터 프레임 컬럼만 지정해서 만들고
     result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 
                                 'category_id', 'publisher', 'page', 'rating_score', 'rating_count', 'w_rating', 'cid', 'keywords'])
@@ -34,12 +34,13 @@ def opposite_meeting(memberId, booklog, review, meeting, df):
 
     revese_sim_meeting = pd.DataFrame(columns = ['meetingId', 'bookId', 'bookTitle', 'cover', 
                                                 'meetingtTitle', 'currenMember', 'maxCapacity', 'meetingCategory'])
-
+    
     for bookid in list(result['id']):
         if bookid in list(meeting['book_id']):
 
             revese_sim_meeting = pd.concat([revese_sim_meeting , meeting[meeting['book_id'] == bookid]])
-
+    revese_sim_meeting['createdAt'] = pd.to_datetime(revese_sim_meeting['createdAt'], errors='coerce')
+    revese_sim_meeting['createdAt'] = revese_sim_meeting['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
     response = dict()
     response['oppositeMeetings'] = json.loads(revese_sim_meeting.to_json(orient='records', force_ascii=False, indent=4))
     return response

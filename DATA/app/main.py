@@ -47,7 +47,8 @@ try:
     REDIS_HOST = os.getenv("REDIS_HOST")
     REDIS_PORT = os.getenv("REDIS_PORT")
     REDIS_DATABASE = os.getenv("REDIS_DATABASE")
-    pool = redis.ConnectionPool(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE)
+    REDIS_SECRET = os.getenv("REDIS_SECRET")
+    pool = redis.ConnectionPool(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE, password=REDIS_SECRET)
     rd = redis.Redis(connection_pool=pool)
 except:
     print("redis 연결 에러")
@@ -219,7 +220,12 @@ def get_recommend_will_meeting(memberId: int):
         rd.set(key, json_value)
 
         result_id = list(cbf_result.sort_values('w_rating', ascending=False)['id']) # 추천 받은 책을 가중 평점으로 정렬 후 id => 리스트 
-        will_read = list(meeting.groupby('meeting_status').get_group('NONE')['book_id']) # 같이 독서하는 모임의 book_id 리스트
+        try:
+            will_read = list(meeting.groupby('meeting_status').get_group('NONE')['book_id']) # 같이 독서하는 모임의 book_id 리스트
+        except:
+            response = dict()
+            response['willMeeting'] = []
+            return response
 
         wiimeetings = pd.DataFrame(columns = ['meetingId', 'book_id', 'bookTitle', 'cover', 
                                             'meetingtTitle', 'currenMember', 'maxCapacity', 'meetingCategory']) 
@@ -227,7 +233,8 @@ def get_recommend_will_meeting(memberId: int):
         for bookid in result_id:
             if bookid in will_read:
                 wiimeetings = pd.concat([wiimeetings, meeting[meeting['book_id'] == bookid]])
-
+        wiimeetings['createdAt'] = pd.to_datetime(wiimeetings['createdAt'], errors='coerce')
+        wiimeetings['createdAt'] = wiimeetings['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
         response = dict()
         response['willMeetings'] = json.loads(wiimeetings.to_json(orient='records', force_ascii=False, indent=4))    
         return response
