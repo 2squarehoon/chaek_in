@@ -41,5 +41,5 @@ def opposite_meeting(memberId, booklog, review, meeting, df):
             revese_sim_meeting = pd.concat([revese_sim_meeting , meeting[meeting['book_id'] == bookid]])
 
     response = dict()
-    response['oppositeMeeting'] = json.loads(revese_sim_meeting.to_json(orient='records', force_ascii=False, indent=4))
+    response['oppositeMeetings'] = json.loads(revese_sim_meeting.to_json(orient='records', force_ascii=False, indent=4))
     return response
