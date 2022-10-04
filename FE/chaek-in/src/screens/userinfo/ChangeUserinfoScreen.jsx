@@ -118,7 +118,7 @@ function ChangeUserinfoScreen({ navigation, route }) {
           </FormContainer>
         </FormEntireContainer>
         <SubmitButton onPress={submitUserinfo}>
-          <Text>제출</Text>
+          <KeyText>제출</KeyText>
         </SubmitButton>
       </TouchableWithoutFeedback>
     </ChangeUserinfoContainer>
