@@ -6,6 +6,7 @@ import LibraryScreen from '../screens/userinfo/LibraryScreen';
 import ReadBooksListScreen from '../screens/userinfo/ReadBooksListScreen';
 import LikeBooksListScreen from '../screens/userinfo/LikeBooksListScreen';
 import BookDetailScreen from '../screens/BookDetailScreen';
+import RecordScreen from '../screens/bookRecord/RecordScreen';
 
 const UserinfoStack = createStackNavigator();
 
@@ -55,6 +56,11 @@ function UserinfoNavigation() {
         name='BookDetail'
         component={BookDetailScreen}
         options={{ title: '책 상세보기' }}
+      ></UserinfoStack.Screen>
+      <UserinfoStack.Screen
+        name='RecordScreen'
+        component={RecordScreen}
+        options={{ title: '나의 기록' }}
       ></UserinfoStack.Screen>
     </UserinfoStack.Navigator>
   );
