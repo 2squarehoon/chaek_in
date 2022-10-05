@@ -33,7 +33,7 @@ public interface BookLogRepository extends JpaRepository<BookLog, Long> {
     List<BookLog> findByMemberAndReadStatusEqualsOrderByStartDate(Member member, ReadStatus readStatus);
 
     @EntityGraph(attributePaths = {"book"})
-    List<BookLog> findByMemberAndStartDateBetweenOrderByStartDate(Member member, LocalDate first, LocalDate last);
+    List<BookLog> findByMemberAndStartDateBetweenOrderByCreatedAt(Member member, LocalDate first, LocalDate last);
 
     @EntityGraph(attributePaths = {"member"})
     List<BookLog> findByEndDateNotNullAndStartDateBefore(LocalDate date);

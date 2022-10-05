@@ -91,14 +91,13 @@ public class BookService {
         Member member = getMember(memberId);
 
         LocalDate now = LocalDate.now();
-        LocalDate requestDate = LocalDate.of(now.getYear(), month, 1);
-        int lastDay = requestDate.lengthOfMonth();
-        int today = requestDate.getDayOfMonth();
+        int lastDay = now.lengthOfMonth();
+        int today = now.getDayOfMonth();
 
-        LocalDate firstDate = requestDate.withDayOfMonth(1);
-        LocalDate lastDate = requestDate.withDayOfMonth(lastDay);
+        LocalDate firstDate = LocalDate.of(now.getYear(), month, 1);
+        LocalDate lastDate = firstDate.withDayOfMonth(lastDay);
         List<BookLog> bookLogs = bookLogRepository
-                .findByMemberAndStartDateBetweenOrderByStartDate(member, firstDate, lastDate);
+                .findByMemberAndStartDateBetweenOrderByCreatedAt(member, firstDate, lastDate);
 
         BookCalendarListDto[] calenderList = new BookCalendarListDto[lastDay];
         for (int i = 0; i < lastDay; i++) {
@@ -136,11 +135,11 @@ public class BookService {
                 while (calendarDtos.size() <= index) {
                     calendarDtos.add(BookCalendarDto.builder().build());
                 }
-                calendarDtos.add(index, BookCalendarDto.builder()
-                        .bookId(bookLog.getBook().getId())
-                        .title(bookLog.getBook().getTitle())
-                        .isStartDay((i == startDay - 1) && !startFlag ? true : false)
-                        .isEndDay((i == endDay - 1) && !endFlag ? true : false).build());
+                BookCalendarDto bookCalendarDto = calendarDtos.get(index);
+                bookCalendarDto.setBookId(bookLog.getBook().getId());
+                bookCalendarDto.setTitle(bookLog.getBook().getTitle());
+                bookCalendarDto.setIsStartDay((i == startDay - 1) && !startFlag ? true : false);
+                bookCalendarDto.setIsEndDay((i == endDay - 1) && !endFlag ? true : false);
             }
         });
         return new BookCalendarResponse(calenderList);
@@ -194,8 +193,8 @@ public class BookService {
         return new BookPeopleResponse(bookId, numberOfPeople);
     }
 
-    private String makeDayString(int i) {
-        return i < 9 ? "0" + i : "" + i;
+    private String makeDayString(int index) {
+        return index < 9 ? "0" + (index + 1) : "" + (index + 1);
     }
 
     private int findFirstIndex(List<BookCalendarDto> books) {

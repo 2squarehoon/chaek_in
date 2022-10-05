@@ -115,6 +115,7 @@ function HomeNavigation({ navigation }) {
         component={OCRRecordCreateScreen}
         options={{ title: 'OCR 기록하기' }}
       ></HomeStack.Screen>
+      <HomeStack.Screen name='OCR' component={OCRScreen} options={{ title: 'OCR 찍기' }}></HomeStack.Screen>
     </HomeStack.Navigator>
   );
 }
