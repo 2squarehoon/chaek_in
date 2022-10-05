@@ -9,6 +9,10 @@ import ChangeUserinfoScreen from '../screens/userinfo/ChangeUserinfoScreen';
 import LibraryScreen from '../screens/userinfo/LibraryScreen';
 import ReadBooksListScreen from '../screens/userinfo/ReadBooksListScreen';
 import LikeBooksListScreen from '../screens/userinfo/LikeBooksListScreen';
+import RecordScreen from '../screens/bookRecord/RecordScreen';
+import RecordCreateScreen from '../screens/bookRecord/RecordCreateScreen';
+import OCRScreen from '../screens/bookRecord/OCRScreen';
+import OCRRecordCreateScreen from '../screens/bookRecord/OCRRecordCreateScreen';
 
 function LogoTitle() {
   return (
@@ -95,6 +99,21 @@ function HomeNavigation({ navigation }) {
         name='ChangeUserinfo'
         component={ChangeUserinfoScreen}
         options={{ title: '사용자 정보 수정' }}
+      ></HomeStack.Screen>
+      <HomeStack.Screen
+        name='RecordScreen'
+        component={RecordScreen}
+        options={{ title: '나의 한 문장' }}
+      ></HomeStack.Screen>
+      <HomeStack.Screen
+        name='RecordCreate'
+        component={RecordCreateScreen}
+        options={{ title: '메모 작성하기' }}
+      ></HomeStack.Screen>
+      <HomeStack.Screen
+        name='OCRRecordCreate'
+        component={OCRRecordCreateScreen}
+        options={{ title: 'OCR 기록하기' }}
       ></HomeStack.Screen>
     </HomeStack.Navigator>
   );
