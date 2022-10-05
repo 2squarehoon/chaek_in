@@ -38,4 +38,6 @@ public interface BookLogRepository extends JpaRepository<BookLog, Long> {
     @EntityGraph(attributePaths = {"member"})
     List<BookLog> findByEndDateNotNullAndStartDateBefore(LocalDate date);
 
+    @EntityGraph(attributePaths = {"bookLog"})
+    List<BookLog> findByBook(Book book);
 }
