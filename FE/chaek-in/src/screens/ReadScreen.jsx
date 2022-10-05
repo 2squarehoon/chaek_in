@@ -21,6 +21,7 @@ function ReadScreen({ navigation }) {
   }, []);
 
   const handleBarCodeScanned = ({ type, data }) => {
+    console.log(data);
     setScanned(true);
     setBarcodeType(type);
     setBarcodeData(data);

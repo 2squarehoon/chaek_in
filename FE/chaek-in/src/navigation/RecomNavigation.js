@@ -6,16 +6,16 @@ import SimilarBookRecomScreen from '../screens/recommendation/SimilarBookRecomSc
 import MeetingDetailScreen from '../screens/meeting/MeetingDetailScreen';
 import BestSellerRecomScreen from '../screens/recommendation/BestSellerRecomScreen';
 import { FontAwesome5 } from '@expo/vector-icons';
-import ChangeUserinfoScreen from '../screens/userinfo/ChangeUserinfoScreen';
-import LibraryScreen from '../screens/userinfo/LibraryScreen';
-import ReadBooksListScreen from '../screens/userinfo/ReadBooksListScreen';
-import LikeBooksListScreen from '../screens/userinfo/LikeBooksListScreen';
-import RecordScreen from '../screens/bookRecord/RecordScreen';
-import RecordCreateScreen from '../screens/bookRecord/RecordCreateScreen';
-import OCRScreen from '../screens/bookRecord/OCRScreen';
-import OCRRecordCreateScreen from '../screens/bookRecord/OCRRecordCreateScreen';
-import BookDetailScreen from '../screens/BookDetailScreen';
-import MyPageScreen from '../screens/userinfo/MyPageScreen';
+// import ChangeUserinfoScreen from '../screens/userinfo/ChangeUserinfoScreen';
+// import LibraryScreen from '../screens/userinfo/LibraryScreen';
+// import ReadBooksListScreen from '../screens/userinfo/ReadBooksListScreen';
+// import LikeBooksListScreen from '../screens/userinfo/LikeBooksListScreen';
+// import RecordScreen from '../screens/bookRecord/RecordScreen';
+// import RecordCreateScreen from '../screens/bookRecord/RecordCreateScreen';
+// import OCRScreen from '../screens/bookRecord/OCRScreen';
+// import OCRRecordCreateScreen from '../screens/bookRecord/OCRRecordCreateScreen';
+// import BookDetailScreen from '../screens/BookDetailScreen';
+// import MyPageScreen from '../screens/userinfo/MyPageScreen';
 
 const BookRecomStack = createStackNavigator();
 
@@ -102,7 +102,7 @@ function BookRecomNavigation({ navigation }) {
           // },
         }}
       ></BookRecomStack.Screen>
-      <BookRecomStack.Screen
+      {/* <BookRecomStack.Screen
         name='BookDetail'
         component={BookDetailScreen}
         options={{
@@ -162,7 +162,7 @@ function BookRecomNavigation({ navigation }) {
         name='OCR'
         component={OCRScreen}
         options={{ title: 'OCR 찍기' }}
-      ></BookRecomStack.Screen>
+      ></BookRecomStack.Screen> */}
     </BookRecomStack.Navigator>
   );
 }

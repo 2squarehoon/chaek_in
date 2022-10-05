@@ -69,6 +69,7 @@ function RecordScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fcf9f0',
     // justifyContent: 'center',
     // alignItems: 'center',
   },
@@ -109,6 +110,7 @@ const ButtonText = styled.Text`
 
 const ScrollViewContainer = styled.ScrollView`
   flex: 7;
+  background-color: #fcf9f0;
 `;
 
 const BlankContainer = styled.View`
@@ -132,6 +134,7 @@ const WriteButton = styled.TouchableOpacity`
   justify-content: space-around;
   align-items: center;
   border-radius: 15px;
+  border: 1px solid #000;
 `;
 
 const OCRButton = styled.TouchableOpacity`
@@ -144,6 +147,7 @@ const OCRButton = styled.TouchableOpacity`
   justify-content: space-around;
   align-items: center;
   border-radius: 15px;
+  border: 1px solid #000;
 `;
 
 const TestText = styled.Text`

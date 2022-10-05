@@ -122,7 +122,6 @@ function TabNavigation({ navigation }) {
           ),
         }}
       />
-
       <Tab.Screen
         name='Meeting'
         component={MeetingNavigation}
@@ -131,7 +130,7 @@ function TabNavigation({ navigation }) {
           title: '책크人',
           tabBarIcon: ({ focused }) => (
             <View>
-              <Ionicons name='people-circle-outline' size={30} color={focused ? '#728EA6' : 'white'} />
+              <Ionicons name='md-people' size={30} color={focused ? '#728EA6' : 'white'} />
             </View>
           ),
           headerRight: () => (

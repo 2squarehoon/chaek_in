@@ -9,10 +9,11 @@ import MeetingChallengeScreen from '../screens/meeting/MeetingChallengeScreen';
 import MeetingCreateScreen from '../screens/meeting/MeetingCreateScreen';
 import MeetingDetailScreen from '../screens/meeting/MeetingDetailScreen';
 import { useSelector } from 'react-redux';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const MeetingStack = createStackNavigator();
 
-function MeetingNavigation() {
+function MeetingNavigation({ navigation }) {
   const { nickname } = useSelector((state) => state.main);
 
   return (
@@ -50,9 +51,31 @@ function MeetingNavigation() {
             fontFamily: 'Medium',
             fontSize: 16,
           },
+          headerRight: () => (
+            <FontAwesome5
+              name='user-circle'
+              size={25}
+              style={{ right: 20 }}
+              color='#728EA6'
+              onPress={() => navigation.navigate('MyPage')}
+            />
+          ),
         }}
       ></MeetingStack.Screen>
-      <MeetingStack.Screen name='MeetingAll' component={MeetingAllScreen}></MeetingStack.Screen>
+      <MeetingStack.Screen
+        name='MeetingAll'
+        component={MeetingAllScreen}
+        options={{
+          title: '모임 전체 보기',
+          headerStyle: {
+            backgroundColor: '#FCF9F0',
+          },
+          headerTitleStyle: {
+            fontFamily: 'Medium',
+            fontSize: 16,
+          },
+        }}
+      ></MeetingStack.Screen>
       <MeetingStack.Screen
         name='MeetingMyBook'
         component={MeetingMyBookScreen}
@@ -112,7 +135,16 @@ function MeetingNavigation() {
       <MeetingStack.Screen
         name='MeetingDetail'
         component={MeetingDetailScreen}
-        options={{ headerShown: false }}
+        options={{
+          title: '모임 상세보기',
+          headerStyle: {
+            backgroundColor: '#FCF9F0',
+          },
+          headerTitleStyle: {
+            fontFamily: 'Medium',
+            fontSize: 16,
+          },
+        }}
       ></MeetingStack.Screen>
     </MeetingStack.Navigator>
   );
