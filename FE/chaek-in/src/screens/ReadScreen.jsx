@@ -21,10 +21,11 @@ function ReadScreen({ navigation }) {
   }, []);
 
   const handleBarCodeScanned = ({ type, data }) => {
+    console.log(data);
     setScanned(true);
     setBarcodeType(type);
     setBarcodeData(data);
-    Alert.alert('책읽기를 시작하시겠습니까?', '', [
+    Alert.alert('책크인 하시겠습니까?', '', [
       { text: '아니오', style: 'cancel' },
       { text: '네', onPress: () => RegistBook(data) },
     ]);

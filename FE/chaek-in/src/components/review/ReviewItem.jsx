@@ -132,8 +132,8 @@ const ReviewItemContainer = styled.View`
 `;
 
 const ReviewStarContainer = styled.View`
-  width: 25%;
-  margin-right: 55%;
+  margin-left: 3%;
+  margin-right: auto;
 `;
 
 const WriterText = styled.Text`
