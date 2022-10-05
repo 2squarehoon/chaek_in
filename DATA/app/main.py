@@ -19,7 +19,7 @@ import random
 
 import os
 from dotenv import load_dotenv
-import redis
+# import redis
 
 load_dotenv()
 
@@ -42,7 +42,8 @@ if not(server_run):
     df = crud.clean_df(book, category)
     # 서버 시작 구분 상태 변경, 이후에는 실행 안되도록
     server_run = not(server_run)
-
+    start = time.time() 
+        
 try:
     REDIS_HOST = os.getenv("REDIS_HOST")
     REDIS_PORT = os.getenv("REDIS_PORT")
@@ -74,7 +75,7 @@ def get_db():
 @app.get('/api/data/books/cbf/{memberId}')
 def get_recommended(memberId: int):
     # redis connection pool에서 연결 하나 갖고옴
-    global rd
+    # global rd
 
     # 서버 시작할 떄 가져온 데이터프레임 쓰려고 global(전역변수) 선언
     global df, booklog, review, cbf_result
@@ -83,61 +84,113 @@ def get_recommended(memberId: int):
     else:
         start = time.time() # 실행시간 계산 코드
         
-        key = "user:" + str(memberId)
-        if rd.exists(key) == 1:
+        # key = "user:" + str(memberId)
+        # if rd.exists(key) == 1:
             #   redis에서 key로 조회시 값이 존재하고
 
         #   요청 시점의 booklog와 기록된 booklog 사이의 변겸점이 없다면
         # 사용자 id 입력하면 사용자가 읽은 책의 book_id을 리스트에 저장 후 변수에 저장
-            user_book = crud.get_user_read(memberId, booklog, review)
+            # user_book = crud.get_user_read(memberId, booklog, review)
 
-            #   redis에서 바로 가져와서 리턴
-            json_dict = rd.get(key).decode('utf-8')
-            dict_list = json.loads(json_dict)
+            # #   redis에서 바로 가져와서 리턴
+            # json_dict = rd.get(key).decode('utf-8')
+            # dict_list = json.loads(json_dict)
             
-            response = dict()
-            response['cbfBooks'] = random.sample(dict_list, 10)
+            # response = dict()
+            # response['cbfBooks'] = random.sample(dict_list, 10)
 
-            end = time.time() # 실행 끝나는 시간 계산
-            print(f"use redis: {end - start:.5f} sec")
+            # end = time.time() # 실행 끝나는 시간 계산
+            # print(f"use redis: {end - start:.5f} sec")
             
-            return response
+            # return response
 
         # else 이 후 없어져도 되는지 한 번 생각해보기
-        else:
+        # else:
         
-            # 코사인 유사도 계산하는 함수 실행 후 저장
-            cat_sim_sorted_ind = crud.count_sim(df)
+        #     # 코사인 유사도 계산하는 함수 실행 후 저장
+        #     cat_sim_sorted_ind = crud.count_sim(df)
 
             # 사용자 id 입력하면 사용자가 읽은 책의 book_id을 리스트에 저장 후 변수에 저장
+            # user_book = crud.get_user_read(memberId, booklog, review)
+
+            # # 빈 데이터 프레임 컬럼만 지정해서 만들고
+            # cbf_result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 
+            #                         'category_id', 'publisher', 'page', 'rating_score', 'rating_count', 'w_rating', 'cid', 'keywords'])
+            
+            # # 읽은 책 리스트의 평점 상위 5개를 하나씩 접근해서
+            # for book_id in user_book[:5]:
+
+            #     # book_id로 비슷한 책 찾아서
+            #     sim_books = crud.find_sim_book(df, cat_sim_sorted_ind, book_id, 1000)
+            #     # 위에서 만든 빈 데이터프레임에 하나씩 추가
+            #     cbf_result = pd.concat([cbf_result, sim_books])
+
+            # # 여러 책을 기준으로 추천 받으면 읽은 책도 추천 리스트에 포함될 수 있으니 삭제
+            # for bookid in user_book:
+            #     cbf_result = cbf_result[cbf_result.index != bookid]
+            # # 중복값 제거
+            # cbf_result = cbf_result.drop_duplicates(['id'])
+            
+            # # 필요한 컬럼만 다시 저장, 약 100개의 행을 가진 데이터 프레임
+            # cbf_result = cbf_result[['id', 'isbn', 'title', 'author', 'cover', 'rating_score', 'w_rating']]
+            # cbf_result = cbf_result.sort_values('w_rating', ascending=False)
+
+            # key = "user:" + str(memberId)
+            # json_value = cbf_result.to_json(orient='records', force_ascii=False, indent=4)
+
+            # json형태로 반환하기 위해 빈 딕셔너리 생성
+        if os.path.isfile('./cos_sim.npy'):
+            cat_sim_sorted_ind = np.load('./cos_sim.npy')
             user_book = crud.get_user_read(memberId, booklog, review)
 
-            # 빈 데이터 프레임 컬럼만 지정해서 만들고
+            cbf_result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 
+                                    'category_id', 'publisher', 'page', 'rating_score', 'rating_count', 'w_rating', 'cid', 'keywords'])
+
+            for book_id in user_book[:5]:
+
+                sim_books = crud.find_sim_book(df, cat_sim_sorted_ind, book_id, 1000)
+                cbf_result = pd.concat([cbf_result, sim_books])
+
+            for bookid in user_book:
+                cbf_result = cbf_result[cbf_result.index != bookid]
+
+            cbf_result = cbf_result.drop_duplicates(['id'])
+            
+            cbf_result = cbf_result[['id', 'isbn', 'title', 'author', 'cover', 'rating_score', 'w_rating']]
+            cbf_result = cbf_result.sort_values('w_rating', ascending=False)
+            response = dict()
+            # 빈 딕셔너리에 key:cbfBooks
+            # value: result에서 10개를 임의 추출 후 json으로 변환 to_json은 json형식으로 변환하려고 썼고
+            # json.loads는 json으로 깔끔하게 만들어줘서 썼음
+            response['cbfBooks'] = json.loads(cbf_result[:100].sample(10).to_json(orient='records', force_ascii=False, indent=4))
+                
+            end = time.time() # 실행 끝나는 시간 계산
+            print(f"{end - start:.5f} sec")
+            return response # 반환값
+        else:
+            cat_sim_sorted_ind = crud.count_sim(df)
+            np.save('./cos_sim', cat_sim_sorted_ind)
+            user_book = crud.get_user_read(memberId, booklog, review)
+
             cbf_result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 
                                     'category_id', 'publisher', 'page', 'rating_score', 'rating_count', 'w_rating', 'cid', 'keywords'])
             
-            # 읽은 책 리스트의 평점 상위 5개를 하나씩 접근해서
             for book_id in user_book[:5]:
 
-                # book_id로 비슷한 책 찾아서
                 sim_books = crud.find_sim_book(df, cat_sim_sorted_ind, book_id, 1000)
-                # 위에서 만든 빈 데이터프레임에 하나씩 추가
                 cbf_result = pd.concat([cbf_result, sim_books])
 
-            # 여러 책을 기준으로 추천 받으면 읽은 책도 추천 리스트에 포함될 수 있으니 삭제
             for bookid in user_book:
                 cbf_result = cbf_result[cbf_result.index != bookid]
-            # 중복값 제거
+
             cbf_result = cbf_result.drop_duplicates(['id'])
             
-            # 필요한 컬럼만 다시 저장, 약 100개의 행을 가진 데이터 프레임
             cbf_result = cbf_result[['id', 'isbn', 'title', 'author', 'cover', 'rating_score', 'w_rating']]
             cbf_result = cbf_result.sort_values('w_rating', ascending=False)
-
-            key = "user:" + str(memberId)
-            json_value = cbf_result.to_json(orient='records', force_ascii=False, indent=4)
-
-            # json형태로 반환하기 위해 빈 딕셔너리 생성
+            print('이미 있음')
+            
+            end = time.time()
+            print(f"{end - start:.5f} sec")
             response = dict()
             # 빈 딕셔너리에 key:cbfBooks
             # value: result에서 10개를 임의 추출 후 json으로 변환 to_json은 json형식으로 변환하려고 썼고
@@ -154,15 +207,35 @@ def get_recommended(memberId: int):
 def get_recommend_will_meeting(memberId: int):
     # 저장된 cbf 활용, 그래서 지금은 cbf 함수 실행시키고 cbf 가져와야함
     # 레디스되고 나서 추천 리스트 어떻게 가져올지 봐야함
-    global rd, book
-    key = "user:" + str(memberId)
-    if rd.exists(key) == 1:
+    global book
+    # key = "user:" + str(memberId)
+    # if rd.exists(key) == 1:
 
-        json_dict = rd.get(key).decode('utf-8')
-        dict_list = json.loads(json_dict)
-        cbf_result = pd.DataFrame(dict_list)
+    #     json_dict = rd.get(key).decode('utf-8')
+    #     dict_list = json.loads(json_dict)
+    #     cbf_result = pd.DataFrame(dict_list)
         # print(cbf_result)
         # 추천 코드
+    if os.path.isfile('./cos_sim.npy'):
+        cat_sim_sorted_ind = np.load('./cos_sim.npy')
+        user_book = crud.get_user_read(memberId, booklog, review)
+
+        cbf_result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 
+                                'category_id', 'publisher', 'page', 'rating_score', 'rating_count', 'w_rating', 'cid', 'keywords'])
+
+        for book_id in user_book[:5]:
+
+            sim_books = crud.find_sim_book(df, cat_sim_sorted_ind, book_id, 1000)
+            cbf_result = pd.concat([cbf_result, sim_books])
+
+        for bookid in user_book:
+            cbf_result = cbf_result[cbf_result.index != bookid]
+
+        cbf_result = cbf_result.drop_duplicates(['id'])
+        
+        cbf_result = cbf_result[['id', 'isbn', 'title', 'author', 'cover', 'rating_score', 'w_rating']]
+        cbf_result = cbf_result.sort_values('w_rating', ascending=False)
+        
         result_id = list(cbf_result.sort_values('w_rating', ascending=False)['id']) # 추천 받은 책을 가중 평점으로 정렬 후 id => 리스트 
         try:
             will_read = list(meeting.groupby('meeting_status').get_group('NONE')['book_id']) # 같이 독서하는 모임의 book_id 리스트
@@ -183,7 +256,7 @@ def get_recommend_will_meeting(memberId: int):
         return response
             # 코사인 유사도 계산하는 함수 실행 후 저장
     else:
-        cat_sim_sorted_ind = crud.count_sim(df)
+        cat_sim_sorted_ind = np.load('./cos_sim.npy')
 
         # 사용자 id 입력하면 사용자가 읽은 책의 book_id을 리스트에 저장 후 변수에 저장
         user_book = crud.get_user_read(memberId, booklog, review)
