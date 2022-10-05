@@ -143,12 +143,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   wrapDot: {
-    position: 'absolute',
-    bottom: 0,
-    left: 360,
-    // bottom: 90,
-    flexDirection: 'column',
+    position: 'relative',
+    flexDirection: 'row',
     alignSelf: 'center',
+    marginBottom: 10
   },
   dotActive: {
     margin: 3,
