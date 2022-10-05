@@ -135,11 +135,11 @@ public class BookService {
                 while (calendarDtos.size() <= index) {
                     calendarDtos.add(BookCalendarDto.builder().build());
                 }
-                calendarDtos.add(index, BookCalendarDto.builder()
-                        .bookId(bookLog.getBook().getId())
-                        .title(bookLog.getBook().getTitle())
-                        .isStartDay((i == startDay - 1) && !startFlag ? true : false)
-                        .isEndDay((i == endDay - 1) && !endFlag ? true : false).build());
+                BookCalendarDto bookCalendarDto = calendarDtos.get(index);
+                bookCalendarDto.setBookId(bookLog.getBook().getId());
+                bookCalendarDto.setTitle(bookLog.getBook().getTitle());
+                bookCalendarDto.setIsStartDay((i == startDay - 1) && !startFlag ? true : false);
+                bookCalendarDto.setIsEndDay((i == endDay - 1) && !endFlag ? true : false);
             }
         });
         return new BookCalendarResponse(calenderList);
