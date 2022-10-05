@@ -54,12 +54,13 @@ function RecordScreen({ route, navigation }) {
             <MemoText>{memo.content}</MemoText>
           </RecordView>
         ))}
+        <BlankContainer></BlankContainer>
       </ScrollViewContainer>
       <WriteButton onPress={goToRecordCreate} title='RecordCreate'>
-        <Text>작성</Text>
+        <ButtonText>작성</ButtonText>
       </WriteButton>
       <OCRButton onPress={goToOCR} title='OCR'>
-        <Text>카메라</Text>
+        <ButtonText>카메라</ButtonText>
       </OCRButton>
     </View>
   );
@@ -88,9 +89,8 @@ const TitleText = styled.Text`
 `;
 
 const MemoText = styled.Text`
-font-size: 15px
-font-family: Light
-
+  font-size: 15px;
+  font-family: Light;
 `;
 
 const ButtonContainer = styled.TouchableOpacity`
@@ -102,8 +102,17 @@ const ButtonContainer = styled.TouchableOpacity`
   color: navy;
 `;
 
+const ButtonText = styled.Text`
+  font-size: 15px;
+  font-family: Light;
+`;
+
 const ScrollViewContainer = styled.ScrollView`
   flex: 7;
+`;
+
+const BlankContainer = styled.View`
+  height: 200px;
 `;
 
 const RecordView = styled.TouchableOpacity`
