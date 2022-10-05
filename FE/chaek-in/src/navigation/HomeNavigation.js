@@ -5,6 +5,10 @@ import HomeScreen from '../screens/HomeScreen';
 import BookDetailScreen from '../screens/BookDetailScreen';
 import MyPageScreen from '../screens/userinfo/MyPageScreen';
 import { FontAwesome5 } from '@expo/vector-icons';
+import ChangeUserinfoScreen from '../screens/userinfo/ChangeUserinfoScreen';
+import LibraryScreen from '../screens/userinfo/LibraryScreen';
+import ReadBooksListScreen from '../screens/userinfo/ReadBooksListScreen';
+import LikeBooksListScreen from '../screens/userinfo/LikeBooksListScreen';
 
 function LogoTitle() {
   return (
@@ -71,6 +75,26 @@ function HomeNavigation({ navigation }) {
         name='MyPage'
         component={MyPageScreen}
         options={{ title: '마이페이지' }}
+      ></HomeStack.Screen>
+      <HomeStack.Screen
+        name='MyLibrary'
+        component={LibraryScreen}
+        options={{ title: '내 서재' }}
+      ></HomeStack.Screen>
+      <HomeStack.Screen
+        name='ReadBooks'
+        component={ReadBooksListScreen}
+        options={{ title: '내가 읽은 책' }}
+      ></HomeStack.Screen>
+      <HomeStack.Screen
+        name='LikeBooks'
+        component={LikeBooksListScreen}
+        options={{ title: '내가 찜한 책' }}
+      ></HomeStack.Screen>
+      <HomeStack.Screen
+        name='ChangeUserinfo'
+        component={ChangeUserinfoScreen}
+        options={{ title: '사용자 정보 수정' }}
       ></HomeStack.Screen>
     </HomeStack.Navigator>
   );
