@@ -50,9 +50,11 @@ try:
     REDIS_HOST = os.getenv("REDIS_HOST")
     REDIS_PORT = os.getenv("REDIS_PORT")
     REDIS_DATABASE = os.getenv("REDIS_DATABASE")
-    REDIS_SECRET = os.getenv("REDIS_SECRET")
-    pool = redis.ConnectionPool(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE, password=REDIS_SECRET)
+    # REDIS_SECRET = os.getenv("REDIS_SECRET")
+    # pool = redis.ConnectionPool(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE, password=REDIS_SECRET)
+    pool = redis.ConnectionPool(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE)
     rd = redis.Redis(connection_pool=pool)
+    print("redis 연결 된것 같은데")
 except:
     print("redis 연결 에러")
 # redis.StrictRedis( ... ) 라고도 사용할 수 있다
