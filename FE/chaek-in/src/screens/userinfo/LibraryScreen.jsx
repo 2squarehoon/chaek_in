@@ -46,7 +46,7 @@ function LibraryScreen({ navigation }) {
     })
       .then(function (response) {
         setBooklogs(response.data.calendarList);
-        console.log(response.data.calendarList);
+        console.log(response.data.calendarList[3]);
       })
       .catch(function (error) {
         console.log(error);
