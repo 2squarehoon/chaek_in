@@ -82,12 +82,15 @@ def get_recommended(memberId: int):
     # 서버 시작할 떄 가져온 데이터프레임 쓰려고 global(전역변수) 선언
     global df, booklog, review, cbf_result
     if len(booklog[booklog['member_id'] == memberId]) == 0:
+        print("여기?")
         return bestseller.bestseller()
     else:
         start = time.time() # 실행시간 계산 코드
         
         key = "user:" + str(memberId)
+        print(key)
         if rd.exists(key) == 1:
+            print("여기까진 옴")
             #   redis에서 key로 조회시 값이 존재하고
 
         #   요청 시점의 booklog와 기록된 booklog 사이의 변겸점이 없다면
@@ -108,7 +111,7 @@ def get_recommended(memberId: int):
 
         # else 이 후 없어져도 되는지 한 번 생각해보기
         else:
-        
+            print("계산하려고 들어옴")
             # 코사인 유사도 계산하는 함수 실행 후 저장
             cat_sim_sorted_ind = crud.count_sim(df)
 
@@ -139,14 +142,14 @@ def get_recommended(memberId: int):
 
             key = "user:" + str(memberId)
             json_value = cbf_result.to_json(orient='records', force_ascii=False, indent=4)
-
+            rd.set(key, json_value)
             # json형태로 반환하기 위해 빈 딕셔너리 생성
             response = dict()
             # 빈 딕셔너리에 key:cbfBooks
             # value: result에서 10개를 임의 추출 후 json으로 변환 to_json은 json형식으로 변환하려고 썼고
             # json.loads는 json으로 깔끔하게 만들어줘서 썼음
             response['cbfBooks'] = json.loads(cbf_result[:100].sample(10).to_json(orient='records', force_ascii=False, indent=4))
-                
+            print("응답", response)
             end = time.time() # 실행 끝나는 시간 계산
             print(f"{end - start:.5f} sec")
             return response # 반환값
