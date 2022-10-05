@@ -16,17 +16,33 @@ function MeetingNavigation() {
   const { nickname } = useSelector((state) => state.main);
 
   return (
-    <MeetingStack.Navigator initialRouteName='MeetingHome'>
+    <MeetingStack.Navigator
+      initialRouteName='MeetingHome'
+      screenOptions={{
+        headerTitleAlign: 'center',
+        headerTintColor: '#010811',
+        headerStyle: {
+          backgroundColor: '#FCF9F0',
+          shadowColor: '#FCF9F0',
+          elevation: 0,
+        },
+        headerTitleStyle: {
+          fontFamily: 'Medium',
+        },
+      }}
+    >
       <MeetingStack.Screen
         name='MeetingCreate'
         component={MeetingCreateScreen}
-        options={{ headerShown: false }}
+        options={{
+          title: '모임 시작하기',
+        }}
       />
       <MeetingStack.Screen
         name='MeetingHome'
         component={MeetingHomeScreen}
         options={{
-          title: '홈',
+          title: '책크人',
           headerStyle: {
             backgroundColor: '#FCF9F0',
           },
