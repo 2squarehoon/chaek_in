@@ -91,12 +91,11 @@ public class BookService {
         Member member = getMember(memberId);
 
         LocalDate now = LocalDate.now();
-        LocalDate requestDate = LocalDate.of(now.getYear(), month, 1);
-        int lastDay = requestDate.lengthOfMonth();
-        int today = requestDate.getDayOfMonth();
+        int lastDay = now.lengthOfMonth();
+        int today = now.getDayOfMonth();
 
-        LocalDate firstDate = requestDate.withDayOfMonth(1);
-        LocalDate lastDate = requestDate.withDayOfMonth(lastDay);
+        LocalDate firstDate = LocalDate.of(now.getYear(), month, 1);
+        LocalDate lastDate = firstDate.withDayOfMonth(lastDay);
         List<BookLog> bookLogs = bookLogRepository
                 .findByMemberAndStartDateBetweenOrderByStartDate(member, firstDate, lastDate);
 
