@@ -41,7 +41,6 @@ if not(server_run):
     meeting_members = crud.meeting_members(meeting, participant)
     df = crud.clean_df(book, category)
 
-    # cat_sim_sorted_ind = crud.count_sim(df)
     # 서버 시작 구분 상태 변경, 이후에는 실행 안되도록
     server_run = not(server_run)
     start = time.time() 
@@ -87,7 +86,7 @@ def get_recommended(memberId: int):
     else:
         start = time.time() # 실행시간 계산 코드
         
-        key = "user:" + str(memberId)
+        key = "user:" + str(memberId) # 여기 user_cbf
         print(key)
         if rd.exists(key) == 1:
             print("여기까진 옴")
@@ -155,114 +154,95 @@ def get_recommended(memberId: int):
             return response # 반환값
 
 
-
-
 @app.get('/api/data/meeting/will/{memberId}')
 def get_recommend_will_meeting(memberId: int):
     # 저장된 cbf 활용, 그래서 지금은 cbf 함수 실행시키고 cbf 가져와야함
     # 레디스되고 나서 추천 리스트 어떻게 가져올지 봐야함
-    global book, cat_sim_sorted_ind
-    # key = "user:" + str(memberId)
-    # if rd.exists(key) == 1:
+    global rd, book
+    key = "user:" + str(memberId)
+    if rd.exists(key) == 1:
 
-    #     json_dict = rd.get(key).decode('utf-8')
-    #     dict_list = json.loads(json_dict)
-    #     cbf_result = pd.DataFrame(dict_list)
+        json_dict = rd.get(key).decode('utf-8')
+        dict_list = json.loads(json_dict)
+        cbf_result = pd.DataFrame(dict_list)
         # print(cbf_result)
         # 추천 코드
-    user_book = crud.get_user_read(memberId, booklog, review)
+        result_id = list(cbf_result.sort_values('w_rating', ascending=False)['id']) # 추천 받은 책을 가중 평점으로 정렬 후 id => 리스트 
+        try:
+            will_read = list(meeting.groupby('meeting_status').get_group('NONE')['book_id']) # 같이 독서하는 모임의 book_id 리스트
+        except:
+            response = dict()
+            response['willMeeting'] = []
+            return response
 
-    cbf_result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 
-                            'category_id', 'publisher', 'page', 'rating_score', 'rating_count', 'w_rating', 'cid', 'keywords'])
+        wiimeetings = pd.DataFrame(columns = ['meetingId', 'book_id', 'bookTitle', 'cover', 
+                                            'meetingtTitle', 'currenMember', 'maxCapacity', 'meetingCategory']) 
+        # 사용자가 받은 추천 리스트에 평점 높은 순으로 추천 모임 탐색 후 데이터프레임에 저장
+        for bookid in result_id:
+            if bookid in will_read:
+                wiimeetings = pd.concat([wiimeetings, meeting[meeting['book_id'] == bookid]])
 
-    for book_id in user_book[:5]:
-
-        sim_books = crud.find_sim_book(df, cat_sim_sorted_ind, book_id, 1000)
-        cbf_result = pd.concat([cbf_result, sim_books])
-
-    for bookid in user_book:
-        cbf_result = cbf_result[cbf_result.index != bookid]
-
-    cbf_result = cbf_result.drop_duplicates(['id'])
-    
-    cbf_result = cbf_result[['id', 'isbn', 'title', 'author', 'cover', 'rating_score', 'w_rating']]
-    cbf_result = cbf_result.sort_values('w_rating', ascending=False)
-    
-    result_id = list(cbf_result.sort_values('w_rating', ascending=False)['id']) # 추천 받은 책을 가중 평점으로 정렬 후 id => 리스트 
-    try:
-        will_read = list(meeting.groupby('meeting_status').get_group('NONE')['book_id']) # 같이 독서하는 모임의 book_id 리스트
-    except:
         response = dict()
-        response['willMeeting'] = []
+        response['willMeeting'] = json.loads(wiimeetings.to_json(orient='records', force_ascii=False, indent=4))    
+        return response
+            # 코사인 유사도 계산하는 함수 실행 후 저장
+    else:
+        cat_sim_sorted_ind = crud.count_sim(df)
+
+        # 사용자 id 입력하면 사용자가 읽은 책의 book_id을 리스트에 저장 후 변수에 저장
+        user_book = crud.get_user_read(memberId, booklog, review)
+
+        # 빈 데이터 프레임 컬럼만 지정해서 만들고
+        cbf_result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 
+                                'category_id', 'publisher', 'page', 'rating_score', 'rating_count', 'w_rating', 'cid', 'keywords'])
+        
+        # 읽은 책 리스트의 평점 상위 5개를 하나씩 접근해서
+        for book_id in user_book[:5]:
+
+            # book_id로 비슷한 책 찾아서
+            sim_books = crud.find_sim_book(df, cat_sim_sorted_ind, book_id, 1000)
+            # 위에서 만든 빈 데이터프레임에 하나씩 추가
+            cbf_result = pd.concat([cbf_result, sim_books])
+
+        # 여러 책을 기준으로 추천 받으면 읽은 책도 추천 리스트에 포함될 수 있으니 삭제
+        for bookid in user_book:
+            cbf_result = cbf_result[cbf_result.index != bookid]
+            
+        # 중복값 제거
+        cbf_result = cbf_result.drop_duplicates(['id'])
+        # 중복값 제거
+        cbf_result = cbf_result.drop_duplicates(['id'])
+        
+        # 필요한 컬럼만 다시 저장, 약 100개의 행을 가진 데이터 프레임
+        cbf_result = cbf_result[['id', 'isbn', 'title', 'author', 'cover', 'rating_score', 'w_rating']]
+        cbf_result = cbf_result.sort_values('w_rating', ascending=False)
+        
+
+        key = "user:" + str(memberId)
+        json_value = cbf_result.to_json(orient='records', force_ascii=False, indent=4)
+        # json_value = json.dumps(value, ensure_ascii=False).encode('utf-8')
+        rd.set(key, json_value)
+
+        result_id = list(cbf_result.sort_values('w_rating', ascending=False)['id']) # 추천 받은 책을 가중 평점으로 정렬 후 id => 리스트 
+        try:
+            will_read = list(meeting.groupby('meeting_status').get_group('NONE')['book_id']) # 같이 독서하는 모임의 book_id 리스트
+        except:
+            response = dict()
+            response['willMeeting'] = []
+            return response
+
+        wiimeetings = pd.DataFrame(columns = ['meetingId', 'book_id', 'bookTitle', 'cover', 
+                                            'meetingtTitle', 'currenMember', 'maxCapacity', 'meetingCategory']) 
+        # 사용자가 받은 추천 리스트에 평점 높은 순으로 추천 모임 탐색 후 데이터프레임에 저장
+        for bookid in result_id:
+            if bookid in will_read:
+                wiimeetings = pd.concat([wiimeetings, meeting[meeting['book_id'] == bookid]])
+        wiimeetings['createdAt'] = pd.to_datetime(wiimeetings['createdAt'], errors='coerce')
+        wiimeetings['createdAt'] = wiimeetings['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
+        response = dict()
+        response['willMeetings'] = json.loads(wiimeetings.to_json(orient='records', force_ascii=False, indent=4))    
         return response
 
-    wiimeetings = pd.DataFrame(columns = ['meetingId', 'book_id', 'bookTitle', 'cover', 
-                                        'meetingtTitle', 'currenMember', 'maxCapacity', 'meetingCategory']) 
-    # 사용자가 받은 추천 리스트에 평점 높은 순으로 추천 모임 탐색 후 데이터프레임에 저장
-    for bookid in result_id:
-        if bookid in will_read:
-            wiimeetings = pd.concat([wiimeetings, meeting[meeting['book_id'] == bookid]])
-
-    response = dict()
-    response['willMeeting'] = json.loads(wiimeetings.to_json(orient='records', force_ascii=False, indent=4))    
-    return response
-        # 코사인 유사도 계산하는 함수 실행 후 저장
-    # else:
-    #     cat_sim_sorted_ind = np.load('./cos_sim.npy')
-
-    #     # 사용자 id 입력하면 사용자가 읽은 책의 book_id을 리스트에 저장 후 변수에 저장
-    #     user_book = crud.get_user_read(memberId, booklog, review)
-
-    #     # 빈 데이터 프레임 컬럼만 지정해서 만들고
-    #     cbf_result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 
-    #                             'category_id', 'publisher', 'page', 'rating_score', 'rating_count', 'w_rating', 'cid', 'keywords'])
-        
-    #     # 읽은 책 리스트의 평점 상위 5개를 하나씩 접근해서
-    #     for book_id in user_book[:5]:
-
-    #         # book_id로 비슷한 책 찾아서
-    #         sim_books = crud.find_sim_book(df, cat_sim_sorted_ind, book_id, 1000)
-    #         # 위에서 만든 빈 데이터프레임에 하나씩 추가
-    #         cbf_result = pd.concat([cbf_result, sim_books])
-
-    #     # 여러 책을 기준으로 추천 받으면 읽은 책도 추천 리스트에 포함될 수 있으니 삭제
-    #     for bookid in user_book:
-    #         cbf_result = cbf_result[cbf_result.index != bookid]
-            
-    #     # 중복값 제거
-    #     cbf_result = cbf_result.drop_duplicates(['id'])
-    #     # 중복값 제거
-    #     cbf_result = cbf_result.drop_duplicates(['id'])
-        
-    #     # 필요한 컬럼만 다시 저장, 약 100개의 행을 가진 데이터 프레임
-    #     cbf_result = cbf_result[['id', 'isbn', 'title', 'author', 'cover', 'rating_score', 'w_rating']]
-    #     cbf_result = cbf_result.sort_values('w_rating', ascending=False)
-        
-
-    #     key = "user:" + str(memberId)
-    #     json_value = cbf_result.to_json(orient='records', force_ascii=False, indent=4)
-    #     # json_value = json.dumps(value, ensure_ascii=False).encode('utf-8')
-    #     rd.set(key, json_value)
-
-    #     result_id = list(cbf_result.sort_values('w_rating', ascending=False)['id']) # 추천 받은 책을 가중 평점으로 정렬 후 id => 리스트 
-    #     try:
-    #         will_read = list(meeting.groupby('meeting_status').get_group('NONE')['book_id']) # 같이 독서하는 모임의 book_id 리스트
-    #     except:
-    #         response = dict()
-    #         response['willMeeting'] = []
-    #         return response
-
-    #     wiimeetings = pd.DataFrame(columns = ['meetingId', 'book_id', 'bookTitle', 'cover', 
-    #                                         'meetingtTitle', 'currenMember', 'maxCapacity', 'meetingCategory']) 
-    #     # 사용자가 받은 추천 리스트에 평점 높은 순으로 추천 모임 탐색 후 데이터프레임에 저장
-    #     for bookid in result_id:
-    #         if bookid in will_read:
-    #             wiimeetings = pd.concat([wiimeetings, meeting[meeting['book_id'] == bookid]])
-    #     wiimeetings['createdAt'] = pd.to_datetime(wiimeetings['createdAt'], errors='coerce')
-    #     wiimeetings['createdAt'] = wiimeetings['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
-    #     response = dict()
-    #     response['willMeetings'] = json.loads(wiimeetings.to_json(orient='records', force_ascii=False, indent=4))    
-    #     return response
 
 
 @app.get('/api/data/books/cf/{memberId}')
@@ -371,14 +351,26 @@ def get_near_bookcafe(latitude: float, longitude: float):
 
 @app.get('/api/data/meeting/opposite/{memberId}')
 def get_opposite_book_meeting(memberId: int):
-    global booklog, review, book, meeting_members
+    global booklog, review, book, meeting_members, rd
     start = time.time() # 실행시간 계산 코드
 
-
-    end = time.time() # 실행 끝나는 시간 계산
-    print(f"{end - start:.5f} sec")
-
-    return opposite_meeting.opposite_meeting(memberId, booklog, review, meeting_members, df, cat_sim_sorted_ind)
+    key = "user:opp:" + str(memberId)
+    if rd.exists(key) == 1:
+        #  redis에서 바로 가져와서 리턴
+        json_dict = rd.get(key).decode('utf-8')
+        dict_list = json.loads(json_dict)
+        response = dict()
+        if len(dict_list)<3:
+            response['oppositeMeetings'] = dict_list
+        else:
+            response['oppositeMeetings'] = random.sample(dict_list, 3)
+        end = time.time() # 실행 끝나는 시간 계산
+        print(f"{end - start:.5f} sec")
+        return response
+    else:
+        end = time.time() # 실행 끝나는 시간 계산
+        print(f"{end - start:.5f} sec")
+        return opposite_meeting.opposite_meeting(memberId, booklog, review, meeting_members, df, rd)
 
 
 @app.get('/api/data/books/bestseller')
