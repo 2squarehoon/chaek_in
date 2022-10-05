@@ -7,7 +7,9 @@ import crud
 # 반대 유사도 책 기반 모임 추천 반환
 def opposite_meeting(memberId, booklog, review, meeting, df, rd):
     cat_sim_resorted_ind = crud.count_sim(df)
-    user_book = crud.get_user_read(memberId, booklog, review)
+    user_book = []
+    for i in booklog[booklog['member_id'] == memberId]['book_id']:
+        user_book.append(i)
     meeting.rename(columns = {'created_at':'createdAt','updatedAt':'updatedAt'},inplace=True)
     # 빈 데이터 프레임 컬럼만 지정해서 만들고
     result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 

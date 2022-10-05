@@ -94,7 +94,9 @@ def get_recommended(memberId: int):
 
         #   요청 시점의 booklog와 기록된 booklog 사이의 변겸점이 없다면
         # 사용자 id 입력하면 사용자가 읽은 책의 book_id을 리스트에 저장 후 변수에 저장
-            user_book = crud.get_user_read(memberId, booklog, review)
+            user_book = []
+            for i in booklog[booklog['member_id'] == memberId]['book_id']:
+                user_book.append(i)
 
             #   redis에서 바로 가져와서 리턴
             json_dict = rd.get(key).decode('utf-8')
@@ -115,7 +117,9 @@ def get_recommended(memberId: int):
             cat_sim_sorted_ind = crud.count_sim(df)
 
             # 사용자 id 입력하면 사용자가 읽은 책의 book_id을 리스트에 저장 후 변수에 저장
-            user_book = crud.get_user_read(memberId, booklog, review)
+            user_book = []
+            for i in booklog[booklog['member_id'] == memberId]['book_id']:
+                user_book.append(i)
 
             # 빈 데이터 프레임 컬럼만 지정해서 만들고
             cbf_result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 
@@ -190,7 +194,9 @@ def get_recommend_will_meeting(memberId: int):
         cat_sim_sorted_ind = crud.count_sim(df)
 
         # 사용자 id 입력하면 사용자가 읽은 책의 book_id을 리스트에 저장 후 변수에 저장
-        user_book = crud.get_user_read(memberId, booklog, review)
+        user_book = []
+        for i in booklog[booklog['member_id'] == memberId]['book_id']:
+            user_book.append(i)
 
         # 빈 데이터 프레임 컬럼만 지정해서 만들고
         cbf_result = pd.DataFrame(columns = ['id', 'isbn', 'title', 'author', 'publish_date', 'description', 'cover', 
