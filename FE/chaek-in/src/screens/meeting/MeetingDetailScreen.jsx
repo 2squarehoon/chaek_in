@@ -137,7 +137,7 @@ function MeetingDetailScreen({ route, navigation }) {
       },
     })
       .then(function (response) {
-        setReload(!reload);
+        navigation.navigate('MeetingHome');
       })
       .catch(function (error) {
         console.log(error);
@@ -146,7 +146,7 @@ function MeetingDetailScreen({ route, navigation }) {
 
   return (
     <MeetingContainer>
-      <IconView>
+      <IconView onPress={deleteMeeting}>
         <EvilIcons name='trash' size={30} color='black' />
       </IconView>
       <MeetingHeader>
@@ -227,6 +227,7 @@ function MeetingDetailScreen({ route, navigation }) {
         placeholder='댓글을 입력하세요'
         onSubmitEditing={() => {
           CreateComment();
+          setComment('');
         }}
       ></CommentInput>
       <FakeView></FakeView>

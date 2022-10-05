@@ -52,6 +52,7 @@ const MeetingSearchView = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
+  background-color: #fcf9f0;
 `;
 
 const SearchTextInput = styled.TextInput`
