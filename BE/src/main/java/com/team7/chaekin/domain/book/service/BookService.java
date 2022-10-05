@@ -194,8 +194,8 @@ public class BookService {
         return new BookPeopleResponse(bookId, numberOfPeople);
     }
 
-    private String makeDayString(int i) {
-        return i < 9 ? "0" + i : "" + i;
+    private String makeDayString(int index) {
+        return index < 9 ? "0" + (index + 1) : "" + (index + 1);
     }
 
     private int findFirstIndex(List<BookCalendarDto> books) {
