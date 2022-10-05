@@ -97,7 +97,7 @@ public class BookService {
         LocalDate firstDate = LocalDate.of(now.getYear(), month, 1);
         LocalDate lastDate = firstDate.withDayOfMonth(lastDay);
         List<BookLog> bookLogs = bookLogRepository
-                .findByMemberAndStartDateBetweenOrderByStartDate(member, firstDate, lastDate);
+                .findByMemberAndStartDateBetweenOrderByCreatedAt(member, firstDate, lastDate);
 
         BookCalendarListDto[] calenderList = new BookCalendarListDto[lastDay];
         for (int i = 0; i < lastDay; i++) {
