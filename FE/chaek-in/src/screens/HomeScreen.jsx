@@ -65,7 +65,7 @@ function HomeScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <HomeScrollView>
       {/* <View>
         <Text>{nickname}님의 서재</Text>
         <Text>{userId}</Text>
@@ -103,6 +103,7 @@ function HomeScreen({ navigation }) {
           ))}
         </View>
       </BookItemsContainer>
+
       <View style={styles.bottomSpace}></View>
       {/* <View>
         <Button onPress={goToBookLog} title='테스트용으로 만든 책 검색페이지'></Button>
@@ -114,7 +115,18 @@ function HomeScreen({ navigation }) {
       <View>
         <Button onPress={goToBookDetail} title='책 상세정보'></Button>
       </View> */}
-    </View>
+      {/* 제일 최근에 읽은 책 */}
+      <MeetingText>이런 독서모임 어때요?</MeetingText>
+      {/* 일단 placeholder를 책 cover로 해서 모임 예시 만들고 meetingId로 detail로 연결 */}
+      {/* bookTitle, cover, meetingTitle, currentMember, maxCapacity */}
+      <MyMeetingView onPress={() => navigation.navigate('MeetingDetail', { meetingId: 1 })}>
+        <MyMeetingCoverImage source={{ uri: 'https://picsum.photos/200/300' }} />
+        <MyMeetingTitleText>책 제목</MyMeetingTitleText>
+        <MyMeetingTitleText>모임 제목</MyMeetingTitleText>
+        <MyMeetingTitleText>모임 인원</MyMeetingTitleText>
+      </MyMeetingView>
+      <View style={styles.bottomSpace}></View>
+    </HomeScrollView>
   );
 }
 
@@ -179,6 +191,11 @@ const styles = StyleSheet.create({
   },
 });
 
+const HomeScrollView = styled.ScrollView`
+  flex: 1;
+  background-color: #fcf9f0;
+`;
+
 const ChangeInput = styled.TextInput`
   width: 300px;
   height: 40px;
@@ -203,4 +220,38 @@ const BookItemsContainer = styled.View`
   border-radius: 20px;
   background-color: white;
 `;
+
+const MeetingText = styled.Text`
+  flex: 1;
+  font-family: 'Medium';
+  font-size: 18px;
+  margin: 20px 30px;
+`;
+
+const BookText = styled.Text`
+  font-family: 'Medium';
+  font-size: 14px;
+  color: #b1d8e8;
+`;
+
+const MyMeetingCoverImage = styled.Image`
+  width: 100%;
+  height: 20px;
+  border-radius: 20px;
+`;
+
+const MyMeetingTitleText = styled.Text`
+  font-family: 'Medium';
+  font-size: 14px;
+  margin: 5px;
+`;
+
+const MyMeetingView = styled.TouchableOpacity`
+  flex: 1;
+  margin: 0 30px;
+  border: 1px solid #000;
+  border-radius: 20px;
+  background-color: white;
+`;
+
 export default HomeScreen;

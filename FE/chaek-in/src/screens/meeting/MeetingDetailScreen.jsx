@@ -238,7 +238,7 @@ function MeetingDetailScreen({ route, navigation }) {
 const MeetingContainer = styled.ScrollView`
   flex: 1;
   background-color: #fcf9f0;
-  padding: 0 5%;
+  padding: 5%;
 `;
 
 const BookContainer = styled.View`
@@ -330,6 +330,7 @@ const MeetingTitle = styled.Text`
   flex: 8;
   font-size: 24px;
   font-family: Medium;
+  margin-top: 10%;
 `;
 
 const EnterButton = styled.TouchableOpacity`
