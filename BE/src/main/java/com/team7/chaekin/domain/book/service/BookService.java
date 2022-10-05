@@ -11,11 +11,8 @@ import com.team7.chaekin.domain.member.repository.MemberRepository;
 import com.team7.chaekin.domain.wishlist.entity.WishList;
 import com.team7.chaekin.domain.wishlist.repository.WishListRepository;
 import com.team7.chaekin.global.error.exception.CustomException;
-import com.team7.chaekin.global.notification.entity.FcmToken;
-import com.team7.chaekin.global.notification.util.FCMUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,19 +32,6 @@ public class BookService {
     private final BookLogRepository bookLogRepository;
     private final MemberRepository memberRepository;
     private final WishListRepository wishListRepository;
-    private final FCMUtil fcmUtil;
-
-    @Transactional
-    @Scheduled(cron = "0 0 10 * * *") //TODO: 매일 몇 시에 보낼지 정하기
-    protected void sendRemindNotification() {
-        LocalDate date = LocalDate.now().minusMonths(1);
-        List<BookLog> bookLogs = bookLogRepository.findByEndDateNotNullAndStartDateBefore(date);
-
-        List<FcmToken> tokens = new ArrayList<>();
-        bookLogs.stream().forEach(bookLog -> tokens.addAll(bookLog.getMember().getFcmTokens()));
-        fcmUtil.sendMessage(tokens);
-    }
-
 
     @Transactional(readOnly = true)
     public BookListResponse search(String keyword) {
@@ -107,19 +91,19 @@ public class BookService {
         Member member = getMember(memberId);
 
         LocalDate now = LocalDate.now();
-        LocalDate requestDate = LocalDate.of(now.getYear(), month, 1);
-        int lastDay = requestDate.lengthOfMonth();
-        int today = requestDate.getDayOfMonth();
+        int lastDay = now.lengthOfMonth();
+        int today = now.getDayOfMonth();
 
-        LocalDate firstDate = requestDate.withDayOfMonth(1);
-        LocalDate lastDate = requestDate.withDayOfMonth(lastDay);
+        LocalDate firstDate = LocalDate.of(now.getYear(), month, 1);
+        LocalDate lastDate = firstDate.withDayOfMonth(lastDay);
         List<BookLog> bookLogs = bookLogRepository
-                .findByMemberAndStartDateBetweenOrderByStartDate(member, firstDate, lastDate);
+                .findByMemberAndStartDateBetweenOrderByCreatedAt(member, firstDate, lastDate);
 
         BookCalendarListDto[] calenderList = new BookCalendarListDto[lastDay];
         for (int i = 0; i < lastDay; i++) {
+            String day = makeDayString(i);
             calenderList[i] = BookCalendarListDto.builder()
-                    .date(now.getYear() + "-" + month + "-" + i + 1)
+                    .date(now.getYear() + "-" + month + "-" + day)
                     .books(new ArrayList<>()).build();
         }
 
@@ -131,8 +115,10 @@ public class BookService {
                 startFlag = true;
             }
             boolean endFlag = false;
-            int endDay = bookLog.getEndDate() == null ? today : bookLog.getEndDate().getDayOfMonth();
-            if (bookLog.getEndDate().getMonthValue() != month) {
+            int endDay = 0;
+            if (bookLog.getEndDate() != null && bookLog.getEndDate().getMonthValue() == month) {
+                endDay = bookLog.getEndDate().getDayOfMonth();
+            } else {
                 endDay = today;
                 endFlag = true;
             }
@@ -156,16 +142,7 @@ public class BookService {
                         .isEndDay((i == endDay - 1) && !endFlag ? true : false).build());
             }
         });
-
         return new BookCalendarResponse(calenderList);
-    }
-
-    private int findFirstIndex(List<BookCalendarDto> books) {
-        int index = 0;
-        while (index < books.size() && !books.get(index).isEmpty()) {
-            index++;
-        }
-        return index;
     }
 
     @Transactional
@@ -189,8 +166,6 @@ public class BookService {
                             .readStatus(ReadStatus.READING).build());
                     wishListRepository.findByMemberIdAndBookId(member.getId(), book.getId())
                             .ifPresent(wishList -> wishList.delete());
-
-                    fcmUtil.sendMessage(member.getFcmTokens());
                 });
         return response;
     }
@@ -216,5 +191,17 @@ public class BookService {
         Book book = getBook(bookId);
         int numberOfPeople = bookLogRepository.findByBookAndReadStatusEquals(book, ReadStatus.READING).size();
         return new BookPeopleResponse(bookId, numberOfPeople);
+    }
+
+    private String makeDayString(int index) {
+        return index < 9 ? "0" + (index + 1) : "" + (index + 1);
+    }
+
+    private int findFirstIndex(List<BookCalendarDto> books) {
+        int index = 0;
+        while (index < books.size() && !books.get(index).isEmpty()) {
+            index++;
+        }
+        return index;
     }
 }

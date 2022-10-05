@@ -1,28 +1,59 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import styled from 'styled-components/native';
+import Axios from 'axios';
+import { HOST } from '@env';
+import { useSelector } from 'react-redux';
 
 function RecordScreen({ route, navigation }) {
-  // const bookId = route.params.bookId;
+  const { accessToken } = useSelector((state) => state.main);
+  const bookId = route.params.bookId;
+  const title = route.params.title;
+  const [memoList, setMemoList] = useState([]);
   // 내가 쓴 메모 목록 useEffect로 불러오면 끝
-  // useEffect();
+  useEffect(() => {
+    Axios.get(`${HOST}/api/v1/books/${bookId}/memos`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then(function (response) {
+        console.log(response.data);
+        setMemoList(response.data.memos);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
 
   const goToRecordCreate = (e) => {
-    navigation.navigate('RecordCreate');
+    navigation.navigate('RecordCreate', { bookId: bookId });
   };
 
   const goToRecordDetail = (e) => {
-    navigation.navigate('RecordDetail');
+    // navigation.navigate('RecordDetail', { bookId: bookId, title: title });
   };
 
   const goToOCR = (e) => {
-    navigation.navigate('OCR');
+    navigation.navigate('OCR', { bookId: bookId });
   };
 
   return (
     <View style={styles.container}>
+      <TitleText>{title}</TitleText>
       <ScrollViewContainer>
-        <RecordView onPress={goToRecordDetail} title='RecordDetail'></RecordView>
+        {memoList.map((memo) => (
+          <RecordView
+            key={memo.memoId}
+            item={memo}
+            bookId={bookId}
+            onPress={goToRecordDetail}
+            title='RecordDetail'
+            style={{ backgroundColor: `${memo.color}` }}
+          >
+            <MemoText>{memo.content}</MemoText>
+          </RecordView>
+        ))}
       </ScrollViewContainer>
       <WriteButton onPress={goToRecordCreate} title='RecordCreate'>
         <Text>작성</Text>
@@ -50,6 +81,18 @@ const TopContainer = styled.View`
   align-items: center;
 `;
 
+const TitleText = styled.Text`
+  font-size: 20px
+  font-family: Medium
+  margin: 5% auto 3%
+`;
+
+const MemoText = styled.Text`
+font-size: 15px
+font-family: Light
+
+`;
+
 const ButtonContainer = styled.TouchableOpacity`
   background-color: #b1d8e8;
   border-radius: 15px;
@@ -64,17 +107,17 @@ const ScrollViewContainer = styled.ScrollView`
 `;
 
 const RecordView = styled.TouchableOpacity`
-  background-color: #f2d8a7;
+  // background-color: #f2d8a7;
   border-radius: 15px;
   padding: 15px;
   margin: 10px 10px;
 `;
 
 const WriteButton = styled.TouchableOpacity`
-  background-color: #b1d8e8;
+  background-color: #a8ca47;
   position: absolute;
   right: 10px;
-  bottom: 10px;
+  bottom: 100px;
   width: 50px;
   height: 50px;
   justify-content: space-around;
@@ -83,10 +126,10 @@ const WriteButton = styled.TouchableOpacity`
 `;
 
 const OCRButton = styled.TouchableOpacity`
-  background-color: #b1d8e8;
+  background-color: #a8ca47;
   position: absolute;
   left: 10px;
-  bottom: 10px;
+  bottom: 100px;
   width: 50px;
   height: 50px;
   justify-content: space-around;

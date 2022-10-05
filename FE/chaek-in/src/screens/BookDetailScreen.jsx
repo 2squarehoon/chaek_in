@@ -98,7 +98,7 @@ function BookDetailScreen({ route, navigation }) {
   }
 
   function GoRecord() {
-    navigation.navigate('RecordScreen', { bookId: bookId });
+    navigation.navigate('RecordScreen', { bookId: bookId, title: title });
   }
 
   function PressLike() {

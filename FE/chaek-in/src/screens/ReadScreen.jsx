@@ -65,7 +65,10 @@ function ReadScreen({ navigation }) {
         navigation.navigate('BookDetail', { bookId: response.data.bookId });
       })
       .catch(function (error) {
-        console.log(error);
+        console.log(error.response.status);
+        if (error.response.status === 404) {
+          Alert.alert('DB에 등록되지 않은 책입니다ㅠㅠ');
+        }
       });
   }
 

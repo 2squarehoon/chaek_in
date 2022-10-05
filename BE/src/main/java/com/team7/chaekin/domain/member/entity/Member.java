@@ -2,14 +2,12 @@ package com.team7.chaekin.domain.member.entity;
 
 import com.team7.chaekin.domain.common.entity.BaseTimeEntity;
 import com.team7.chaekin.domain.member.dto.MemberUpdateRequest;
-import com.team7.chaekin.global.notification.entity.FcmToken;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -41,9 +39,6 @@ public class Member extends BaseTimeEntity {
 
     @Column
     private String refreshToken;
-
-    @OneToMany(mappedBy = "member")
-    private List<FcmToken> fcmTokens;
 
     @Builder
     public Member(String identifier, String password, String nickname, String job, int age, Gender gender) {
