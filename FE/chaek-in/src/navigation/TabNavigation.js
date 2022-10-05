@@ -64,21 +64,22 @@ function TabNavigation({ navigation }) {
               <MaterialIcons name='home' size={30} color={focused ? '#728EA6' : 'white'} />
             </View>
           ),
-          headerRight: () => (
-            <FontAwesome5
-              name='user-circle'
-              size={25}
-              style={{ right: 20 }}
-              color='#728EA6'
-              onPress={() => navigation.navigate('MyPage')}
-            />
-          ),
+          // headerRight: () => (
+          //   <FontAwesome5
+          //     name='user-circle'
+          //     size={25}
+          //     style={{ right: 20 }}
+          //     color='#728EA6'
+          //     onPress={() => navigation.navigate('MyPage')}
+          //   />
+          // ),
         }}
       />
       <Tab.Screen
         name='Recommend'
         component={RecomNavigation}
         options={{
+          headerShown: false,
           title: '나를 위한 책',
           tabBarIcon: ({ focused }) => (
             <View>
@@ -89,15 +90,15 @@ function TabNavigation({ navigation }) {
               />
             </View>
           ),
-          headerRight: () => (
-            <FontAwesome5
-              name='user-circle'
-              size={25}
-              style={{ right: 20 }}
-              color='#728EA6'
-              onPress={() => navigation.navigate('MyPage')}
-            />
-          ),
+          // headerRight: () => (
+          //   <FontAwesome5
+          //     name='user-circle'
+          //     size={25}
+          //     style={{ right: 20 }}
+          //     color='#728EA6'
+          //     onPress={() => navigation.navigate('MyPage')}
+          //   />
+          // ),
         }}
       />
       <Tab.Screen
@@ -126,6 +127,7 @@ function TabNavigation({ navigation }) {
         name='Meeting'
         component={MeetingNavigation}
         options={{
+          headerShown: false,
           title: '책크人',
           tabBarIcon: ({ focused }) => (
             <View>
