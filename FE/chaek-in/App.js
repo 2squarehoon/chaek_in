@@ -1,29 +1,73 @@
-import React from 'react';
-// import { StatusBar } from 'expo-status-bar';
-// import { StyleSheet } from 'react-native';
+import { StyleSheet, Text, View, Alert, TextInput, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import 'react-native-gesture-handler';
-
-// import LoginPage from './src/components/Pages/Login/LoginPage';
 import TabNavigation from './src/navigation/TabNavigation';
+import SigninNavigation from './src/navigation/SigninNavigation';
+import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+import { Store, Persistor } from './src/redux/store';
+import { useSelector, Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import styled from 'styled-components/native';
+import { useFonts } from 'expo-font';
+import * as Location from 'expo-location';
 
-export default function App() {
+const Stack = createStackNavigator();
+
+function AppInner({ navigation }) {
+  const [fontsLoaded] = useFonts({
+    Light: require('../../../S07P22A107/FE/chaek-in/assets/font/Light.ttf'),
+    Medium: require('../../../S07P22A107/FE/chaek-in/assets/font/Medium.ttf'),
+    Bold: require('../../../S07P22A107/FE/chaek-in/assets/font/Bold.ttf'),
+  });
+  const { accessToken } = useSelector((state) => state.main);
   return (
-    // <View style={styles.container}>
-    //   <LoginPage />
-    //   <StatusBar style="auto" />
-    // </View>
     <NavigationContainer>
-      <TabNavigation />
+      <Stack.Navigator>
+        {accessToken === '' ? (
+          <Stack.Screen
+            name='Signin'
+            component={SigninNavigation}
+            options={{ headerShown: false }}
+          ></Stack.Screen>
+        ) : (
+          <Stack.Screen name='Home' component={TabNavigation} options={{ headerShown: false }}></Stack.Screen>
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
+export default function App() {
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      console.log(location);
+      setLocation(location);
+    })();
+  }, []);
+
+  let text = 'Waiting..';
+  if (errorMsg) {
+    text = errorMsg;
+  } else if (location) {
+    text = JSON.stringify(location);
+  }
+
+  return (
+    <Provider store={Store}>
+      <PersistGate persistor={Persistor}>
+        <AppInner />
+      </PersistGate>
+    </Provider>
+  );
+}

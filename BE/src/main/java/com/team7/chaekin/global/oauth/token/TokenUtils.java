@@ -92,7 +92,6 @@ public class TokenUtils {
         try {
             Claims claims = getClaimsInToken(token);
             Object id = claims.get("id");
-            log.info("Logout Member id = {}", id);
             return Long.valueOf((Integer) id);
         } catch (SecurityException | MalformedJwtException e) {
             log.info("JWT Signature is wrong.");

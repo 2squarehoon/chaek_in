@@ -8,12 +8,15 @@ import com.team7.chaekin.domain.participant.dto.ParticipantListDto;
 import com.team7.chaekin.domain.participant.dto.ParticipantListResponse;
 import com.team7.chaekin.domain.participant.entity.Participant;
 import com.team7.chaekin.domain.participant.repository.ParticipantRepository;
+import com.team7.chaekin.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -43,29 +46,41 @@ public class ParticipantService {
         Member member = getMember(memberId);
         Meeting meeting = getMeeting(meetingId);
 
+        if (meeting.getMeetingLeader().getId().equals(memberId)) {
+            throw new CustomException(ALREADY_JOIN_MEETING);
+        }
+        if (meeting.getCurrentParticipants() >= meeting.getCapacity()) {
+            throw new CustomException(MEETING_IS_FULL);
+        }
         return participantRepository.save(Participant.makeParticipant(meeting, member, false))
                 .getId();
     }
 
     @Transactional
-    public void leaveMeeting(long meetingId, long participantId) {
+    public void leaveMeeting(long meetingId, long participantId, long memberId) {
         Meeting meeting = getMeeting(meetingId);
 
-        Participant participant = participantRepository.findById(participantId)
-                .orElseThrow(() -> new RuntimeException("해당 참가자가 존재하지 않습니다."));
-        if (!participant.getMeeting().equals(meeting)) {
-            throw new RuntimeException("미팅 참가자가 아닙니다.");
+        Participant participant = participantRepository.findByIdAndIsRemovedIsFalse(participantId)
+                .orElseThrow(() -> new CustomException(PARTICIPANT_IS_NOT_EXIST));
+        if (!participant.getMember().getId().equals(memberId)) {
+            throw new CustomException(DO_NOT_HAVE_AUTHORIZATION);
         }
+        if (!participant.getMeeting().equals(meeting)) {
+            throw new CustomException(MEMBER_IS_NOT_BELONG_MEETING);
+        }
+//        if (participant.isLeader()) {
+//            throw new CustomException(CAN_NOT_LEAVE_MEETING_READER);
+//        }
         participant.leave();
     }
 
     private Meeting getMeeting(long meetingId) {
-        return meetingRepository.findById(meetingId)
-                .orElseThrow(() -> new RuntimeException("해당 모임이 존재하지 않습니다."));
+        return meetingRepository.findByIdAndIsRemovedIsFalse(meetingId)
+                .orElseThrow(() -> new CustomException(MEETING_IS_NOT_EXIST));
     }
 
     private Member getMember(long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
     }
 }

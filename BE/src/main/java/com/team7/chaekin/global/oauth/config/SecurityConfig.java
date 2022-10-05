@@ -3,6 +3,7 @@ package com.team7.chaekin.global.oauth.config;
 import com.team7.chaekin.global.oauth.exception.RestAuthenticationEntryPoint;
 import com.team7.chaekin.global.oauth.filter.TokenAuthenticationFilter;
 import com.team7.chaekin.global.oauth.handler.CustomLogoutHandler;
+import com.team7.chaekin.global.webmvc.properties.CorsProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
@@ -71,5 +73,10 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

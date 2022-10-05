@@ -2,7 +2,6 @@ package com.team7.chaekin.domain.meetingcomment.entity;
 
 import com.team7.chaekin.domain.common.entity.BaseTimeEntity;
 import com.team7.chaekin.domain.meeting.entity.Meeting;
-import com.team7.chaekin.domain.meetingcomment.dto.MeetingCommentUpdateRequest;
 import com.team7.chaekin.domain.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.Builder;

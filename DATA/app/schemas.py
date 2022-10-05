@@ -43,6 +43,14 @@ from pydantic import BaseModel
 class BookBase(BaseModel):
     title: str
     description: Union[str, None] = None
+    author = str
+    # publish_date = str
+    # description = str
+    # cover = str
+    # publisher = str
+    # page = int
+    # rating_score = float
+    # rating_count = int
 
 
 class BookCreate(BookBase):
@@ -51,6 +59,8 @@ class BookCreate(BookBase):
 
 class Book(BookBase):
     id: int
+    isbn: int
+    category_id: int
 
     class Config:
         orm_mode = True

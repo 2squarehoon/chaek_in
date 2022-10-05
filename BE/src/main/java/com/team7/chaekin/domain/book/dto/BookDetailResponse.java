@@ -12,5 +12,7 @@ public class BookDetailResponse {
     private String description;
     private String cover;
     private String title;
-    private double ratingScore;
+    private String ratingScore;
+    private Boolean isLiked;
+    private String readStatus;
 }

@@ -1,19 +1,22 @@
 {
   "expo": {
-    "name": "chaek-in",
-    "slug": "chaek-in",
+    "name": "chaek-in-test",
+    "slug": "chaek-in-test",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "",
+    "icon": "./assets/image/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "",
+      "image": "./assets/image/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
+    "plugins": [
+      "@react-native-google-signin/google-signin"
+    ],
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -21,15 +24,21 @@
       "supportsTablet": true
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.chaek_in"
+      "package": "com.a107.chaekintest"
     },
     "web": {
       "favicon": ""
     },
-    "scheme": "chaek_in"
+    "scheme": "chaek-in-test",
+    "extra": {
+      "eas": {
+        "projectId": "09935a8d-0d83-4b12-85ee-2660a4d88f5e"
+      }
+    }
   }
 }

@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"identifier"})
+        @UniqueConstraint(columnNames = {"identifier", "refreshToken"})
 })
 public class Member extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +25,9 @@ public class Member extends BaseTimeEntity {
     @Column(length = 45, nullable = false)
     private String nickname;
 
+    @Column(length = 255, nullable = false)
+    private String password;
+
     @Column(length = 45)
     private String job;
 
@@ -34,13 +37,13 @@ public class Member extends BaseTimeEntity {
     @Column(columnDefinition = "char(6) NOT NULL")
     private Gender gender;
 
-    private boolean isRemoved;
-
+    @Column
     private String refreshToken;
 
     @Builder
-    public Member(String identifier, String nickname, String job, int age, Gender gender) {
+    public Member(String identifier, String password, String nickname, String job, int age, Gender gender) {
         this.identifier = identifier;
+        this.password = password;
         this.nickname = nickname;
         this.job = job;
         this.age = age;
@@ -54,10 +57,6 @@ public class Member extends BaseTimeEntity {
         gender = memberUpdateRequest.getGender();
     }
 
-    public void deleteMember() {
-        isRemoved = true;
-    }
-
     public void saveRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
@@ -65,4 +64,5 @@ public class Member extends BaseTimeEntity {
     public void removeRefreshToken() {
         this.refreshToken = "";
     }
+
 }

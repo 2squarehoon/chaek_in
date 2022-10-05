@@ -1,4 +1,5 @@
 spring:
   profiles:
     active: server
-    include: token
+    include:
+      - token

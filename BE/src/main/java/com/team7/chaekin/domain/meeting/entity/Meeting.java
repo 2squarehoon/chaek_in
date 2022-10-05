@@ -5,6 +5,7 @@ import com.team7.chaekin.domain.common.entity.BaseTimeEntity;
 import com.team7.chaekin.domain.meeting.dto.MeetingDetailResponse;
 import com.team7.chaekin.domain.meeting.dto.MeetingListDto;
 import com.team7.chaekin.domain.meeting.dto.MeetingUpdateRequest;
+import com.team7.chaekin.domain.member.entity.Member;
 import com.team7.chaekin.domain.participant.entity.Participant;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -35,15 +36,19 @@ public class Meeting extends BaseTimeEntity {
 
     private int capacity;
 
+    @Enumerated(EnumType.STRING)
+    private MeetingStatus meetingStatus;
+
     @OneToMany(mappedBy = "meeting")
     private List<Participant> participants = new ArrayList<>();
 
     private boolean isRemoved;
 
     @Builder
-    public Meeting(Book book, String title, String description, int capacity) {
+    public Meeting(Book book, String title, String description, String meetingStatus, int capacity) {
         this.book = book;
         this.title = title;
+        this.meetingStatus = meetingStatus.equals(MeetingStatus.NONE.name()) ? MeetingStatus.NONE : MeetingStatus.COMPLETE;
         this.description = description;
         this.capacity = capacity;
     }
@@ -63,12 +68,14 @@ public class Meeting extends BaseTimeEntity {
         return MeetingDetailResponse.builder()
                 .meetingId(id)
                 .bookTitle(book.getTitle())
+                .author(book.getAuthor())
                 .cover(book.getCover())
                 .meetingTitle(title)
                 .description(description)
                 .currentMember(getCurrentParticipants())
                 .maxCapacity(capacity)
                 .createdAt(getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH.mm")))
+                .meetingStatus(meetingStatus.name())
                 .build();
     }
 
@@ -80,13 +87,25 @@ public class Meeting extends BaseTimeEntity {
                 .meetingTitle(title)
                 .currentMember(getCurrentParticipants())
                 .maxCapacity(capacity)
+                .meetingStatus(meetingStatus.name())
                 .createdAt(getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH.mm")))
                 .build();
     }
 
-    private int getCurrentParticipants() {
+    public int getCurrentParticipants() {
         return (int) participants.stream()
                 .filter(p -> !p.isRemoved())
                 .count();
+    }
+
+    public Member getMeetingLeader() {
+        Member member = null;
+        for (Participant participant : participants) {
+            if (participant.isLeader()) {
+                member = participant.getMember();
+                break;
+            }
+        }
+        return member;
     }
 }

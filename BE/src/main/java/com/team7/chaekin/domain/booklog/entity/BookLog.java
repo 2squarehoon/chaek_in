@@ -3,7 +3,6 @@ package com.team7.chaekin.domain.booklog.entity;
 import com.team7.chaekin.domain.book.entity.Book;
 import com.team7.chaekin.domain.common.entity.BaseTimeEntity;
 import com.team7.chaekin.domain.member.entity.Member;
-import com.team7.chaekin.domain.todaybook.entity.TodayBook;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,8 +10,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -42,23 +39,19 @@ public class BookLog extends BaseTimeEntity {
     @Column
     private LocalDate endDate;
 
-    @OneToMany(mappedBy = "bookLog")
-    private List<TodayBook> todayBooks = new ArrayList<>();
-
     @Builder
-    public BookLog(Member member, Book book) {
+    public BookLog(Member member, Book book, ReadStatus readStatus) {
         this.member = member;
         this.book = book;
-        this.readStatus = ReadStatus.READING;
+        this.readStatus = readStatus;
         this.startDate = LocalDate.now();
     }
 
-    public void updateStatus() {
-        this.readStatus = ReadStatus.COMPLETE;
-    }
-
-    public void addTodayBook(TodayBook todayBook) {
-        this.todayBooks.add(todayBook);
+    public void completeReadBook() {
+        if (readStatus.equals(ReadStatus.COMPLETE))
+            return;
+        readStatus = ReadStatus.COMPLETE;
+        endDate = LocalDate.now();
     }
 
 }

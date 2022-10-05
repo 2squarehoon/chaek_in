@@ -24,6 +24,9 @@ public class Category {
     @Column(nullable = false, columnDefinition = "char(4)")
     private String mall;
 
+    @Column(nullable = false, columnDefinition = "varchar(100)")
+    private String keywords;
+
     @Column(nullable = false, length = 70)
     private String depth1;
 
@@ -39,12 +42,15 @@ public class Category {
     @Column(length = 70)
     private String depth5;
 
+
+
     //Test를 위해 만든 Builder, 이후 수정해도 괜찮음.
     @Builder
-    public Category(String cid, String name, String mall, String depth1) {
+    public Category(String cid, String name, String mall, String depth1, String keywords) {
         this.cid = cid;
         this.name = name;
         this.mall = mall;
         this.depth1 = depth1;
+        this.keywords = keywords;
     }
 }

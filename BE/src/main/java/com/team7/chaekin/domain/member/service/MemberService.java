@@ -7,15 +7,22 @@ import com.team7.chaekin.domain.booklog.repository.BookLogRepository;
 import com.team7.chaekin.domain.member.dto.*;
 import com.team7.chaekin.domain.member.entity.Member;
 import com.team7.chaekin.domain.member.repository.MemberRepository;
+import com.team7.chaekin.domain.memo.dto.MemberTokenResponse;
+import com.team7.chaekin.global.error.errorcode.DomainErrorCode;
+import com.team7.chaekin.global.error.exception.CustomException;
 import com.team7.chaekin.global.oauth.token.TokenProperties;
 import com.team7.chaekin.global.oauth.token.TokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,19 +33,26 @@ public class MemberService {
     private final TokenProperties tokenProperties;
     private final BookLogRepository bookLogRepository;
     private final TokenUtils tokenUtils;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
-    public MemberLoginResponse login(String identifier) {
+    public MemberLoginResponse login(String id, String password) {
         MemberLoginResponse memberLoginResponse = new MemberLoginResponse();
 
-        memberRepository.findByIdentifier(identifier).ifPresentOrElse(
-                member -> {
-                    TokenSet issueTokens = issueNewTokenSet(member);
-                    memberLoginResponse.setIsFirst(false);
-                    memberLoginResponse.setAccessToken(issueTokens.getAccess());
-                    memberLoginResponse.setRefreshToken(issueTokens.getRefresh());
-                },
-                () -> memberLoginResponse.setIsFirst(true));
+        memberRepository.findByIdentifier(id)
+                .ifPresent(member -> {
+                            if (bCryptPasswordEncoder.matches(password, member.getPassword())) {
+                                TokenSet issueTokens = issueNewTokenSet(member);
+                                memberLoginResponse.setIsFirst(false);
+                                memberLoginResponse.setAccessToken(issueTokens.getAccess());
+                                memberLoginResponse.setRefreshToken(issueTokens.getRefresh());
+                                memberLoginResponse.setNickname(member.getNickname());
+                                memberLoginResponse.setMemberId(member.getId());
+                            }
+                });
+        if (!StringUtils.hasText(memberLoginResponse.getAccessToken())) {
+            memberLoginResponse.setIsFirst(true);
+        }
         return memberLoginResponse;
     }
 
@@ -68,8 +82,20 @@ public class MemberService {
     }
 
     @Transactional
-    public void saveAdditionalInformation(MemberCreateRequest memberCreateRequest) {
-        memberRepository.save(memberCreateRequest.toEntity());
+    public MemberTokenResponse saveAdditionalInformation(MemberCreateRequest memberCreateRequest) {
+        memberCreateRequest.encryptPassword(bCryptPasswordEncoder);
+
+        memberRepository.findByIdentifier(memberCreateRequest.getIdentifier())
+                .ifPresent(m -> {
+                    if (bCryptPasswordEncoder.matches(memberCreateRequest.getPassword(), m.getPassword())) {
+                        throw new CustomException(DomainErrorCode.ALREADY_REGIST_MEMBER);
+                    }
+                    throw new CustomException(DO_NOT_HAVE_AUTHORIZATION);
+                });
+        Member member = memberRepository.save(memberCreateRequest.toEntity());
+
+        TokenSet issueTokens = issueNewTokenSet(member);
+        return new MemberTokenResponse(issueTokens.getAccess(), issueTokens.getRefresh(), member.getId());
     }
 
     @Transactional
@@ -81,28 +107,28 @@ public class MemberService {
     @Transactional
     public void deleteMember(long memberId) {
         Member member = getMember(memberId);
-        member.deleteMember();
+        memberRepository.delete(member);
     }
 
     private Member getMember(long memberId) {
-        Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException());
-        if (findMember.isRemoved()) {
-            log.info("Deleted Member : memberId = {}", memberId);
-            throw new RuntimeException("해당 회원이 존재하지 않습니다.");
-        }
-
-        return findMember;
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
     }
 
     private TokenSet issueNewTokenSet(Member member) {
         String accessToken = tokenUtils.createJwt(member.getId(), tokenProperties.getAccess().getName());
         String refreshToken = tokenUtils.createJwt(member.getId(), tokenProperties.getRefresh().getName());
-        log.info("Issue New Token : Access-Token = {}, Refresh-Token = {}", accessToken, refreshToken);
 
         member.saveRefreshToken(refreshToken);
         return new TokenSet(accessToken, refreshToken);
     }
 
-
+    public MemberInfoResponse getMyInformation(long memberId) {
+        Member member = getMember(memberId);
+        return MemberInfoResponse.builder()
+                .nickname(member.getNickname())
+                .age(member.getAge())
+                .job(member.getJob())
+                .gender(member.getGender()).build();
+    }
 }
