@@ -119,7 +119,7 @@ public class BookService {
         BookCalendarListDto[] calenderList = new BookCalendarListDto[lastDay];
         for (int i = 0; i < lastDay; i++) {
             calenderList[i] = BookCalendarListDto.builder()
-                    .date(now.getYear() + "-" + month + "-" + i + 1)
+                    .date(now.getYear() + "-" + month + "-" + (i + 1))
                     .books(new ArrayList<>()).build();
         }
 
@@ -131,8 +131,10 @@ public class BookService {
                 startFlag = true;
             }
             boolean endFlag = false;
-            int endDay = bookLog.getEndDate() == null ? today : bookLog.getEndDate().getDayOfMonth();
-            if (bookLog.getEndDate().getMonthValue() != month) {
+            int endDay = 0;
+            if (bookLog.getEndDate() != null && bookLog.getEndDate().getMonthValue() == month) {
+                endDay = bookLog.getEndDate().getDayOfMonth();
+            } else {
                 endDay = today;
                 endFlag = true;
             }
