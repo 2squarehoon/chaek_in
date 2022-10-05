@@ -59,7 +59,6 @@ public class ReviewService {
                 .collect(Collectors.toList()));
         Member member = getMember(memberId);
 
-        List<BookLog> bookLogs = new ArrayList<>();
         for (int i = 0, j = 0; i < books.size() && j < filtered.size(); i++, j++) {
             Book book = books.get(i);
             ReviewFirstDto dto = filtered.get(j);
@@ -71,12 +70,14 @@ public class ReviewService {
             }
 
             book.addScore(dto.getScore());
-            bookLogs.add(BookLog.builder()
+            BookLog bookLog = bookLogRepository.save(BookLog.builder()
                     .book(book)
                     .member(member)
                     .readStatus(ReadStatus.COMPLETE).build());
+            reviewRepository.save(Review.builder()
+                            .bookLog(bookLog)
+                            .score(dto.getScore()).build());
         }
-        bookLogRepository.saveAll(bookLogs);
     }
 
     @Transactional
