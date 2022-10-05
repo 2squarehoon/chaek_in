@@ -24,6 +24,7 @@ function MeetingHomeScreen({ navigation }) {
       },
     })
       .then(function (response) {
+        console.log(response.data);
         setMyMeetingList(response.data.meetings);
       })
       .catch(function (error) {
