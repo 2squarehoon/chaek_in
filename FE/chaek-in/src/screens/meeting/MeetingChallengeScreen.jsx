@@ -11,57 +11,57 @@ function MeetingChallengeScreen({ navigation }) {
   const [fakeMeeting4List, setFakeMeeting4List] = useState([]);
 
   // /api/data/meeting/will/{memberId}: 완독 모임
-  // useEffect(() => {
-  //   Axios.get(`${HOST}/api/data/meeting/will/${userId}`, {
-  //     headers: {
-  //       Authorization: `Bearer ${accessToken}`,
-  //     },
-  //   })
-  //     .then(function (response) {
-  //       setMyMeetingList(response.data.meetings);
-  //       console.log(response);
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
-  // }, [accessToken, userId]);
-
   useEffect(() => {
-    Axios.get(`${HOST}/api/v1/meetings`, {
+    Axios.get(`${HOST}/api/data/meeting/will/${userId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
       .then(function (response) {
-        const meetings = response.data.meetings;
-        let randomIndexArray = [];
-        let meetingListArray = [];
-        for (var i = 0; i < 5; i++) {
-          var randomNum = Math.floor(Math.random() * meetings.length + 1);
-          if (randomIndexArray.indexOf(randomNum) === -1) {
-            randomIndexArray.push(randomNum);
-          } else {
-            i--;
-          }
-        }
-        for (var j = 0; j < 5; j++) {
-          meetingListArray.push(meetings[randomIndexArray[j]]);
-        }
-        setFakeMeeting4List(meetingListArray);
+        setMyMeetingList(response.data.willMeeting);
+        console.log(response.data.willMeeting);
       })
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [accessToken, userId]);
+
+  // useEffect(() => {
+  //   Axios.get(`${HOST}/api/v1/meetings`, {
+  //     headers: {
+  //       Authorization: `Bearer ${accessToken}`,
+  //     },
+  //   })
+  //     .then(function (response) {
+  //       const meetings = response.data.meetings;
+  //       let randomIndexArray = [];
+  //       let meetingListArray = [];
+  //       for (var i = 0; i < 5; i++) {
+  //         var randomNum = Math.floor(Math.random() * meetings.length + 1);
+  //         if (randomIndexArray.indexOf(randomNum) === -1) {
+  //           randomIndexArray.push(randomNum);
+  //         } else {
+  //           i--;
+  //         }
+  //       }
+  //       for (var j = 0; j < 5; j++) {
+  //         meetingListArray.push(meetings[randomIndexArray[j]]);
+  //       }
+  //       setFakeMeeting4List(meetingListArray);
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // }, []);
 
   // 실제 미팅값을 넣을때는 fakeMeetingList를 실제 미팅리스트로 바꾸고 key를 meetingId로 설정한다
   return (
     <>
       <ScrollViewContainer>
         <MyBookView>
-          {fakeMeeting4List ? (
+          {myMeetingList ? (
             <MyMeetingView>
-              {fakeMeeting4List.map((meeting, index) => (
+              {myMeetingList.map((meeting, index) => (
                 <MyMeetingItem
                   key={index}
                   // key={meeting.meetingId}
