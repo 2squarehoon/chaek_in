@@ -172,6 +172,7 @@ def get_recommend_will_meeting(memberId: int):
         cbf_result = pd.DataFrame(dict_list)
         # print(cbf_result)
         # 추천 코드
+        meeting_reid = meeting.reset_index()
         result_id = list(cbf_result.sort_values('w_rating', ascending=False)['id']) # 추천 받은 책을 가중 평점으로 정렬 후 id => 리스트 
         try:
             will_read = list(meeting.groupby('meeting_status').get_group('NONE')['book_id']) # 같이 독서하는 모임의 book_id 리스트
@@ -180,15 +181,32 @@ def get_recommend_will_meeting(memberId: int):
             response['willMeeting'] = []
             return response
 
-        wiimeetings = pd.DataFrame(columns = ['meetingId', 'book_id', 'bookTitle', 'cover', 
-                                            'meetingtTitle', 'currenMember', 'maxCapacity', 'meetingCategory']) 
+        willmeetings = pd.DataFrame(columns = ['book_id', 'bookTitle', 'cover', 
+                                                'currentMember']) 
         # 사용자가 받은 추천 리스트에 평점 높은 순으로 추천 모임 탐색 후 데이터프레임에 저장
         for bookid in result_id:
             if bookid in will_read:
-                wiimeetings = pd.concat([wiimeetings, meeting[meeting['book_id'] == bookid]])
+                willmeetings = pd.concat([willmeetings, meeting_reid[meeting_reid['book_id'] == bookid]])
+        willmeetings.rename(columns = {'created_at':'createdAt','updated_at':'updatedAt'},inplace=True)
+        willmeetings['createdAt'] = pd.to_datetime(willmeetings['createdAt'], errors='coerce')
+        willmeetings['createdAt'] = willmeetings['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
+        willmeetings['id'] = willmeetings['id'].astype('int')
+        willmeetings['capacity'] = willmeetings['capacity'].astype('int')
+        willmeetings.rename(columns = {'id':'meetingId'},inplace=True)
 
+        bookTitle = []
+        bookCover = []
+        crrr_member = []
+        for i in list(willmeetings['book_id']):
+            bookCover.append(book[book['id'] == i]['cover'].iloc[0])
+            bookTitle.append(book[book['id'] == i]['title'].iloc[0])
+            crrr_member.append(len(willmeetings[willmeetings['book_id'] == i]['meetingMembers'].iloc[0]))
+            
+        willmeetings['cover'] = bookCover
+        willmeetings['bookTitle'] = bookTitle
+        willmeetings['currentMember'] = crrr_member
         response = dict()
-        response['willMeeting'] = json.loads(wiimeetings.to_json(orient='records', force_ascii=False, indent=4))    
+        response['willMeetings'] = json.loads(willmeetings.to_json(orient='records', force_ascii=False, indent=4))   
         return response
             # 코사인 유사도 계산하는 함수 실행 후 저장
     else:
@@ -217,9 +235,7 @@ def get_recommend_will_meeting(memberId: int):
             
         # 중복값 제거
         cbf_result = cbf_result.drop_duplicates(['id'])
-        # 중복값 제거
-        cbf_result = cbf_result.drop_duplicates(['id'])
-        
+
         # 필요한 컬럼만 다시 저장, 약 100개의 행을 가진 데이터 프레임
         cbf_result = cbf_result[['id', 'isbn', 'title', 'author', 'cover', 'rating_score', 'w_rating']]
         cbf_result = cbf_result.sort_values('w_rating', ascending=False)
@@ -229,7 +245,7 @@ def get_recommend_will_meeting(memberId: int):
         json_value = cbf_result.to_json(orient='records', force_ascii=False, indent=4)
         # json_value = json.dumps(value, ensure_ascii=False).encode('utf-8')
         rd.set(key, json_value)
-
+        meeting_reid = meeting.reset_index()
         result_id = list(cbf_result.sort_values('w_rating', ascending=False)['id']) # 추천 받은 책을 가중 평점으로 정렬 후 id => 리스트 
         try:
             will_read = list(meeting.groupby('meeting_status').get_group('NONE')['book_id']) # 같이 독서하는 모임의 book_id 리스트
@@ -238,16 +254,32 @@ def get_recommend_will_meeting(memberId: int):
             response['willMeeting'] = []
             return response
 
-        wiimeetings = pd.DataFrame(columns = ['meetingId', 'book_id', 'bookTitle', 'cover', 
-                                            'meetingtTitle', 'currenMember', 'maxCapacity', 'meetingCategory']) 
+        willmeetings = pd.DataFrame(columns = ['book_id', 'bookTitle', 'cover', 
+                                                'currentMember']) 
         # 사용자가 받은 추천 리스트에 평점 높은 순으로 추천 모임 탐색 후 데이터프레임에 저장
         for bookid in result_id:
             if bookid in will_read:
-                wiimeetings = pd.concat([wiimeetings, meeting[meeting['book_id'] == bookid]])
-        wiimeetings['createdAt'] = pd.to_datetime(wiimeetings['createdAt'], errors='coerce')
-        wiimeetings['createdAt'] = wiimeetings['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
+                willmeetings = pd.concat([willmeetings, meeting_reid[meeting_reid['book_id'] == bookid]])
+        willmeetings.rename(columns = {'created_at':'createdAt','updated_at':'updatedAt'},inplace=True)
+        willmeetings['createdAt'] = pd.to_datetime(willmeetings['createdAt'], errors='coerce')
+        willmeetings['createdAt'] = willmeetings['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
+        willmeetings['id'] = willmeetings['id'].astype('int')
+        willmeetings['capacity'] = willmeetings['capacity'].astype('int')
+        willmeetings.rename(columns = {'id':'meetingId'},inplace=True)
+
+        bookTitle = []
+        bookCover = []
+        crrr_member = []
+        for i in list(willmeetings['book_id']):
+            bookCover.append(book[book['id'] == i]['cover'].iloc[0])
+            bookTitle.append(book[book['id'] == i]['title'].iloc[0])
+            crrr_member.append(len(willmeetings[willmeetings['book_id'] == i]['meetingMembers'].iloc[0]))
+            
+        willmeetings['cover'] = bookCover
+        willmeetings['bookTitle'] = bookTitle
+        willmeetings['currentMember'] = crrr_member
         response = dict()
-        response['willMeetings'] = json.loads(wiimeetings.to_json(orient='records', force_ascii=False, indent=4))    
+        response['willMeetings'] = json.loads(willmeetings.to_json(orient='records', force_ascii=False, indent=4))   
         return response
 
 
@@ -366,17 +398,72 @@ def get_opposite_book_meeting(memberId: int):
         #  redis에서 바로 가져와서 리턴
         json_dict = rd.get(key).decode('utf-8')
         dict_list = json.loads(json_dict)
+        result = pd.DataFrame(dict_list)
         response = dict()
-        if len(dict_list)<3:
-            response['oppositeMeetings'] = dict_list
+        meeting_reid = meeting_members.reset_index()
+        reverse_sim_meeting = pd.DataFrame(columns = ['book_id', 'bookTitle', 'cover', 
+                                            'currentMember']) 
+        for bookid in list(result['id']):
+            if bookid in list(meeting_reid ['book_id']):
+                reverse_sim_meeting = pd.concat([reverse_sim_meeting , meeting_reid[meeting_reid['book_id'] == bookid]])
+        if len(reverse_sim_meeting) == 0:
+
+            oppositeMeetings = pd.DataFrame(columns = ['book_id', 'bookTitle', 'cover', 
+                                                'currentMember']) 
+            oppositeMeetings = pd.concat([oppositeMeetings, meeting_reid])
+            oppositeMeetings.rename(columns = {'created_at':'createdAt','updated_at':'updatedAt'},inplace=True)
+            oppositeMeetings['createdAt'] = pd.to_datetime(oppositeMeetings['createdAt'], errors='coerce')
+            oppositeMeetings['createdAt'] = oppositeMeetings['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
+            oppositeMeetings['id'] = oppositeMeetings['id'].astype('int')
+            oppositeMeetings['capacity'] = oppositeMeetings['capacity'].astype('int')
+            oppositeMeetings.rename(columns = {'id':'meetingId'},inplace=True)
+            bookTitle = []
+            bookCover = []
+            crrr_member = []
+            for i in list(oppositeMeetings['book_id']):
+                bookCover.append(book[book['id'] == i]['cover'].iloc[0])
+                bookTitle.append(book[book['id'] == i]['title'].iloc[0])
+                crrr_member.append(len(oppositeMeetings[oppositeMeetings['book_id'] == i]['meetingMembers'].iloc[0]))
+            oppositeMeetings['cover'] = bookCover
+            oppositeMeetings['bookTitle'] = bookTitle
+            oppositeMeetings['currentMember'] = crrr_member
+            response = dict()
+            response['oppositeMeetings'] = json.loads(oppositeMeetings.to_json(orient='records', force_ascii=False, indent=4))
+            return response
         else:
             response['oppositeMeetings'] = random.sample(dict_list, 3)
         end = time.time() # 실행 끝나는 시간 계산
         print(f"{end - start:.5f} sec")
         return response
     else:
-        end = time.time() # 실행 끝나는 시간 계산
-        print(f"{end - start:.5f} sec")
+        oppositeMeetings = pd.DataFrame(columns = ['book_id', 'bookTitle', 'cover', 
+                                                'currentMember']) 
+        meeting_reid = meeting_members.reset_index()
+        # 사용자가 받은 추천 리스트에 평점 높은 순으로 추천 모임 탐색 후 데이터프레임에 저장
+        for bookid in list(result['id']):
+            if bookid in list(meeting_reid ['book_id']):
+                oppositeMeetings = pd.concat([oppositeMeetings, meeting_reid[meeting_reid['book_id'] == bookid]])
+        oppositeMeetings.rename(columns = {'created_at':'createdAt','updated_at':'updatedAt'},inplace=True)
+        oppositeMeetings['createdAt'] = pd.to_datetime(oppositeMeetings['createdAt'], errors='coerce')
+        oppositeMeetings['createdAt'] = oppositeMeetings['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
+        oppositeMeetings['id'] = oppositeMeetings['id'].astype('int')
+        oppositeMeetings['capacity'] = oppositeMeetings['capacity'].astype('int')
+        oppositeMeetings.rename(columns = {'id':'meetingId'},inplace=True)
+
+        bookTitle = []
+        bookCover = []
+        crrr_member = []
+        for i in list(oppositeMeetings['book_id']):
+            bookCover.append(book[book['id'] == i]['cover'].iloc[0])
+            bookTitle.append(book[book['id'] == i]['title'].iloc[0])
+            crrr_member.append(len(oppositeMeetings[oppositeMeetings['book_id'] == i]['meetingMembers'].iloc[0]))
+            
+        oppositeMeetings['cover'] = bookCover
+        oppositeMeetings['bookTitle'] = bookTitle
+        oppositeMeetings['currentMember'] = crrr_member
+        response = dict()
+        response['willMeetings'] = json.loads(oppositeMeetings.to_json(orient='records', force_ascii=False, indent=4))   
+        return response
         return opposite_meeting.opposite_meeting(memberId, booklog, review, meeting_members, df, rd)
 
 
