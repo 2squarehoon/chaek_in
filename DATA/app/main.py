@@ -49,9 +49,9 @@ try:
     REDIS_HOST = os.getenv("REDIS_HOST")
     REDIS_PORT = os.getenv("REDIS_PORT")
     REDIS_DATABASE = os.getenv("REDIS_DATABASE")
-    # REDIS_SECRET = os.getenv("REDIS_SECRET")
-    # pool = redis.ConnectionPool(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE, password=REDIS_SECRET)
-    pool = redis.ConnectionPool(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE)
+    REDIS_SECRET = os.getenv("REDIS_SECRET")
+    pool = redis.ConnectionPool(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE, password=REDIS_SECRET)
+    # pool = redis.ConnectionPool(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE)
     rd = redis.Redis(connection_pool=pool)
     print("redis 연결 된것 같은데")
 except:
@@ -146,6 +146,11 @@ def get_recommended(memberId: int):
             key = "user:" + str(memberId)
             json_value = cbf_result.to_json(orient='records', force_ascii=False, indent=4)
             rd.set(key, json_value)
+            
+            path = '/Users/kit938639/xmrghk_test/' + key + '.txt'
+            f = open(path, 'w')
+            print(json_value, file=f)
+            f.close()
             # json형태로 반환하기 위해 빈 딕셔너리 생성
             response = dict()
             # 빈 딕셔너리에 key:cbfBooks
