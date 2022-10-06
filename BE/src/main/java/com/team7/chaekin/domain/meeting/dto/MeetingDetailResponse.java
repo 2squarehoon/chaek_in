@@ -18,4 +18,5 @@ public class MeetingDetailResponse {
     private String createdAt;
     private String meetingStatus;
     private Boolean isMine;
+    private Boolean isParticipated;
 }
