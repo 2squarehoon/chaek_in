@@ -41,14 +41,15 @@ const TitleContainer = styled.View`
 
 const TitleText = styled.Text`
   font-size: 35px;
+  font-family: 'Medium';
 `;
 
 const FormContainer = styled.View`
   border: 1px solid #000;
   width: 90%;
-  height: 58%
+  height: 58%;
   border-radius: 15px;
-  margin-left:5%
+  margin-left: 5%;
   background-color: #ffffff;
 `;
 
@@ -60,6 +61,7 @@ const UserinfoForm = styled.TextInput`
   border-bottom-color: #000000;
   border-bottom-width: 1px;
   font-size: 20px;
+  font-family: 'Light';
 `;
 
 export default GetNicknameScreen;

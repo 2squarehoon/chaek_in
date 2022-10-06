@@ -160,7 +160,7 @@ function LoginScreen({ navigation }) {
       <MiddleContainer>
         <MiddleText>책 속으로의</MiddleText>
         <MiddleText>여행을</MiddleText>
-        <MiddleText>더 즐겁게,</MiddleText>
+        <MiddleText>더 설레게,</MiddleText>
         <MiddleText> </MiddleText>
         <MiddleText>책크인</MiddleText>
         {/* <MiddleText>{user.displayName}</MiddleText> */}
