@@ -10,6 +10,7 @@ function RecordScreen({ route, navigation }) {
   const bookId = route.params.bookId;
   const title = route.params.title;
   const [memoList, setMemoList] = useState([]);
+  const reload = route.params.reload;
   // 내가 쓴 메모 목록 useEffect로 불러오면 끝
   useEffect(() => {
     Axios.get(`${HOST}/api/v1/books/${bookId}/memos`, {
@@ -24,7 +25,7 @@ function RecordScreen({ route, navigation }) {
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [reload]);
 
   const goToRecordCreate = (e) => {
     navigation.navigate('RecordCreate', { bookId: bookId });
