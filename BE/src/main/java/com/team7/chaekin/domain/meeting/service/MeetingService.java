@@ -46,6 +46,13 @@ public class MeetingService {
         Meeting meeting = getMeeting(meetingId);
         MeetingDetailResponse meetingDetailResponse = meeting.toDetailDto();
 
+        Member member = getMember(memberId);
+        participantRepository.findByMemberAndMeetingAndIsRemovedIsFalse(member, meeting)
+                .ifPresentOrElse(
+                        participant -> meetingDetailResponse.setIsParticipated(true),
+                        () -> meetingDetailResponse.setIsParticipated(false)
+                );
+
         Member meetingLeader = meeting.getMeetingLeader();
         meetingDetailResponse.setIsMine(meetingLeader.getId().equals(memberId));
         return meetingDetailResponse;
