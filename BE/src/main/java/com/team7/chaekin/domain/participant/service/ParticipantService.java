@@ -8,6 +8,7 @@ import com.team7.chaekin.domain.participant.dto.ParticipantListDto;
 import com.team7.chaekin.domain.participant.dto.ParticipantListResponse;
 import com.team7.chaekin.domain.participant.entity.Participant;
 import com.team7.chaekin.domain.participant.repository.ParticipantRepository;
+import com.team7.chaekin.global.error.errorcode.DomainErrorCode;
 import com.team7.chaekin.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,8 @@ public class ParticipantService {
         if (meeting.getCurrentParticipants() >= meeting.getCapacity()) {
             throw new CustomException(MEETING_IS_FULL);
         }
+        participantRepository.findByMemberAndMeeting(member, meeting)
+                .ifPresent(participant -> { throw new CustomException(ALREADY_MEETING_PARTICIPANT); });
         return participantRepository.save(Participant.makeParticipant(meeting, member, false))
                 .getId();
     }
