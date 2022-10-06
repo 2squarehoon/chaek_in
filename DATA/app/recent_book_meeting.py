@@ -13,12 +13,15 @@ def get_my_meetings(member_id):
     my_meetings = list(pd.read_sql(query, engine)["id"])
     return my_meetings
 
-def get_meetings(member_id):    
+def get_meetings(member_id):   
+    response = dict()
+
     query = "SELECT book_id FROM booklog WHERE member_id = {} AND read_status = 'COMPLETE' ORDER BY created_at desc LIMIT 1".format(member_id)
     book_id = pd.read_sql(query, engine)
 
     if len(book_id) == 0 :
-        raise HTTPException(status_code = 404, detail= "NO_BOOKLOG")
+        response['meetings'] = json.loads(book_id.to_json(orient='records', force_ascii=False, indent=4))
+        return response
 
     book_id = book_id.iat[0,0]
     query = "SELECT m.id AS meetingId, b.title AS bookTitle, b.cover AS cover, m.title AS meetingTitle, (SELECT COUNT(*) FROM participant p WHERE p.meeting_id = m.id AND p.is_removed = 0) AS currentMember, m.capacity AS maxCapacity, m.meeting_status AS meetingStatus, m.created_at AS createdAt FROM meeting m, book b WHERE m.is_removed = 0 AND m.book_id = {} AND m.book_id = b.id".format(book_id)
@@ -33,14 +36,14 @@ def get_meetings(member_id):
     meetings = meetings[~meetings.meetingId.isin(my_meetings)]
 
     if len(meetings) == 0 :
-        raise HTTPException(status_code = 404, detail= "NO_MEETING")
+        response['meetings'] = json.loads(meetings.to_json(orient='records', force_ascii=False, indent=4))
+        return response
 
     meetings['createdAt'] = pd.to_datetime(meetings['createdAt'], errors='coerce')
     meetings['createdAt'] = meetings['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
 
     print(meetings)
 
-    response = dict()
     response['meetings'] = json.loads(meetings.to_json(orient='records', force_ascii=False, indent=4))
     
     return response
