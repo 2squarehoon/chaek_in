@@ -205,6 +205,7 @@ def get_recommend_will_meeting(memberId: int):
         willmeetings['cover'] = bookCover
         willmeetings['bookTitle'] = bookTitle
         willmeetings['currentMember'] = crrr_member
+        willmeetings = willmeetings[willmeetings['meeting_status'] == 'NONE']
         response = dict()
         response['willMeetings'] = json.loads(willmeetings.to_json(orient='records', force_ascii=False, indent=4))   
         return response
