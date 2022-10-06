@@ -29,7 +29,7 @@ const RecordCreateScreen = ({ route, navigation }) => {
           Alert.alert('저장되었습니다.');
         })
         .then(() => {
-          navigation.navigate('RecordScreen', { bookId: bookId });
+          navigation.navigate('RecordScreen', { bookId: bookId, reload: '메모작성' });
         })
         .catch(function (error) {
           console.log(error);
