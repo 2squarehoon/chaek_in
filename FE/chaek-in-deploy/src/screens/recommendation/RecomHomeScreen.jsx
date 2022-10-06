@@ -7,6 +7,9 @@ function RecomHomeScreen({ navigation }) {
 
   return (
     <BookRecomView>
+      <ButtonContainer onPress={() => navigation.navigate('BookSearch')}>
+        <ButtonText>책 검색하기</ButtonText>
+      </ButtonContainer>
       <CBFView onPress={() => navigation.navigate('SimilarBookRecom')}>
         <CBFImage source={require('../../../assets/image/bookRecom/BookRecom.png')} />
         <CBFText>
@@ -96,6 +99,23 @@ const CFImage = styled.Image`
   width: 90px;
   resize-mode: contain;
   margin-bottom: 10px;
+`;
+
+const ButtonText = styled.Text`
+  font-family: 'Medium';
+  font-size: 16px;
+`;
+
+const ButtonContainer = styled.TouchableOpacity`
+  background-color: #a8ca47;
+  border-radius: 20px;
+  border: 1px solid black;
+  padding: 10px 0px;
+  margin: 3% 5% 3% auto;
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  width: 40%;
 `;
 
 export default RecomHomeScreen;

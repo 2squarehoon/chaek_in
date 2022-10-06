@@ -158,9 +158,9 @@ function LoginScreen({ navigation }) {
       </ImageView>
 
       <MiddleContainer>
-        <MiddleText>책으로</MiddleText>
-        <MiddleText>연결되는</MiddleText>
-        <MiddleText>우리,</MiddleText>
+        <MiddleText>책 속으로의</MiddleText>
+        <MiddleText>여행을</MiddleText>
+        <MiddleText>더 설레게,</MiddleText>
         <MiddleText> </MiddleText>
         <MiddleText>책크인</MiddleText>
         {/* <MiddleText>{user.displayName}</MiddleText> */}

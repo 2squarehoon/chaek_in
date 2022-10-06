@@ -1,15 +1,15 @@
 import styled from 'styled-components/native';
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import Axios from 'axios';
 import { HOST } from '@env';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAccessToken } from '../redux/actions';
-import BookItemList from '../components/common/BookItemList';
-import BookItem from '../components/common/BookItem';
+import { setAccessToken } from '../../redux/actions';
+import BookItemList from '../../components/common/BookItemList';
+import BookItem from '../../components/common/BookItem';
 import { AntDesign } from '@expo/vector-icons';
 
-function BookLogScreen({ route }) {
+function BookSearchScreen({ route, navigation }) {
   const dispatch = useDispatch();
   const [keyword, setKeyword] = useState('');
   const [books, setBooks] = useState([]);
@@ -33,7 +33,9 @@ function BookLogScreen({ route }) {
     }
   }
 
-  function RatingBooks() {}
+  const goBookDetail = (bookNumber) => {
+    navigation.navigate('BookDetail', { bookId: bookNumber });
+  };
 
   return (
     <EntireContainer>
@@ -46,14 +48,21 @@ function BookLogScreen({ route }) {
         />
         <AntDesign name='search1' size={24} color='black' onPress={SearchBooks} />
       </SearchContainer>
-      <BookItemList books={books} />
+      {/* <BookItemList books={books} /> */}
+      <BookItemsContainer>
+        {books.map((book) => (
+          <TouchableOpacity key={book.bookId} onPress={() => goBookDetail(book.bookId)}>
+            <BookItem item={book} />
+          </TouchableOpacity>
+        ))}
+      </BookItemsContainer>
+      <BlankContainer></BlankContainer>
     </EntireContainer>
   );
 }
 
-const EntireContainer = styled.View`
+const EntireContainer = styled.ScrollView`
   background-color: #fcf9f0;
-  flex: 1;
 `;
 
 const SearchContainer = styled.View`
@@ -66,6 +75,18 @@ const SearchContainer = styled.View`
 const SearchBar = styled.TextInput`
   width: 90%;
   font-size: 20px;
+  font-family: 'Light';
 `;
 
-export default BookLogScreen;
+const BookItemsContainer = styled.View`
+  margin-top: 5%;
+  margin-left: 2%
+  display:flex
+  flex-flow: row wrap;
+`;
+
+const BlankContainer = styled.View`
+  height: 150px;
+`;
+
+export default BookSearchScreen;
