@@ -35,6 +35,7 @@ function MeetingDetailScreen({ route, navigation }) {
       },
     })
       .then(function (response) {
+        console.log(response.data);
         setBookTitle(response.data.bookTitle);
         setCover(response.data.cover);
         setCreatedAt(response.data.createdAt);
@@ -43,7 +44,7 @@ function MeetingDetailScreen({ route, navigation }) {
         setIsMine(response.data.isMine);
         // 만약 내가 속한 모임이면 isParticipated를 true로
         if (response.data.isMine) {
-          setIsParticipated(false);
+          setIsParticipated(true);
         }
         setMaxCapacity(response.data.maxCapacity);
         setMeetingId(response.data.meetingId);
@@ -156,7 +157,7 @@ function MeetingDetailScreen({ route, navigation }) {
           <CurrentMemberText>
             {currentMember} / {maxCapacity}명
           </CurrentMemberText>
-          {isParticipated ? (
+          {!isMine ? (
             <EnterButton
               onPress={() => {
                 participateMeeting();
@@ -389,7 +390,7 @@ const DescriptionText = styled.Text`
 `;
 
 const FakeView = styled.View`
-  height: 100px;
+  height: 150px;
 `;
 
 const IconView = styled.TouchableOpacity`

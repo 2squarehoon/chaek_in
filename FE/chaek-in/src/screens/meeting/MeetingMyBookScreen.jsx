@@ -8,7 +8,7 @@ import styled from 'styled-components/native';
 function MeetingMyBookScreen({ navigation }) {
   const { accessToken, userId } = useSelector((state) => state.main);
   const [myMeetingList, setMyMeetingList] = useState([]);
-  const [fakeMeetingList, setFakeMeetingList] = useState([]);
+  const [fakeMeeting3List, setFakeMeeting3List] = useState([]);
 
   // 최근에 읽은 책 관련 모임 추천 가져오기(최근에 읽은 책이 없으면 추천 없음)
   // /api/data/meeting/recent-book/{memberId}
@@ -50,7 +50,7 @@ function MeetingMyBookScreen({ navigation }) {
           meetingListArray.push(meetings[randomIndexArray[j]]);
         }
         console.log(meetingListArray);
-        setFakeMeetingList(meetingListArray);
+        setFakeMeeting3List(meetingListArray);
       })
       .catch(function (error) {
         console.log(error);
@@ -62,9 +62,9 @@ function MeetingMyBookScreen({ navigation }) {
     <>
       <ScrollViewContainer>
         <MyBookView>
-          {fakeMeetingList ? (
+          {fakeMeeting3List ? (
             <MyMeetingView>
-              {fakeMeetingList.map((meeting, index) => (
+              {fakeMeeting3List.map((meeting, index) => (
                 <MyMeetingItem
                   key={index}
                   // key={meeting.meetingId}

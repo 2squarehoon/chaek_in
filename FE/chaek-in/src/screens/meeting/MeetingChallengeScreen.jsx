@@ -8,7 +8,7 @@ import { StyleSheet, Text, View } from 'react-native';
 function MeetingChallengeScreen({ navigation }) {
   const [myMeetingList, setMyMeetingList] = useState([]);
   const { accessToken, userId } = useSelector((state) => state.main);
-  const [fakeMeetingList, setFakeMeetingList] = useState([]);
+  const [fakeMeeting4List, setFakeMeeting4List] = useState([]);
 
   // /api/data/meeting/will/{memberId}: 완독 모임
   // useEffect(() => {
@@ -45,11 +45,9 @@ function MeetingChallengeScreen({ navigation }) {
           }
         }
         for (var j = 0; j < 5; j++) {
-          // meetingListArray.push(randomIndexArray[j]);
           meetingListArray.push(meetings[randomIndexArray[j]]);
         }
-        // console.log(meetingListArray);
-        setFakeMeetingList(meetingListArray);
+        setFakeMeeting4List(meetingListArray);
       })
       .catch(function (error) {
         console.log(error);
@@ -61,9 +59,9 @@ function MeetingChallengeScreen({ navigation }) {
     <>
       <ScrollViewContainer>
         <MyBookView>
-          {fakeMeetingList ? (
+          {fakeMeeting4List ? (
             <MyMeetingView>
-              {fakeMeetingList.map((meeting, index) => (
+              {fakeMeeting4List.map((meeting, index) => (
                 <MyMeetingItem
                   key={index}
                   // key={meeting.meetingId}

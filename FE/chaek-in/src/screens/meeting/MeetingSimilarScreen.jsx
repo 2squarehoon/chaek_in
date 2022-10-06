@@ -8,7 +8,7 @@ import { StyleSheet, Text, View } from 'react-native';
 function MeetingSimilarScreen({ navigation }) {
   const { accessToken, userId } = useSelector((state) => state.main);
   const [myMeetingList, setMyMeetingList] = useState([]);
-  const [fakeMeetingList, setFakeMeetingList] = useState([]);
+  const [fakeMeeting1List, setFakeMeeting1List] = useState([]);
 
   // /api/data/meeting/similar/{memberId} : 나와 비슷한 책을 좋아하는 사람들이 만든 모임
   // useEffect(() => {
@@ -49,7 +49,7 @@ function MeetingSimilarScreen({ navigation }) {
           meetingListArray.push(meetings[randomIndexArray[j]]);
         }
         // console.log(meetingListArray);
-        setFakeMeetingList(meetingListArray);
+        setFakeMeeting1List(meetingListArray);
       })
       .catch(function (error) {
         console.log(error);
@@ -61,9 +61,9 @@ function MeetingSimilarScreen({ navigation }) {
     <>
       <ScrollViewContainer>
         <MyBookView>
-          {fakeMeetingList ? (
+          {fakeMeeting1List ? (
             <MyMeetingView>
-              {fakeMeetingList.map((meeting, index) => (
+              {fakeMeeting1List.map((meeting, index) => (
                 <MyMeetingItem
                   key={index}
                   // key={meeting.meetingId}

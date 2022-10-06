@@ -8,7 +8,7 @@ import { StyleSheet, Text, View } from 'react-native';
 function MeetingOppositeScreen({ navigation }) {
   const { accessToken, userId } = useSelector((state) => state.main);
   const [myMeetingList, setMyMeetingList] = useState([]);
-  const [fakeMeetingList, setFakeMeetingList] = useState([]);
+  const [fakeMeeting2List, setFakeMeeting2List] = useState([]);
 
   // /api/data/meeting/opposite/{memberId} : 반대 모임
   // useEffect(() => {
@@ -49,7 +49,7 @@ function MeetingOppositeScreen({ navigation }) {
           meetingListArray.push(meetings[randomIndexArray[j]]);
         }
         // console.log(meetingListArray);
-        setFakeMeetingList(meetingListArray);
+        setFakeMeeting2List(meetingListArray);
       })
       .catch(function (error) {
         console.log(error);
@@ -61,9 +61,9 @@ function MeetingOppositeScreen({ navigation }) {
     <>
       <ScrollViewContainer>
         <MyBookView>
-          {fakeMeetingList ? (
+          {fakeMeeting2List ? (
             <MyMeetingView>
-              {fakeMeetingList.map((meeting, index) => (
+              {fakeMeeting2List.map((meeting, index) => (
                 <MyMeetingItem
                   key={index}
                   // key={meeting.meetingId}
