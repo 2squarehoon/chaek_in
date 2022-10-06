@@ -6,7 +6,7 @@ import pandas as pd
 import itertools
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import main
+# import main
 
 import time
 import json
@@ -150,3 +150,9 @@ def get_booklog_id(user_id: int):
     return booklog
 
 
+# member 테이블 불러오는 코드
+def get_member_id():
+    select_sql = 'SELECT id FROM member'
+    member = pd.read_sql(select_sql, engine)
+    member = member.set_index('id')
+    return member
