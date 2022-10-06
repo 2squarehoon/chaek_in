@@ -7,18 +7,18 @@ import { StyleSheet, Text, View } from 'react-native';
 
 function SimilarBookRecomScreen({ navigation }) {
   const { accessToken, userId } = useSelector((state) => state.main);
-  const [myMeetingList, setMyMeetingList] = useState([]);
+  const [myBookList, setMyBookList] = useState([]);
 
   // /api/data/meeting/recent-book/{memberId} : 내가 좋아할 만한 책 추천
   useEffect(() => {
-    Axios.get(`${HOST}/api/data/books/cbf/70`, {
+    Axios.get(`${HOST}/api/data/books/cbf/${userId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
       .then(function (response) {
         console.log(response);
-        setMyMeetingList(response.data);
+        setMyBookList(response.data.cbfBooks);
       })
       .catch(function (error) {
         console.log(error);
@@ -26,70 +26,67 @@ function SimilarBookRecomScreen({ navigation }) {
   }, [accessToken, userId]);
 
   return (
-    <View style={styles.container}>
-      {myMeetingList ? (
-        <MyMeetingView>
-          {myMeetingList.map((meeting) => (
-            <MyMeetingItem
-              key={meeting.meetingId}
-              onPress={() => navigation.navigate('MeetingDetail', { meetingId: meeting.meetingId })}
-            >
-              {/* <MyMeetingCoverImage source={{ uri: meeting.cover }} /> */}
-
-              <MyMeetingTitleText>{meeting.meetingTitle}</MyMeetingTitleText>
-              <MyMeetingText numberOfLines={2} elipseMode='tail'>
-                {meeting.bookTitle}
-              </MyMeetingText>
-            </MyMeetingItem>
-          ))}
-        </MyMeetingView>
-      ) : (
-        <Text>추천할 만한 책이 없습니다.</Text>
-      )}
-    </View>
+    <CFBooksView>
+      <CFItemView>
+        {myBookList ? (
+          myBookList.map((book) => (
+            <CFBookItem key={book.id} onPress={() => navigation.navigate('BookDetail', { bookId: book.id })}>
+              <CFBookCoverImage source={{ uri: book.cover }} />
+              <CFBookTitleText>{book.title}</CFBookTitleText>
+              <CFBookAuthorText>{book.author}</CFBookAuthorText>
+            </CFBookItem>
+          ))
+        ) : (
+          <Text>추천할 만한 책이 없습니다.</Text>
+        )}
+      </CFItemView>
+    </CFBooksView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+const CFBooksView = styled.ScrollView`
+  flex: 1;
+  background-color: #fcf9f0;
+`;
 
-const MyMeetingView = styled.View`
-  flex; 1;
-  flex-direction: column;
+const CFItemView = styled.View`
+  flex: 1;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
   align-items: center;
-  width: 95%;
+`;
+
+const CFBookItem = styled.TouchableOpacity`
+  width: 150px;
   height: 250px;
-  
-`;
-
-const MyMeetingTitleText = styled.Text`
-  font-size: 18px;
-  font-family: 'Medium';
-  margin-bottom: 5px;
-  flex-wrap: wrap;
-`;
-
-const MyMeetingText = styled.Text`
-  font-size: 14px;
-  font-family: 'Light';
-  margin-bottom: 10px;
-  flex-wrap: wrap;
-`;
-
-const MyMeetingItem = styled.Text`
-  flex-direction: column;
-  width: 100%;
-  height: 100px;
+  margin: 10px;
+  border: 1px solid grey;
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
   background-color: white;
-  border: 1px solid black;
-  border-radius: 18px;
-  margin-bottom: 10px;
-  padding: 20px;
+  overflow: hidden;
+`;
+
+const CFBookCoverImage = styled.Image`
+  width: 100px;
+  height: 150px;
+  border-radius: 10px;
+`;
+
+const CFBookTitleText = styled.Text`
+  font-size: 12px;
+  font-family: Medium;
+  margin-top: 10px;
+`;
+
+const CFBookAuthorText = styled.Text`
+  font-size: 10px;
+  font-family: Medium;
+  color: #999999;
+  margin-top: 5px;
 `;
 
 export default SimilarBookRecomScreen;

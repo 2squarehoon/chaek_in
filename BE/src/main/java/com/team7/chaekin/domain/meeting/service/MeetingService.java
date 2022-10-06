@@ -56,6 +56,7 @@ public class MeetingService {
         List<Participant> participants = participantRepository.findByMemberId(memberId);
         List<MeetingListDto> dtoList = participants.stream()
                 .map(participant -> participant.getMeeting())
+                .filter(meeting -> !meeting.isRemoved())
                 .map(Meeting::toListDto)
                 .collect(Collectors.toList());
         return new MeetingMyResponse(dtoList);
@@ -94,9 +95,13 @@ public class MeetingService {
     @Transactional
     public void deleteMeeting(long memberId, long meetingId) {
         Meeting meeting = getMeeting(meetingId);
+        Member member = getMember(memberId);
         if (!meeting.getMeetingLeader().getId().equals(memberId)) {
             throw new CustomException(ONLY_LEADER_CAN_DELETE_MEETING);
         }
+        Participant participant = participantRepository.findByMemberAndMeeting(member, meeting)
+                .orElseThrow(() -> new CustomException(PARTICIPANT_IS_NOT_EXIST));
+        participant.leave();
         meeting.delete();
     }
 

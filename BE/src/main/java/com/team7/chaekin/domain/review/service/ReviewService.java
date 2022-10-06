@@ -17,7 +17,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.team7.chaekin.global.error.errorcode.DomainErrorCode.*;
@@ -33,8 +36,11 @@ public class ReviewService {
 
     @Transactional
     public ReviewListResponse getReviewList(long bookId, long memberId, Pageable pageable) {
-        BookLog bookLog = getBookLog(bookId, memberId);
-        Page<Review> reviewPages = reviewRepository.findByBookLog(bookLog, pageable);
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new CustomException(BOOK_IS_NOT_EXIST));
+        List<BookLog> bookLogList = bookLogRepository.findByBook(book);
+
+        Page<Review> reviewPages = reviewRepository.findByBookLogs(bookLogList, pageable);
 
         int totalPages = reviewPages.getTotalPages();
         List<ReviewListDto> dtos = reviewPages.toList().stream()
@@ -59,7 +65,6 @@ public class ReviewService {
                 .collect(Collectors.toList()));
         Member member = getMember(memberId);
 
-        List<BookLog> bookLogs = new ArrayList<>();
         for (int i = 0, j = 0; i < books.size() && j < filtered.size(); i++, j++) {
             Book book = books.get(i);
             ReviewFirstDto dto = filtered.get(j);
@@ -71,12 +76,14 @@ public class ReviewService {
             }
 
             book.addScore(dto.getScore());
-            bookLogs.add(BookLog.builder()
+            BookLog bookLog = bookLogRepository.save(BookLog.builder()
                     .book(book)
                     .member(member)
                     .readStatus(ReadStatus.COMPLETE).build());
+            reviewRepository.save(Review.builder()
+                            .bookLog(bookLog)
+                            .score(dto.getScore()).build());
         }
-        bookLogRepository.saveAll(bookLogs);
     }
 
     @Transactional

@@ -46,7 +46,7 @@ const TitleText = styled.Text`
 const FormContainer = styled.View`
   border: 1px solid #000;
   width: 90%;
-  height: 60%
+  height: 58%
   border-radius: 15px;
   margin-left:5%
   background-color: #ffffff;

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Axios from 'axios';
-import { View } from 'react-native';
+import { View, RefreshControl } from 'react-native';
 import { HOST } from '@env';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components/native';
@@ -8,6 +8,7 @@ import styled from 'styled-components/native';
 function MeetingHomeScreen({ navigation }) {
   const { accessToken, nickname, email } = useSelector((state) => state.main);
   const [myMeetingList, setMyMeetingList] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const goToMeetingAll = (e) => {
     navigation.navigate('MeetingAll');
@@ -15,6 +16,16 @@ function MeetingHomeScreen({ navigation }) {
   const goToMeetingCreate = (e) => {
     navigation.navigate('MeetingCreate');
   };
+
+  // refresh control
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
 
   // meetings/me에 내가 속한 모임 조회
   useEffect(() => {
@@ -24,6 +35,7 @@ function MeetingHomeScreen({ navigation }) {
       },
     })
       .then(function (response) {
+        console.log(response.data);
         setMyMeetingList(response.data.meetings);
       })
       .catch(function (error) {
@@ -33,7 +45,7 @@ function MeetingHomeScreen({ navigation }) {
 
   return (
     <MeetingHomeView>
-      <ScrollViewContainer>
+      <ScrollViewContainer refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         <MeetingCreateButton onPress={goToMeetingCreate}>
           <MeetingCreateText>모임 시작하기</MeetingCreateText>
         </MeetingCreateButton>
@@ -42,17 +54,24 @@ function MeetingHomeScreen({ navigation }) {
           <TitleText>내가 속한 모임</TitleText>
         </TitleTextView>
         <MyMeetingView>
-          {myMeetingList.map((meeting) => (
+          {myMeetingList.map((meeting, index) => (
             <MyMeetingItem
-              key={meeting.meetingId}
+              key={index}
+              // key={meeting.meetingId}
               onPress={() => navigation.navigate('MeetingDetail', { meetingId: meeting.meetingId })}
             >
-              {/* <MyMeetingCoverImage source={{ uri: meeting.cover }} /> */}
-
-              <MyMeetingTitleText>{meeting.meetingTitle}</MyMeetingTitleText>
-              <MyMeetingText numberOfLines={2} elipseMode='tail'>
-                {meeting.bookTitle}
-              </MyMeetingText>
+              <MyMeetingCoverImage source={{ uri: meeting.cover }} />
+              <MyMeetingContentsContainer>
+                <MyMeetingTitleText numberOfLines={2} elipseMode='tail'>
+                  {meeting.meetingTitle}
+                </MyMeetingTitleText>
+                <MyMeetingText numberOfLines={2} elipseMode='tail'>
+                  {meeting.bookTitle}
+                </MyMeetingText>
+                <MyMeetingMembersText>
+                  {meeting.currentMember} / {meeting.maxCapacity}
+                </MyMeetingMembersText>
+              </MyMeetingContentsContainer>
             </MyMeetingItem>
           ))}
         </MyMeetingView>
@@ -108,16 +127,14 @@ function MeetingHomeScreen({ navigation }) {
             </MeetingRecom>
           </RecomHalfView>
         </RecomView>
-        <FakeView></FakeView>
+        <BlankContainer></BlankContainer>
       </ScrollViewContainer>
     </MeetingHomeView>
   );
 }
 
 // styled-components
-const FakeView = styled.View`
-  height: 100px;
-`;
+
 const MeetingHomeView = styled.View`
   flex: 1;
   background-color: #fcf9f0;
@@ -148,7 +165,7 @@ const ScrollViewContainer = styled.ScrollView`
 `;
 
 const RecomView = styled.View`
-  flex: 5;
+  flex: 7;
 `;
 
 const RecomHalfView = styled.View`
@@ -217,6 +234,13 @@ const MeetingRecomImage = styled.Image`
   align-self: center;
 `;
 
+const MyMeetingCoverImage = styled.Image`
+  width: 50px;
+  height: 75px;
+  border-radius: 10px;
+  margin-right: 10px;
+`;
+
 // const MyMeetingCoverImage = styled.Image`
 //   flex: 3;
 //   width: 50px;
@@ -226,12 +250,11 @@ const MeetingRecomImage = styled.Image`
 // `;
 
 const MyMeetingView = styled.View`
-  flex; 1;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   width: 95%;
-  height: 250px;
-  
+  margin-bottom: 20%;
 `;
 
 const MyMeetingTitleText = styled.Text`
@@ -247,16 +270,31 @@ const MyMeetingText = styled.Text`
   margin-bottom: 10px;
   flex-wrap: wrap;
 `;
+const MyMeetingMembersText = styled.Text`
+  font-size: 10px;
+  font-family: 'Light';
+  margin-left: auto;
+`;
 
-const MyMeetingItem = styled.Text`
-  flex-direction: column;
+const MyMeetingContentsContainer = styled.View`
+  width: 80%;
+`;
+
+const MyMeetingItem = styled.TouchableOpacity`
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
   width: 100%;
-  height: 100px;
+  height: 110px;
   background-color: white;
   border: 1px solid black;
   border-radius: 18px;
   margin-bottom: 10px;
   padding: 20px;
+`;
+
+const BlankContainer = styled.View`
+  height: 150px;
 `;
 
 export default MeetingHomeScreen;

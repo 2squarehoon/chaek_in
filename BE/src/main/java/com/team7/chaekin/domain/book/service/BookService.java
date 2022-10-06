@@ -91,11 +91,12 @@ public class BookService {
         Member member = getMember(memberId);
 
         LocalDate now = LocalDate.now();
-        int lastDay = now.lengthOfMonth();
-        int today = now.getDayOfMonth();
 
         LocalDate firstDate = LocalDate.of(now.getYear(), month, 1);
+        int lastDay = now.lengthOfMonth();
         LocalDate lastDate = firstDate.withDayOfMonth(lastDay);
+        int today = now.getMonthValue() == month ? now.getDayOfMonth() : lastDay;
+
         List<BookLog> bookLogs = bookLogRepository
                 .findByMemberAndStartDateBetweenOrderByCreatedAt(member, firstDate, lastDate);
 
@@ -135,11 +136,11 @@ public class BookService {
                 while (calendarDtos.size() <= index) {
                     calendarDtos.add(BookCalendarDto.builder().build());
                 }
-                calendarDtos.add(index, BookCalendarDto.builder()
-                        .bookId(bookLog.getBook().getId())
-                        .title(bookLog.getBook().getTitle())
-                        .isStartDay((i == startDay - 1) && !startFlag ? true : false)
-                        .isEndDay((i == endDay - 1) && !endFlag ? true : false).build());
+                BookCalendarDto bookCalendarDto = calendarDtos.get(index);
+                bookCalendarDto.setBookId(bookLog.getBook().getId());
+                bookCalendarDto.setTitle(bookLog.getBook().getTitle());
+                bookCalendarDto.setIsStartDay((i == startDay - 1) && !startFlag ? true : false);
+                bookCalendarDto.setIsEndDay((i == endDay - 1) && !endFlag ? true : false);
             }
         });
         return new BookCalendarResponse(calenderList);

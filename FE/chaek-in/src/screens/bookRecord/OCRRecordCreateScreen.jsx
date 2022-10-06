@@ -9,7 +9,7 @@ const OCRRecordCreateScreen = ({ route, navigation }) => {
   const { accessToken } = useSelector((state) => state.main);
   const [text, onChangeText] = React.useState(`${route.params.OCRText}`);
   const [memoColor, setMemoColor] = React.useState('#F8DFAA');
-  // const bookId = route.params.bookId;
+  const bookId = route.params.bookId;
 
   // 메모 작성(/api/v1/books/{bookId}/memos)
   const submitMemo = () => {
@@ -21,7 +21,7 @@ const OCRRecordCreateScreen = ({ route, navigation }) => {
         content: text,
         color: memoColor,
       };
-      Axios.post(`${HOST}/api/v1/books/1/memos`, data, {
+      Axios.post(`${HOST}/api/v1/books/${bookId}/memos`, data, {
         headers: header,
       })
         .then(function (response) {
@@ -29,7 +29,7 @@ const OCRRecordCreateScreen = ({ route, navigation }) => {
           Alert.alert('저장되었습니다.');
         })
         .then(() => {
-          navigation.navigate('RecordScreen');
+          navigation.navigate('RecordScreen', { bookId: bookId, reload: 'OCR메모작성' });
         })
         .catch(function (error) {
           console.log(error);

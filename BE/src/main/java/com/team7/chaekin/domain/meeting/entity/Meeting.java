@@ -48,7 +48,7 @@ public class Meeting extends BaseTimeEntity {
     public Meeting(Book book, String title, String description, String meetingStatus, int capacity) {
         this.book = book;
         this.title = title;
-        this.meetingStatus = meetingStatus.equals(MeetingStatus.NONE.name()) ? MeetingStatus.NONE : MeetingStatus.COMPLETE;
+        this.meetingStatus = MeetingStatus.NONE.name().equals(meetingStatus) ? MeetingStatus.NONE : MeetingStatus.COMPLETE;
         this.description = description;
         this.capacity = capacity;
     }

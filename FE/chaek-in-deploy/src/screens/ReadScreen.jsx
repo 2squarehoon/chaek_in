@@ -21,10 +21,11 @@ function ReadScreen({ navigation }) {
   }, []);
 
   const handleBarCodeScanned = ({ type, data }) => {
+    console.log(data);
     setScanned(true);
     setBarcodeType(type);
     setBarcodeData(data);
-    Alert.alert('책읽기를 시작하시겠습니까?', '', [
+    Alert.alert('책크인 하시겠습니까?', '', [
       { text: '아니오', style: 'cancel' },
       { text: '네', onPress: () => RegistBook(data) },
     ]);
@@ -65,7 +66,10 @@ function ReadScreen({ navigation }) {
         navigation.navigate('BookDetail', { bookId: response.data.bookId });
       })
       .catch(function (error) {
-        console.log(error);
+        console.log(error.response.status);
+        if (error.response.status === 404) {
+          Alert.alert('DB에 등록되지 않은 책입니다ㅠㅠ');
+        }
       });
   }
 

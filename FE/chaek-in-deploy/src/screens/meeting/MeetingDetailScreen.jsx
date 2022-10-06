@@ -25,6 +25,7 @@ function MeetingDetailScreen({ route, navigation }) {
   const [replyComment, setReplyComment] = useState('');
   const [isReplyOpened, setIsReplyOpened] = useState(0);
   const [reload, setReload] = useState(false);
+  const [meetingStatus, setMeetingStatus] = useState('');
 
   const isFocused = useIsFocused();
   // MeetingDetail 가져오기
@@ -35,6 +36,7 @@ function MeetingDetailScreen({ route, navigation }) {
       },
     })
       .then(function (response) {
+        console.log(response.data);
         setBookTitle(response.data.bookTitle);
         setCover(response.data.cover);
         setCreatedAt(response.data.createdAt);
@@ -43,11 +45,12 @@ function MeetingDetailScreen({ route, navigation }) {
         setIsMine(response.data.isMine);
         // 만약 내가 속한 모임이면 isParticipated를 true로
         if (response.data.isMine) {
-          setIsParticipated(false);
+          setIsParticipated(true);
         }
         setMaxCapacity(response.data.maxCapacity);
         setMeetingId(response.data.meetingId);
         setMeetingTitle(response.data.meetingTitle);
+        setMeetingStatus(response.data.meetingStatus);
       })
       .catch(function (error) {
         console.log(error);
@@ -137,7 +140,7 @@ function MeetingDetailScreen({ route, navigation }) {
       },
     })
       .then(function (response) {
-        setReload(!reload);
+        navigation.navigate('MeetingHome');
       })
       .catch(function (error) {
         console.log(error);
@@ -146,9 +149,9 @@ function MeetingDetailScreen({ route, navigation }) {
 
   return (
     <MeetingContainer>
-      <IconView>
+      {/* <IconView onPress={deleteMeeting}>
         <EvilIcons name='trash' size={30} color='black' />
-      </IconView>
+      </IconView> */}
       <MeetingHeader>
         <MeetingTitle>{meetingTitle}</MeetingTitle>
         {/* 이미 참여한 모임이면 버튼 보여주지 않음 */}
@@ -156,7 +159,7 @@ function MeetingDetailScreen({ route, navigation }) {
           <CurrentMemberText>
             {currentMember} / {maxCapacity}명
           </CurrentMemberText>
-          {isParticipated ? (
+          {!isParticipated && meetingStatus === 'NONE' ? (
             <EnterButton
               onPress={() => {
                 participateMeeting();
@@ -227,6 +230,7 @@ function MeetingDetailScreen({ route, navigation }) {
         placeholder='댓글을 입력하세요'
         onSubmitEditing={() => {
           CreateComment();
+          setComment('');
         }}
       ></CommentInput>
       <FakeView></FakeView>
@@ -237,7 +241,7 @@ function MeetingDetailScreen({ route, navigation }) {
 const MeetingContainer = styled.ScrollView`
   flex: 1;
   background-color: #fcf9f0;
-  padding: 0 5%;
+  padding: 5%;
 `;
 
 const BookContainer = styled.View`
@@ -329,6 +333,7 @@ const MeetingTitle = styled.Text`
   flex: 8;
   font-size: 24px;
   font-family: Medium;
+  margin-top: 10%;
 `;
 
 const EnterButton = styled.TouchableOpacity`
@@ -387,7 +392,7 @@ const DescriptionText = styled.Text`
 `;
 
 const FakeView = styled.View`
-  height: 100px;
+  height: 150px;
 `;
 
 const IconView = styled.TouchableOpacity`

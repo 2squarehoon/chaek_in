@@ -13,6 +13,7 @@ import RecordScreen from '../screens/bookRecord/RecordScreen';
 import RecordCreateScreen from '../screens/bookRecord/RecordCreateScreen';
 import OCRScreen from '../screens/bookRecord/OCRScreen';
 import OCRRecordCreateScreen from '../screens/bookRecord/OCRRecordCreateScreen';
+import MeetingDetailScreen from '../screens/meeting/MeetingDetailScreen';
 
 function LogoTitle() {
   return (
@@ -113,7 +114,26 @@ function HomeNavigation({ navigation }) {
       <HomeStack.Screen
         name='OCRRecordCreate'
         component={OCRRecordCreateScreen}
-        options={{ title: 'OCR 기록하기' }}
+        options={{ title: '나의 한 문장' }}
+      ></HomeStack.Screen>
+      <HomeStack.Screen
+        name='OCR'
+        component={OCRScreen}
+        options={{ title: '나의 한 문장' }}
+      ></HomeStack.Screen>
+      <HomeStack.Screen
+        name='MeetingDetail'
+        component={MeetingDetailScreen}
+        options={{
+          title: '모임 상세보기',
+          headerStyle: {
+            backgroundColor: '#FCF9F0',
+          },
+          headerTitleStyle: {
+            fontFamily: 'Medium',
+            fontSize: 16,
+          },
+        }}
       ></HomeStack.Screen>
     </HomeStack.Navigator>
   );

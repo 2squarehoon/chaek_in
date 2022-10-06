@@ -23,4 +23,6 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
             "AND p.isRemoved IS NOT TRUE")
     @EntityGraph(attributePaths = {"member", "meeting"})
     List<Participant> findByMemberId(@Param("memberId") long memberId);
+
+    Optional<Participant> findByMemberAndMeeting(Member member, Meeting meeting);
 }

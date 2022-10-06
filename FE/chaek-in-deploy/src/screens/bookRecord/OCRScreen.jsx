@@ -2,13 +2,13 @@ import * as ImagePicker from 'expo-image-picker';
 import { Camera } from 'expo-camera';
 import { Text, View, ScrollView, Image, Alert, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import Environment from '../../../secret';
 import Button from '../../components/Button';
 import styled from 'styled-components/native';
+import { GOOGLE_CLOUD_VISION_API_KEY } from '@env';
 
 // https://cloud.google.com/vision/docs/ocr?apix_params=%7B%22resource%22%3A%7B%22requests%22%3A%5B%7B%22features%22%3A%5B%7B%22type%22%3A%22TEXT_DETECTION%22%7D%5D%2C%22image%22%3A%7B%22source%22%3A%7B%22imageUri%22%3A%22gs%3A%2F%2Fcloud-samples-data%2Fvision%2Focr%2Fsign.jpg%22%7D%7D%7D%5D%7D%7D#vision_text_detection-nodejs
 
-function OCRScreen({ navigation }) {
+function OCRScreen({ navigation, route }) {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [response, setResponse] = useState(null);
   const [loadMessage, setLoadMessage] = useState('Pick an image');
@@ -20,6 +20,7 @@ function OCRScreen({ navigation }) {
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [isCamera, setIsCamera] = useState(true);
   const [isResponse, setIsResponse] = useState(false);
+  const bookId = route.params.bookId;
 
   // 카메라 권한 허용
   const permissionFunction = async () => {
@@ -38,22 +39,19 @@ function OCRScreen({ navigation }) {
     setResponse(null);
     setLoadMessage('Loading...');
     try {
-      await fetch(
-        'https://vision.googleapis.com/v1/images:annotate?key=' + Environment['GOOGLE_CLOUD_VISION_API_KEY'],
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            requests: [
-              {
-                image: {
-                  content: base64,
-                },
-                features: [{ type: 'TEXT_DETECTION' }],
+      await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_CLOUD_VISION_API_KEY}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          requests: [
+            {
+              image: {
+                content: base64,
               },
-            ],
-          }),
-        },
-      )
+              features: [{ type: 'TEXT_DETECTION' }],
+            },
+          ],
+        }),
+      })
         .then((res) => res.json())
         .then((res) => {
           setResponse(res.responses[0].textAnnotations[0]);
@@ -179,7 +177,10 @@ function OCRScreen({ navigation }) {
           >
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('OCRRecordCreate', { OCRText: response.description });
+                navigation.navigate('OCRRecordCreate', {
+                  OCRText: response.description,
+                  bookId: bookId,
+                });
               }}
             >
               <View>
