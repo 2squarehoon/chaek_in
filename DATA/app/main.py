@@ -147,10 +147,6 @@ def get_recommended(memberId: int):
             json_value = cbf_result.to_json(orient='records', force_ascii=False, indent=4)
             rd.set(key, json_value)
             
-            path = '/Users/kit938639/xmrghk_test/' + key + '.txt'
-            f = open(path, 'w')
-            print(json_value, file=f)
-            f.close()
             # json형태로 반환하기 위해 빈 딕셔너리 생성
             response = dict()
             # 빈 딕셔너리에 key:cbfBooks
