@@ -72,7 +72,7 @@ function MeetingAllScreen({ navigation }) {
       <MeetingListView>
         <FlatList
           data={meetingList}
-          onEndReached={fetchMore}
+          // onEndReached={fetchMore}
           renderItem={({ item }) => (
             <MeetingCard style={styles.card}>
               <Text style={styles.title}>{item.meetingTitle}</Text>
