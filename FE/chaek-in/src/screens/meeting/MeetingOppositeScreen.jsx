@@ -8,62 +8,62 @@ import { StyleSheet, Text, View } from 'react-native';
 function MeetingOppositeScreen({ navigation }) {
   const { accessToken, userId } = useSelector((state) => state.main);
   const [myMeetingList, setMyMeetingList] = useState([]);
-  const [fakeMeetingList, setFakeMeetingList] = useState([]);
+  const [fakeMeeting2List, setFakeMeeting2List] = useState([]);
 
   // /api/data/meeting/opposite/{memberId} : 반대 모임
-  // useEffect(() => {
-  //   Axios.get(`${HOST}/api/data/meeting/opposite/${userId}`, {
-  //     headers: {
-  //       Authorization: `Bearer ${accessToken}`,
-  //     },
-  //   })
-  //     .then(function (response) {
-  //       setMyMeetingList(response.data.meetings);
-  //       console.log(response);
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
-  // }, [accessToken, userId]);
-
   useEffect(() => {
-    Axios.get(`${HOST}/api/v1/meetings`, {
+    Axios.get(`${HOST}/api/data/meeting/opposite/${userId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
       .then(function (response) {
-        const meetings = response.data.meetings;
-        let randomIndexArray = [];
-        let meetingListArray = [];
-        for (var i = 0; i < 5; i++) {
-          var randomNum = Math.floor(Math.random() * meetings.length + 1);
-          if (randomIndexArray.indexOf(randomNum) === -1) {
-            randomIndexArray.push(randomNum);
-          } else {
-            i--;
-          }
-        }
-        for (var j = 0; j < 5; j++) {
-          // meetingListArray.push(randomIndexArray[j]);
-          meetingListArray.push(meetings[randomIndexArray[j]]);
-        }
-        // console.log(meetingListArray);
-        setFakeMeetingList(meetingListArray);
+        setMyMeetingList(response.data.oppositeMeetings);
+        console.log(response.data.oppositeMeetings);
       })
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [accessToken, userId]);
+
+  // useEffect(() => {
+  //   Axios.get(`${HOST}/api/v1/meetings`, {
+  //     headers: {
+  //       Authorization: `Bearer ${accessToken}`,
+  //     },
+  //   })
+  //     .then(function (response) {
+  //       const meetings = response.data.meetings;
+  //       let randomIndexArray = [];
+  //       let meetingListArray = [];
+  //       for (var i = 0; i < 5; i++) {
+  //         var randomNum = Math.floor(Math.random() * meetings.length + 1);
+  //         if (randomIndexArray.indexOf(randomNum) === -1) {
+  //           randomIndexArray.push(randomNum);
+  //         } else {
+  //           i--;
+  //         }
+  //       }
+  //       for (var j = 0; j < 5; j++) {
+  //         // meetingListArray.push(randomIndexArray[j]);
+  //         meetingListArray.push(meetings[randomIndexArray[j]]);
+  //       }
+  //       // console.log(meetingListArray);
+  //       setFakeMeeting2List(meetingListArray);
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // }, []);
 
   // 실제 미팅값을 넣을때는 fakeMeetingList를 실제 미팅리스트로 바꾸고 key를 meetingId로 설정한다
   return (
     <>
       <ScrollViewContainer>
         <MyBookView>
-          {fakeMeetingList ? (
+          {myMeetingList ? (
             <MyMeetingView>
-              {fakeMeetingList.map((meeting, index) => (
+              {myMeetingList.map((meeting, index) => (
                 <MyMeetingItem
                   key={index}
                   // key={meeting.meetingId}
