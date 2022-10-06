@@ -399,7 +399,7 @@ def get_opposite_book_meeting(memberId: int):
         json_dict = rd.get(key).decode('utf-8')
         dict_list = json.loads(json_dict)
         result = pd.DataFrame(dict_list)
-        response = dict()
+        print(result)
         meeting_reid = meeting_members.reset_index()
         reverse_sim_meeting = pd.DataFrame(columns = ['book_id', 'bookTitle', 'cover', 
                                             'currentMember']) 
