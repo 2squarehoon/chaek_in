@@ -18,7 +18,7 @@ function MeetingOppositeScreen({ navigation }) {
   //     },
   //   })
   //     .then(function (response) {
-  //       setMyMeetingList(response.data.meetings)
+  //       setMyMeetingList(response.data.meetings);
   //       console.log(response);
   //     })
   //     .catch(function (error) {
@@ -65,7 +65,7 @@ function MeetingOppositeScreen({ navigation }) {
             <MyMeetingView>
               {fakeMeetingList.map((meeting, index) => (
                 <MyMeetingItem
-                  key={meeting.index}
+                  key={index}
                   // key={meeting.meetingId}
                   onPress={() => navigation.navigate('MeetingDetail', { meetingId: meeting.meetingId })}
                 >
@@ -77,6 +77,9 @@ function MeetingOppositeScreen({ navigation }) {
                     <MyMeetingText numberOfLines={2} elipseMode='tail'>
                       {meeting.bookTitle}
                     </MyMeetingText>
+                    <MyMeetingMembersText>
+                      {meeting.currentMember} / {meeting.maxCapacity}
+                    </MyMeetingMembersText>
                   </MyMeetingContentsContainer>
                 </MyMeetingItem>
               ))}
@@ -131,10 +134,16 @@ const MyMeetingTitleText = styled.Text`
 `;
 
 const MyMeetingText = styled.Text`
-  font-size: 14px;
+  font-size: 15px;
   font-family: 'Light';
   margin-bottom: 10px;
   flex-wrap: wrap;
+`;
+
+const MyMeetingMembersText = styled.Text`
+  font-size: 10px;
+  font-family: 'Light';
+  margin-left: auto;
 `;
 
 const MyMeetingItem = styled.TouchableOpacity`
@@ -142,7 +151,7 @@ const MyMeetingItem = styled.TouchableOpacity`
   align-items: center;
   flex-direction: row;
   width: 100%;
-  height: 100px;
+  height: 110px;
   background-color: white;
   border: 1px solid black;
   border-radius: 18px;

@@ -8,8 +8,9 @@ import {
   ScrollView,
   Image,
   Dimensions,
+  RefreshControl,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components/native';
 import { useSelector } from 'react-redux';
 import Axios from 'axios';
@@ -24,6 +25,11 @@ function HomeScreen({ navigation }) {
   const [bookNumber, changeBookNumber] = useState('');
   const [readingBooks, setReadingBooks] = useState([]);
   const [bookActive, setbookActive] = useState(0);
+  const [meetingList, setMeetingList] = useState([]);
+  const [randomNumber, setRandomNumber] = useState(1);
+  const [meeting, setMeeting] = useState({});
+  const [refreshing, setRefreshing] = useState(false);
+
   useEffect(() => {
     Axios.get(`${HOST}/api/v1/books/me?isReading=true`, {
       headers: {
@@ -31,7 +37,7 @@ function HomeScreen({ navigation }) {
       },
     })
       .then(function (response) {
-        console.log(response.data);
+        // console.log(response.data);
         setReadingBooks(response.data.books);
       })
       .catch(function (error) {
@@ -39,6 +45,50 @@ function HomeScreen({ navigation }) {
       });
   }, []);
 
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
+  function randomNum(min, max) {
+    var randNum = Math.floor(Math.random() * (max - min + 1)) + min;
+    return randNum;
+  }
+  useEffect(() => {
+    Axios.get(`${HOST}/api/v1/meetings`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then(function (response) {
+        setMeetingList(response.data.meetings);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    setRandomNumber(randomNum(1, meetingList.length + 1));
+    // console.log(userId);
+  }, []);
+
+  useEffect(() => {
+    Axios.get(`${HOST}/api/v1/meetings/${randomNumber}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then(function (response) {
+        setMeeting(response.data);
+        console.log(randomNumber);
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [randomNumber]);
   // 위도, 경도 받아오기
 
   const goToBookLog = (e) => {
@@ -65,7 +115,7 @@ function HomeScreen({ navigation }) {
   };
 
   return (
-    <HomeScrollView>
+    <HomeScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
       {/* <View>
         <Text>{nickname}님의 서재</Text>
         <Text>{userId}</Text>
@@ -103,27 +153,30 @@ function HomeScreen({ navigation }) {
           ))}
         </View>
       </BookItemsContainer>
-
       <View style={styles.bottomSpace}></View>
-      {/* <View>
-        <Button onPress={goToBookLog} title='테스트용으로 만든 책 검색페이지'></Button>
-      </View>
-      <View>
-        <Text>책 번호 입력</Text>
-        <ChangeInput value={bookNumber} onChangeText={changeBookNumber} />
-      </View>
-      <View>
-        <Button onPress={goToBookDetail} title='책 상세정보'></Button>
-      </View> */}
-      {/* 제일 최근에 읽은 책 */}
       <MeetingText>이런 독서모임 어때요?</MeetingText>
       {/* 일단 placeholder를 책 cover로 해서 모임 예시 만들고 meetingId로 detail로 연결 */}
       {/* bookTitle, cover, meetingTitle, currentMember, maxCapacity */}
       <MyMeetingView onPress={() => navigation.navigate('MeetingDetail', { meetingId: 1 })}>
-        <MyMeetingCoverImage source={{ uri: 'https://picsum.photos/200/300' }} />
-        <MyMeetingTitleText>책 제목</MyMeetingTitleText>
-        <MyMeetingTitleText>모임 제목</MyMeetingTitleText>
-        <MyMeetingTitleText>모임 인원</MyMeetingTitleText>
+        <MyMeetingContainer>
+          <MyMeetingCoverImage source={{ uri: meeting.cover }} />
+          <MyMeetingContents>
+            <MyMeetingTextContainer>
+              <MyMeetingBookTitleText>책 제목</MyMeetingBookTitleText>
+              <MyMeetingContentsText>{meeting.bookTitle}</MyMeetingContentsText>
+            </MyMeetingTextContainer>
+            <MyMeetingTextContainer>
+              <MyMeetingTitleText>모임 제목</MyMeetingTitleText>
+              <MyMeetingContentsText>{meeting.meetingTitle}</MyMeetingContentsText>
+            </MyMeetingTextContainer>
+            <MyMeetingTextContainer>
+              <MyMeetingTitleText>모임 인원</MyMeetingTitleText>
+              <MyMeetingContentsText>
+                {meeting.currentMember} / {meeting.maxCapacity}
+              </MyMeetingContentsText>
+            </MyMeetingTextContainer>
+          </MyMeetingContents>
+        </MyMeetingContainer>
       </MyMeetingView>
       <View style={styles.bottomSpace}></View>
     </HomeScrollView>
@@ -154,7 +207,7 @@ const styles = StyleSheet.create({
   },
   dot: {
     margin: 3,
-    color: 'black',
+    color: 'gray',
   },
   cover: {
     width: WIDTH * 0.2,
@@ -232,16 +285,41 @@ const BookText = styled.Text`
   color: #b1d8e8;
 `;
 
+const MyMeetingContainer = styled.View`
+  flex-direction: row;
+  margin: 4%;
+`;
+
+const MyMeetingContents = styled.View`
+  margin-left: 5%;
+`;
+
 const MyMeetingCoverImage = styled.Image`
-  width: 100%;
-  height: 20px;
+  width: 20%;
+  height: 100%;
   border-radius: 20px;
 `;
 
 const MyMeetingTitleText = styled.Text`
   font-family: 'Medium';
-  font-size: 14px;
-  margin: 5px;
+  font-size: 12px;
+  margin-right: 3%;
+`;
+
+const MyMeetingBookTitleText = styled.Text`
+  font-family: 'Medium';
+  font-size: 12px;
+  margin-right: 10%;
+`;
+
+const MyMeetingContentsText = styled.Text`
+  font-family: 'Light';
+  font-size: 12px;
+`;
+
+const MyMeetingTextContainer = styled.View`
+  width: 70%
+  flex-direction: row;
 `;
 
 const MyMeetingView = styled.TouchableOpacity`

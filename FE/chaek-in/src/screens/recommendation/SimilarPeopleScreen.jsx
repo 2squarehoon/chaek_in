@@ -11,7 +11,7 @@ function SimilarPeopleScreen({ navigation }) {
 
   // /api/data/books/cf/{memberId} : 나와 비슷한 사람들이 좋아하는 책 추천
   useEffect(() => {
-    Axios.get(`${HOST}/api/data/books/cf/70`, {
+    Axios.get(`${HOST}/api/data/books/cf/${userId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
