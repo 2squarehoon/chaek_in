@@ -34,13 +34,14 @@ def opposite_meeting(memberId, booklog, review, meeting, df, rd):
     # 필요한 컬럼만 다시 저장, 약 100개의 행을 가진 데이터 프레임
     result = result[['id', 'isbn', 'title', 'author', 'cover', 'rating_score', 'w_rating', 'rating_count']]
 
-    revese_sim_meeting = pd.DataFrame(columns = ['meetingId', 'bookId', 'bookTitle', 'cover', 
+    revese_sim_meeting = pd.DataFrame(columns = ['createdAt', 'meetingId', 'bookId', 'bookTitle', 'cover', 
                                                 'meetingtTitle', 'currenMember', 'maxCapacity', 'meetingCategory'])
     
     for bookid in list(result['id']):
         if bookid in list(meeting['book_id']):
 
             revese_sim_meeting = pd.concat([revese_sim_meeting , meeting[meeting['book_id'] == bookid]])
+    revese_sim_meeting.rename(columns = {'created_at':'createdAt','updatedAt':'updatedAt'},inplace=True)
     revese_sim_meeting['createdAt'] = pd.to_datetime(revese_sim_meeting['createdAt'], errors='coerce')
     revese_sim_meeting['createdAt'] = revese_sim_meeting['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
 

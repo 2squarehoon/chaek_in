@@ -8,7 +8,11 @@ import styled from 'styled-components/native';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
+<<<<<<< FE/chaek-in/src/screens/meeting/MeetingAllScreen.jsx
 function MeetingAllScreen( {navigation} ) {
+=======
+function MeetingAllScreen({ navigation }) {
+>>>>>>> FE/chaek-in/src/screens/meeting/MeetingAllScreen.jsx
   const { accessToken } = useSelector((state) => state.main);
   const [meeting, setMeeting] = useState([]);
   const [search, setSearch] = useState('');
@@ -29,13 +33,12 @@ function MeetingAllScreen( {navigation} ) {
 
   // /api/v1/meetings : 모임 검색
   function getMeeting() {
-    Axios.get(`${HOST}/api/v1/meetings`, { 
-        params: { keyword: search },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+    Axios.get(`${HOST}/api/v1/meetings`, {
+      params: { keyword: search },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
       },
-    )
+    })
       .then(function (response) {
         setMeeting(response.data.meetings);
       })
@@ -44,10 +47,15 @@ function MeetingAllScreen( {navigation} ) {
       });
   }
   const fetchMore = () => {
-    setMeetingList(prevState => [
+    setMeetingList((prevState) => [
       ...prevState,
+<<<<<<< FE/chaek-in/src/screens/meeting/MeetingAllScreen.jsx
       ...Array.from({length: 10}).map((_, i) => i + 1 + prevState.length),
     ])
+=======
+      ...Array.from({ length: 20 }).map((_, i) => i + 1 + prevState.length),
+    ]);
+>>>>>>> FE/chaek-in/src/screens/meeting/MeetingAllScreen.jsx
   };
 
   return (
@@ -72,6 +80,7 @@ function MeetingAllScreen( {navigation} ) {
       </View>
       <MeetingListView>
         <FlatList
+<<<<<<< FE/chaek-in/src/screens/meeting/MeetingAllScreen.jsx
         data={meetingList}
         // onEndReached={fetchMore}
         renderItem={({item}) =>  (
@@ -107,6 +116,27 @@ function MeetingAllScreen( {navigation} ) {
           </MeetingCard>
         )}>
         </FlatList>
+=======
+          data={meetingList}
+          onEndReached={fetchMore}
+          renderItem={({ item }) => (
+            <MeetingCard style={styles.card}>
+              <Text style={styles.title}>{item.meetingTitle}</Text>
+              <View
+                style={styles.detailButton}
+                onPress={() => navigation.navigate('MeetingDetail', { meetingId: item.meetingId })}
+              >
+                <Text style={styles.buttonText}>상세보기</Text>
+              </View>
+              <View style={styles.member}>
+                <Text>
+                  {item.currentMember}/{item.maxCapacity}
+                </Text>
+              </View>
+            </MeetingCard>
+          )}
+        ></FlatList>
+>>>>>>> FE/chaek-in/src/screens/meeting/MeetingAllScreen.jsx
         {/* {meetingList.map((item) => (
           <MeetingCard style={styles.card}>
             <MeetingText key={item.meetingId}>{item.bookTitle}</MeetingText>
@@ -125,9 +155,15 @@ const styles = StyleSheet.create({
   },
   card: {
     width: WIDTH * 0.845,
+<<<<<<< FE/chaek-in/src/screens/meeting/MeetingAllScreen.jsx
     height: HEIGHT * 0.25,
     borderWidth: 1,
     borderRadius: 20
+=======
+    height: HEIGHT * 0.15,
+    borderWidth: 2,
+    borderRadius: 20,
+>>>>>>> FE/chaek-in/src/screens/meeting/MeetingAllScreen.jsx
   },
   titleView:{
     width: WIDTH * 0.45,
@@ -155,14 +191,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#728EA6',
     marginTop: 20,
     marginLeft: 10,
-    borderRadius: 20
+    borderRadius: 20,
   },
   buttonText: {
     top: 5,
     left: 14,
-    fontColor: '#010811'
+    fontColor: '#010811',
   },
   member: {
+<<<<<<< FE/chaek-in/src/screens/meeting/MeetingAllScreen.jsx
     left: 270,
     bottom: 35,
     flexDirection: 'row',
@@ -180,6 +217,10 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     width: WIDTH * 0.1,
     height: HEIGHT * 0.05,
+=======
+    left: 300,
+    bottom: 20,
+>>>>>>> FE/chaek-in/src/screens/meeting/MeetingAllScreen.jsx
   },
 });
 
@@ -202,7 +243,7 @@ const MeetingListView = styled.View`
   background-color: #fcf9f0;
 `;
 
-const MeetingCard= styled.View`
+const MeetingCard = styled.View`
   background-color: white;
   margin: 5px;
 `;
@@ -210,6 +251,5 @@ const TitleCoverView = styled.View`
   display: flex;
   flex-direction: row;
 `;
-
 
 export default MeetingAllScreen;

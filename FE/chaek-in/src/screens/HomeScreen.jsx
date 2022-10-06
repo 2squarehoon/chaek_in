@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     flexDirection: 'row',
     alignSelf: 'center',
-    marginBottom: 10
+    marginBottom: 10,
   },
   dotActive: {
     margin: 3,

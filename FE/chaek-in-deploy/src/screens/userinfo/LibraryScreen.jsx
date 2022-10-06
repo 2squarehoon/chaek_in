@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, Button, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import Axios from 'axios';
 import { HOST } from '@env';
 import { useSelector } from 'react-redux';
@@ -46,7 +46,9 @@ function LibraryScreen({ navigation }) {
     })
       .then(function (response) {
         setBooklogs(response.data.calendarList);
-        console.log(response.data.calendarList);
+        console.log(response.data.calendarList[2], response.data.calendarList[2].books.length);
+        console.log(response.data.calendarList[3], response.data.calendarList[3].books.length);
+        console.log(response.data.calendarList[4], response.data.calendarList[4].books.length);
       })
       .catch(function (error) {
         console.log(error);
@@ -57,14 +59,31 @@ function LibraryScreen({ navigation }) {
     var markedDates = {};
     for (var i = 0; i < booklogs.length; i++) {
       var periods = [];
-      booklogs[i].books.map((book, index) => {
+      var books = booklogs[i].books;
+      for (var j = 0; j < books.length; j++) {
         var obj = {};
+        var book = books[j];
         obj.startingDay = book.isStartDay;
         obj.endingDay = book.isEndDay;
-        obj.color = colors[index % 4];
+        if (book.bookId !== 0) {
+          obj.color = colors[j % 4];
+        } else {
+          obj.color = '#ffffff';
+        }
         periods.push(obj);
-      });
-      markedDates[`2022-${month}-${i + 1}`] = {
+      }
+      // booklogs[i].books.map((book, index) => {
+
+      //   obj.startingDay = book.isStartDay;
+      //   obj.endingDay = book.isEndDay;
+      //   if (book.bookId !== 0) {
+      //     obj.color = colors[index % 4];
+      //   } else {
+      //     obj.color = '#ffffff';
+      //   }
+      //   periods.push(obj);
+      // });
+      markedDates[booklogs[i].date] = {
         periods,
       };
     }
@@ -86,9 +105,15 @@ function LibraryScreen({ navigation }) {
 
   const pressDay = (day) => {
     // console.log(booklogs[day].books);
+    var bookList = [];
     if (booklogs[day].books) {
       setbooklogId(day);
-      setBooks(booklogs[day].books);
+      for (var i = 0; i < booklogs[day].books.length; i++) {
+        if (booklogs[day].books[i].bookId !== 0) {
+          bookList.push(booklogs[day].books[i]);
+        }
+      }
+      setBooks(bookList);
       setModalVisible(true);
     }
   };
@@ -143,11 +168,13 @@ function LibraryScreen({ navigation }) {
               2022년 {month}월 {booklogId + 1}일
             </ModalTitleText>
             <ModalTitleText>읽은 책 리스트</ModalTitleText>
-            {books.map((book) => (
-              <TouchableOpacity key={book.bookId} onPress={() => goBookDetail(book.bookId)}>
-                <ModalText>{book.title}</ModalText>
-              </TouchableOpacity>
-            ))}
+            <ScrollView>
+              {books.map((book) => (
+                <TouchableOpacity key={book.bookId} onPress={() => goBookDetail(book.bookId)}>
+                  <ModalText>{book.title}</ModalText>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </ModalContainer>
         </MenuOverLay>
       </Modal>
