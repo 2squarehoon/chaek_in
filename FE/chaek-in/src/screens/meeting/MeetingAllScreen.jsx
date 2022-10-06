@@ -8,7 +8,7 @@ import styled from 'styled-components/native';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-function MeetingAllScreen() {
+function MeetingAllScreen({ navigation }) {
   const { accessToken } = useSelector((state) => state.main);
   const [meeting, setMeeting] = useState([]);
   const [search, setSearch] = useState('');
@@ -30,13 +30,12 @@ function MeetingAllScreen() {
 
   // /api/v1/meetings : 모임 검색
   function getMeeting() {
-    Axios.get(`${HOST}/api/v1/meetings`, { 
-        params: { keyword: search },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+    Axios.get(`${HOST}/api/v1/meetings`, {
+      params: { keyword: search },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
       },
-    )
+    })
       .then(function (response) {
         setMeeting(response.data.meetings);
       })
@@ -46,10 +45,10 @@ function MeetingAllScreen() {
   }
 
   const fetchMore = () => {
-    setMeetingList(prevState => [
+    setMeetingList((prevState) => [
       ...prevState,
-      ...Array.from({length: 20}).map((_, i) => i + 1 + prevState.length),
-    ])
+      ...Array.from({ length: 20 }).map((_, i) => i + 1 + prevState.length),
+    ]);
   };
 
   return (
@@ -72,23 +71,25 @@ function MeetingAllScreen() {
       </View>
       <MeetingListView>
         <FlatList
-        data={meetingList}
-        onEndReached={fetchMore}
-        renderItem={({item}) =>  (
-          <MeetingCard style={styles.card}>
-            <Text style={styles.title}>{item.meetingTitle}</Text>
-            <View 
-              style={styles.detailButton}
-              onPress={() => navigation.navigate('MeetingDetail', { meetingId: item.meetingId })}
+          data={meetingList}
+          onEndReached={fetchMore}
+          renderItem={({ item }) => (
+            <MeetingCard style={styles.card}>
+              <Text style={styles.title}>{item.meetingTitle}</Text>
+              <View
+                style={styles.detailButton}
+                onPress={() => navigation.navigate('MeetingDetail', { meetingId: item.meetingId })}
               >
-              <Text style={styles.buttonText}>상세보기</Text>
-            </View>
-            <View style={styles.member}>
-              <Text>{item.currentMember}/{item.maxCapacity}</Text>
-            </View>
-          </MeetingCard>
-        )}>
-        </FlatList>
+                <Text style={styles.buttonText}>상세보기</Text>
+              </View>
+              <View style={styles.member}>
+                <Text>
+                  {item.currentMember}/{item.maxCapacity}
+                </Text>
+              </View>
+            </MeetingCard>
+          )}
+        ></FlatList>
         {/* {meetingList.map((item) => (
           <MeetingCard style={styles.card}>
             <MeetingText key={item.meetingId}>{item.bookTitle}</MeetingText>
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
     width: WIDTH * 0.845,
     height: HEIGHT * 0.15,
     borderWidth: 2,
-    borderRadius: 20
+    borderRadius: 20,
   },
   title: {
     margin: 10,
@@ -123,17 +124,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#728EA6',
     marginTop: 40,
     marginLeft: 10,
-    borderRadius: 20
+    borderRadius: 20,
   },
   buttonText: {
     top: 5,
     left: 14,
-    fontColor: '#010811'
+    fontColor: '#010811',
   },
   member: {
     left: 300,
-    bottom: 20
-  }
+    bottom: 20,
+  },
 });
 
 const SearchTextInput = styled.TextInput`
@@ -154,10 +155,9 @@ const MeetingListView = styled.View`
   background-color: #fcf9f0;
 `;
 
-const MeetingCard= styled.View`
+const MeetingCard = styled.View`
   background-color: white;
   margin: 5px;
 `;
-
 
 export default MeetingAllScreen;

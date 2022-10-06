@@ -4,10 +4,10 @@
     "slug": "chaek-in",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "",
+    "icon": "./assets/image/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "",
+      "image": "./assets/image/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -27,7 +27,7 @@
     "android": {
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "",
+        "foregroundImage": "./assets/image/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.a107.chaekin"

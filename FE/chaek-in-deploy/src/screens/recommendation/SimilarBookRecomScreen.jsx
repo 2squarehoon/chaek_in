@@ -11,7 +11,7 @@ function SimilarBookRecomScreen({ navigation }) {
 
   // /api/data/meeting/recent-book/{memberId} : 내가 좋아할 만한 책 추천
   useEffect(() => {
-    Axios.get(`${HOST}/api/data/books/cbf/70`, {
+    Axios.get(`${HOST}/api/data/books/cbf/78`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
