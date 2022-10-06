@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import BookItem from '../../components/common/BookItem';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
+import { Entypo } from '@expo/vector-icons';
 
 function LibraryScreen({ navigation }) {
   const { accessToken } = useSelector((state) => state.main);
@@ -46,9 +47,6 @@ function LibraryScreen({ navigation }) {
     })
       .then(function (response) {
         setBooklogs(response.data.calendarList);
-        console.log(response.data.calendarList[2], response.data.calendarList[2].books.length);
-        console.log(response.data.calendarList[3], response.data.calendarList[3].books.length);
-        console.log(response.data.calendarList[4], response.data.calendarList[4].books.length);
       })
       .catch(function (error) {
         console.log(error);
@@ -109,13 +107,17 @@ function LibraryScreen({ navigation }) {
     if (booklogs[day].books) {
       setbooklogId(day);
       for (var i = 0; i < booklogs[day].books.length; i++) {
+        var book;
         if (booklogs[day].books[i].bookId !== 0) {
-          bookList.push(booklogs[day].books[i]);
+          book = booklogs[day].books[i];
+          book.color = colors[i % 4];
+          bookList.push(book);
         }
       }
       setBooks(bookList);
       setModalVisible(true);
     }
+    console.log(bookList);
   };
 
   const closeModal = () => {
@@ -171,7 +173,9 @@ function LibraryScreen({ navigation }) {
             <ScrollView>
               {books.map((book) => (
                 <TouchableOpacity key={book.bookId} onPress={() => goBookDetail(book.bookId)}>
-                  <ModalText>{book.title}</ModalText>
+                  <ModalText>
+                    <Entypo name='bookmark' size={20} color={book.color} /> {book.title}
+                  </ModalText>
                 </TouchableOpacity>
               ))}
             </ScrollView>

@@ -8,63 +8,63 @@ import styled from 'styled-components/native';
 function MeetingMyBookScreen({ navigation }) {
   const { accessToken, userId } = useSelector((state) => state.main);
   const [myMeetingList, setMyMeetingList] = useState([]);
-  const [fakeMeetingList, setFakeMeetingList] = useState([]);
+  const [fakeMeeting3List, setFakeMeeting3List] = useState([]);
 
   // 최근에 읽은 책 관련 모임 추천 가져오기(최근에 읽은 책이 없으면 추천 없음)
   // /api/data/meeting/recent-book/{memberId}
-  // useEffect(() => {
-  //   Axios.get(`${HOST}/api/data/meeting/recent-book/${userId}`, {
-  //     headers: {
-  //       Authorization: `Bearer ${accessToken}`,
-  //     },
-  //   })
-  //     .then(function (response) {
-  //       console.log(response);
-  //       setMyMeetingList(response.data.meetings);
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
-  // }, [accessToken, userId]);
-
   useEffect(() => {
-    Axios.get(`${HOST}/api/v1/meetings`, {
+    Axios.get(`${HOST}/api/data/meeting/recent-book/${userId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
       .then(function (response) {
-        const meetings = response.data.meetings;
-        let randomIndexArray = [];
-        let meetingListArray = [];
-        for (var i = 0; i < 5; i++) {
-          var randomNum = Math.floor(Math.random() * meetings.length + 1);
-          if (randomIndexArray.indexOf(randomNum) === -1) {
-            randomIndexArray.push(randomNum);
-          } else {
-            i--;
-          }
-        }
-        for (var j = 0; j < 5; j++) {
-          // meetingListArray.push(randomIndexArray[j]);
-          meetingListArray.push(meetings[randomIndexArray[j]]);
-        }
-        console.log(meetingListArray);
-        setFakeMeetingList(meetingListArray);
+        console.log(response);
+        setMyMeetingList(response.data.meetings);
       })
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [accessToken, userId]);
+
+  // useEffect(() => {
+  //   Axios.get(`${HOST}/api/v1/meetings`, {
+  //     headers: {
+  //       Authorization: `Bearer ${accessToken}`,
+  //     },
+  //   })
+  //     .then(function (response) {
+  //       const meetings = response.data.meetings;
+  //       let randomIndexArray = [];
+  //       let meetingListArray = [];
+  //       for (var i = 0; i < 5; i++) {
+  //         var randomNum = Math.floor(Math.random() * meetings.length + 1);
+  //         if (randomIndexArray.indexOf(randomNum) === -1) {
+  //           randomIndexArray.push(randomNum);
+  //         } else {
+  //           i--;
+  //         }
+  //       }
+  //       for (var j = 0; j < 5; j++) {
+  //         // meetingListArray.push(randomIndexArray[j]);
+  //         meetingListArray.push(meetings[randomIndexArray[j]]);
+  //       }
+  //       console.log(meetingListArray);
+  //       setFakeMeeting3List(meetingListArray);
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // }, []);
 
   // 실제 미팅값을 넣을때는 fakeMeetingList를 실제 미팅리스트로 바꾸고 key를 meetingId로 설정한다
   return (
     <>
       <ScrollViewContainer>
         <MyBookView>
-          {fakeMeetingList ? (
+          {myMeetingList ? (
             <MyMeetingView>
-              {fakeMeetingList.map((meeting, index) => (
+              {myMeetingList.map((meeting, index) => (
                 <MyMeetingItem
                   key={index}
                   // key={meeting.meetingId}
