@@ -119,13 +119,13 @@ function HomeScreen({ navigation }) {
       <MeetingText>이런 독서모임 어때요?</MeetingText>
       {/* 일단 placeholder를 책 cover로 해서 모임 예시 만들고 meetingId로 detail로 연결 */}
       {/* bookTitle, cover, meetingTitle, currentMember, maxCapacity */}
-      <MyMeetingView onPress={() => navigation.navigate('MeetingDetail', { meetingId: 1 })}>
+      {/* <MyMeetingView onPress={() => navigation.navigate('MeetingDetail', { meetingId: 1 })}>
         <MyMeetingCoverImage source={{ uri: 'https://picsum.photos/200/300' }} />
         <MyMeetingTitleText>책 제목</MyMeetingTitleText>
         <MyMeetingTitleText>모임 제목</MyMeetingTitleText>
         <MyMeetingTitleText>모임 인원</MyMeetingTitleText>
       </MyMeetingView>
-      <View style={styles.bottomSpace}></View>
+      <View style={styles.bottomSpace}></View> */}
     </HomeScrollView>
   );
 }
