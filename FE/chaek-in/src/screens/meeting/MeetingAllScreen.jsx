@@ -171,13 +171,14 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
   },
   searchInput: {
-    marginLeft: 55,
+    marginLeft: 'auto',
+    marginRight: 'auto',
   },
   searchIcon: {
     position: 'relative',
     width: WIDTH * 0.06,
     height: HEIGHT * 0.03,
-    left: 315,
+    left: '80%',
     bottom: 47,
   },
   card: {

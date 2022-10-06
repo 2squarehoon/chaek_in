@@ -28,7 +28,7 @@ function HomeScreen({ navigation }) {
   const [meetingList, setMeetingList] = useState([]);
   const [randomNumber, setRandomNumber] = useState(1);
   const [meeting, setMeeting] = useState({});
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     Axios.get(`${HOST}/api/v1/books/me?isReading=true`, {
@@ -71,6 +71,7 @@ function HomeScreen({ navigation }) {
         console.log(error);
       });
     setRandomNumber(randomNum(1, meetingList.length + 1));
+    // console.log(userId);
   }, []);
 
   useEffect(() => {
