@@ -143,6 +143,7 @@ const TitleContainer = styled.View`
 
 const TitleText = styled.Text`
   font-size: 30px;
+  font-family: 'Medium';
 `;
 
 const MiddleContainer = styled.View`
@@ -152,8 +153,9 @@ const MiddleContainer = styled.View`
 `;
 
 const MiddleText = styled.Text`
-  font-size: 25px;
+  font-size: 23px;
   color: #979590;
+  font-family: 'Light';
 `;
 
 const NextButton = styled.TouchableOpacity`
@@ -170,6 +172,7 @@ const NextButton = styled.TouchableOpacity`
 
 const ButtonText = styled.Text`
   font-size: 20px;
+  font-family: 'Medium';
 `;
 
 const SkipButton = styled.TouchableOpacity`
@@ -181,5 +184,6 @@ const SkipButton = styled.TouchableOpacity`
 const SkipText = styled.Text`
   font-size: 20px;
   color: #979590;
+  font-family: 'Light';
 `;
 export default FirstRatingSkipScreen;

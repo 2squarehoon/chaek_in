@@ -159,7 +159,7 @@ function FirstRatingScreen() {
         </BookItemsContainer>
       </ScrollViewContainer>
       <SubmitButton onPress={RatingPress}>
-        <Text>제출</Text>
+        <Text style={{ fontFamily: 'Medium' }}>제출</Text>
       </SubmitButton>
     </EntireContainer>
   );
@@ -180,6 +180,7 @@ const SearchContainer = styled.View`
 const SearchBar = styled.TextInput`
   width: 90%;
   font-size: 20px;
+  font-family: 'Light';
 `;
 
 const ScrollViewContainer = styled.ScrollView`
@@ -209,6 +210,7 @@ const StarRatingContainer = styled.View`
 
 const ModalText = styled.Text`
   margin: 0 10%;
+  font-family: 'Light';
 `;
 
 const SubmitButton = styled.TouchableOpacity`

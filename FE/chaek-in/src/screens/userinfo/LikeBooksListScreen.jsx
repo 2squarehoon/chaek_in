@@ -38,6 +38,7 @@ function LikeBooksListScreen({ navigation }) {
           </TouchableOpacity>
         ))}
       </BookItemsContainer>
+      <BlankContainer></BlankContainer>
     </LikeBooksContainer>
   );
 }
@@ -51,6 +52,10 @@ const BookItemsContainer = styled.View`
   margin-left: 2%
   display:flex
   flex-flow: row wrap;
+`;
+
+const BlankContainer = styled.View`
+  height: 150px;
 `;
 
 export default LikeBooksListScreen;
