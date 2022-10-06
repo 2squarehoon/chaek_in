@@ -6,6 +6,8 @@ import { HOST } from '@env';
 import styled from 'styled-components/native';
 import { AntDesign } from '@expo/vector-icons';
 import { EvilIcons } from '@expo/vector-icons';
+import { Keyboard } from 'react-native';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 function MeetingDetailScreen({ route, navigation }) {
   const { accessToken, email } = useSelector((state) => state.main);
@@ -149,91 +151,93 @@ function MeetingDetailScreen({ route, navigation }) {
 
   return (
     <MeetingContainer>
-      {/* <IconView onPress={deleteMeeting}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        {/* <IconView onPress={deleteMeeting}>
         <EvilIcons name='trash' size={30} color='black' />
       </IconView> */}
-      <MeetingHeader>
-        <MeetingTitle>{meetingTitle}</MeetingTitle>
-        {/* 이미 참여한 모임이면 버튼 보여주지 않음 */}
-        <MeetingHeaderRight>
-          <CurrentMemberText>
-            {currentMember} / {maxCapacity}명
-          </CurrentMemberText>
-          {!isParticipated && meetingStatus === 'NONE' ? (
-            <EnterButton
-              onPress={() => {
-                participateMeeting();
-              }}
-            >
-              <EnterButtonText>참가하기</EnterButtonText>
-            </EnterButton>
-          ) : null}
-        </MeetingHeaderRight>
-      </MeetingHeader>
-      <MeetingInfo>
-        <MeetingInfoTitle>모임 소개</MeetingInfoTitle>
-        <CreatedText>
-          {/* 시간 부분은 잘라내기 */}
-          since {createdAt.split(' ')[0]}
-        </CreatedText>
-        <DescriptionText>{description}</DescriptionText>
-      </MeetingInfo>
-      <BookInfo>
-        <BookInfoTitle>이 책을 읽어요</BookInfoTitle>
-        <BookContainer>
-          <BookCover source={cover ? { uri: cover } : null} />
-          <BookTitleText>{bookTitle}</BookTitleText>
-        </BookContainer>
-      </BookInfo>
-      {/* 댓글 부분 */}
-      {commentList.map((comment) => (
-        <CommentView key={comment.parent.meetingCommentId}>
-          <CommentHeaderView>
-            <CommentContentView>
-              <CommentText>{comment.parent.content}</CommentText>
-              <CommentDateText>{comment.parent.createdAt}</CommentDateText>
-              <CommentWriterText>{comment.parent.writer}</CommentWriterText>
-            </CommentContentView>
-            <OpenChildCommentInputButton
-              onPress={() => {
-                setIsReplyOpened(comment.parent.meetingCommentId);
-              }}
-            >
-              <AntDesign name='enter' size={14} color='black' />
-            </OpenChildCommentInputButton>
-          </CommentHeaderView>
-          <ReplyCommentText>{comment.children.content}</ReplyCommentText>
-          {/* 대댓글 출력 */}
-          {comment.children.map((replyComment) => (
-            <ReplyCommentView key={replyComment.meetingCommentId}>
-              <CommentText>{replyComment.content}</CommentText>
-              <CommentDateText>{replyComment.createdAt}</CommentDateText>
-              <CommentWriterText>{replyComment.writer}</CommentWriterText>
-            </ReplyCommentView>
-          ))}
-          {/* 대댓글 입력 */}
-          {isReplyOpened === comment.parent.meetingCommentId ? (
-            <ChildCommentInput
-              style={{ height: 40, borderColor: '#5f5f5f', borderWidth: 1, marginTop: 10 }}
-              onChangeText={(text) => setReplyComment(text)}
-              value={replyComment}
-              placeholder='대댓글을 입력하세요'
-              onSubmitEditing={() => CreateReplyComment(comment.parent.meetingCommentId)}
-            ></ChildCommentInput>
-          ) : null}
-        </CommentView>
-      ))}
+        <MeetingHeader>
+          <MeetingTitle>{meetingTitle}</MeetingTitle>
+          {/* 이미 참여한 모임이면 버튼 보여주지 않음 */}
+          <MeetingHeaderRight>
+            <CurrentMemberText>
+              {currentMember} / {maxCapacity}명
+            </CurrentMemberText>
+            {!isParticipated && meetingStatus === 'NONE' ? (
+              <EnterButton
+                onPress={() => {
+                  participateMeeting();
+                }}
+              >
+                <EnterButtonText>참가하기</EnterButtonText>
+              </EnterButton>
+            ) : null}
+          </MeetingHeaderRight>
+        </MeetingHeader>
+        <MeetingInfo>
+          <MeetingInfoTitle>모임 소개</MeetingInfoTitle>
+          <CreatedText>
+            {/* 시간 부분은 잘라내기 */}
+            since {createdAt.split(' ')[0]}
+          </CreatedText>
+          <DescriptionText>{description}</DescriptionText>
+        </MeetingInfo>
+        <BookInfo>
+          <BookInfoTitle>이 책을 읽어요</BookInfoTitle>
+          <BookContainer>
+            <BookCover source={cover ? { uri: cover } : null} />
+            <BookTitleText>{bookTitle}</BookTitleText>
+          </BookContainer>
+        </BookInfo>
+        {/* 댓글 부분 */}
+        {commentList.map((comment) => (
+          <CommentView key={comment.parent.meetingCommentId}>
+            <CommentHeaderView>
+              <CommentContentView>
+                <CommentText>{comment.parent.content}</CommentText>
+                <CommentDateText>{comment.parent.createdAt}</CommentDateText>
+                <CommentWriterText>{comment.parent.writer}</CommentWriterText>
+              </CommentContentView>
+              <OpenChildCommentInputButton
+                onPress={() => {
+                  setIsReplyOpened(comment.parent.meetingCommentId);
+                }}
+              >
+                <AntDesign name='enter' size={14} color='black' />
+              </OpenChildCommentInputButton>
+            </CommentHeaderView>
+            <ReplyCommentText>{comment.children.content}</ReplyCommentText>
+            {/* 대댓글 출력 */}
+            {comment.children.map((replyComment) => (
+              <ReplyCommentView key={replyComment.meetingCommentId}>
+                <CommentText>{replyComment.content}</CommentText>
+                <CommentDateText>{replyComment.createdAt}</CommentDateText>
+                <CommentWriterText>{replyComment.writer}</CommentWriterText>
+              </ReplyCommentView>
+            ))}
+            {/* 대댓글 입력 */}
+            {isReplyOpened === comment.parent.meetingCommentId ? (
+              <ChildCommentInput
+                style={{ height: 40, borderColor: '#5f5f5f', borderWidth: 1, marginTop: 10 }}
+                onChangeText={(text) => setReplyComment(text)}
+                value={replyComment}
+                placeholder='대댓글을 입력하세요'
+                onSubmitEditing={() => CreateReplyComment(comment.parent.meetingCommentId)}
+              ></ChildCommentInput>
+            ) : null}
+          </CommentView>
+        ))}
 
-      <CommentInput
-        value={comment}
-        onChangeText={setComment}
-        placeholder='댓글을 입력하세요'
-        onSubmitEditing={() => {
-          CreateComment();
-          setComment('');
-        }}
-      ></CommentInput>
-      <FakeView></FakeView>
+        <CommentInput
+          value={comment}
+          onChangeText={setComment}
+          placeholder='댓글을 입력하세요'
+          onSubmitEditing={() => {
+            CreateComment();
+            setComment('');
+          }}
+        ></CommentInput>
+        <FakeView></FakeView>
+      </TouchableWithoutFeedback>
     </MeetingContainer>
   );
 }

@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import Axios from 'axios';
 import { HOST } from '@env';
 import { useSelector } from 'react-redux';
-import { BackHandler, Modal, StyleSheet, Text, View, Pressable, Alert } from 'react-native';
+import { BackHandler, Modal, StyleSheet, Text, View, Pressable, Alert, Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import { AntDesign } from '@expo/vector-icons';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 function MeetingCreateScreen({ navigation }) {
   const { accessToken } = useSelector((state) => state.main);
@@ -57,76 +57,78 @@ function MeetingCreateScreen({ navigation }) {
 
   return (
     <MeetingCreateView>
-      <Modal
-        animationType='slide'
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <ScrollView>
-          {/* bookList가 있으면 표시하고, 없으면 '결과가 없습니다' 표시 */}
-          <View style={styles.centeredView}>
-            {bookList.length > 0 ? (
-              <View style={styles.modalView}>
-                {bookList.map((book) => (
-                  <ModalPressable
-                    key={book.bookId}
-                    onPress={() => {
-                      setBookId(book.bookId);
-                      setBookTitle(book.title);
-                      setModalVisible(!modalVisible);
-                    }}
-                  >
-                    <BookImage source={{ uri: book.cover }} />
-                    <ModalText>{book.title}</ModalText>
-                  </ModalPressable>
-                ))}
-              </View>
-            ) : (
-              <View style={styles.modalView}>
-                <ModalText>결과가 없습니다</ModalText>
-              </View>
-            )}
-          </View>
-        </ScrollView>
-      </Modal>
-
-      <MeetingTitleInput
-        placeholder='독서 모임 이름'
-        value={meetingTitle}
-        onChangeText={setMeetingTitle}
-      ></MeetingTitleInput>
-      <MeetingNumInput
-        placeholder='인원수'
-        value={meetingNum}
-        onChangeText={setMeetingNum}
-        keyboardType='numeric'
-      ></MeetingNumInput>
-      <SearchView>
-        <AntDesign name='search1' size={24} color='black' />
-        <BookSearch
-          placeholder='책 검색하기'
-          onSubmitEditing={() => {
-            setModalVisible(true);
-            SearchBook();
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <Modal
+          animationType='slide'
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
           }}
-          value={bookTitle}
-          onChangeText={setBookTitle}
-        ></BookSearch>
-      </SearchView>
-      <MeetingDescriptionInput
-        multiline={true}
-        numberOfLines={10}
-        placeholder='어떤 독서 모임인지 알려주세요!'
-        value={meetingDescription}
-        onChangeText={setMeetingDescription}
-      ></MeetingDescriptionInput>
-      <MeetingCreateButton onPress={CreateMeeting}>
-        <MeetingCreateButtonText>독서 모임 만들기</MeetingCreateButtonText>
-      </MeetingCreateButton>
-      <FakeView></FakeView>
+        >
+          <ScrollView>
+            {/* bookList가 있으면 표시하고, 없으면 '결과가 없습니다' 표시 */}
+            <View style={styles.centeredView}>
+              {bookList.length > 0 ? (
+                <View style={styles.modalView}>
+                  {bookList.map((book) => (
+                    <ModalPressable
+                      key={book.bookId}
+                      onPress={() => {
+                        setBookId(book.bookId);
+                        setBookTitle(book.title);
+                        setModalVisible(!modalVisible);
+                      }}
+                    >
+                      <BookImage source={{ uri: book.cover }} />
+                      <ModalText>{book.title}</ModalText>
+                    </ModalPressable>
+                  ))}
+                </View>
+              ) : (
+                <View style={styles.modalView}>
+                  <ModalText>결과가 없습니다</ModalText>
+                </View>
+              )}
+            </View>
+          </ScrollView>
+        </Modal>
+
+        <MeetingTitleInput
+          placeholder='독서 모임 이름'
+          value={meetingTitle}
+          onChangeText={setMeetingTitle}
+        ></MeetingTitleInput>
+        <MeetingNumInput
+          placeholder='인원수'
+          value={meetingNum}
+          onChangeText={setMeetingNum}
+          keyboardType='numeric'
+        ></MeetingNumInput>
+        <SearchView>
+          <AntDesign name='search1' size={24} color='black' />
+          <BookSearch
+            placeholder='책 검색하기'
+            onSubmitEditing={() => {
+              setModalVisible(true);
+              SearchBook();
+            }}
+            value={bookTitle}
+            onChangeText={setBookTitle}
+          ></BookSearch>
+        </SearchView>
+        <MeetingDescriptionInput
+          multiline={true}
+          numberOfLines={10}
+          placeholder='어떤 독서 모임인지 알려주세요!'
+          value={meetingDescription}
+          onChangeText={setMeetingDescription}
+        ></MeetingDescriptionInput>
+        <MeetingCreateButton onPress={CreateMeeting}>
+          <MeetingCreateButtonText>독서 모임 만들기</MeetingCreateButtonText>
+        </MeetingCreateButton>
+        <FakeView></FakeView>
+      </TouchableWithoutFeedback>
     </MeetingCreateView>
   );
 }
