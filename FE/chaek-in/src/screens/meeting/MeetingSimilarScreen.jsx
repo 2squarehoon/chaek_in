@@ -18,8 +18,8 @@ function MeetingSimilarScreen({ navigation }) {
       },
     })
       .then(function (response) {
-        setMyMeetingList(response.data.similarMeetings);
-        console.log(response.data.similarMeetings);
+        setMyMeetingList(response.data.memberSimMeetings);
+        console.log(response.data);
       })
       .catch(function (error) {
         console.log(error);
