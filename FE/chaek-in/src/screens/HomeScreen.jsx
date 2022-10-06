@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   },
   dot: {
     margin: 3,
-    color: 'black',
+    color: 'gray',
   },
   cover: {
     width: WIDTH * 0.2,

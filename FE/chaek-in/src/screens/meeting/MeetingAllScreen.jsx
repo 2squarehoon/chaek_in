@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Dimensions, FlatList, Image, Button } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, FlatList, Image, Button, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import { HOST } from '@env';
@@ -8,7 +8,7 @@ import styled from 'styled-components/native';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-function MeetingAllScreen() {
+function MeetingAllScreen( {navigation} ) {
   const { accessToken } = useSelector((state) => state.main);
   const [meeting, setMeeting] = useState([]);
   const [search, setSearch] = useState('');
@@ -20,7 +20,6 @@ function MeetingAllScreen() {
       },
     })
       .then(function (response) {
-        console.log(response.data);
         setMeetingList(response.data.meetings);
       })
       .catch(function (error) {
@@ -44,11 +43,10 @@ function MeetingAllScreen() {
         console.log(error);
       });
   }
-
   const fetchMore = () => {
     setMeetingList(prevState => [
       ...prevState,
-      ...Array.from({length: 20}).map((_, i) => i + 1 + prevState.length),
+      ...Array.from({length: 10}).map((_, i) => i + 1 + prevState.length),
     ])
   };
 
@@ -66,26 +64,46 @@ function MeetingAllScreen() {
           onSubmitEditing={getMeeting}
         />
         {/* 모임 출력 */}
-        {meeting.map((item) => (
-          <MeetingText key={item.meetingId}>{item.bookTitle}</MeetingText>
-        ))}
+        <View>
+          {meeting.map((item) => (
+            <MeetingText key={item.meetingId}>{item.bookTitle}</MeetingText>
+          ))}
+        </View>
       </View>
       <MeetingListView>
         <FlatList
         data={meetingList}
-        onEndReached={fetchMore}
+        // onEndReached={fetchMore}
         renderItem={({item}) =>  (
-          <MeetingCard style={styles.card}>
-            <Text style={styles.title}>{item.meetingTitle}</Text>
+          <MeetingCard 
+          style={styles.card}
+          >
+          <TitleCoverView>
+            <View style={styles.titleView}>
+              <Text style={styles.title}>{item.meetingTitle}</Text>
+            </View>
+            <View style={styles.coverView}>
+              <Image style={styles.cover} source={{ uri: item.cover }} resizeMode='stretch'/>
+            </View>
+          </TitleCoverView>
+          <TouchableOpacity
+            key={item.meetingId}
+            onPress={() => navigation.navigate('MeetingDetail', { meetingId: item.meetingId })}
+          >
             <View 
               style={styles.detailButton}
-              onPress={() => navigation.navigate('MeetingDetail', { meetingId: item.meetingId })}
               >
               <Text style={styles.buttonText}>상세보기</Text>
             </View>
             <View style={styles.member}>
-              <Text>{item.currentMember}/{item.maxCapacity}</Text>
+              <View>
+                <Image style={styles.memberIcon} source={require('../../../assets/image/meeting/meetingMember.png')}/>
+              </View>
+              <View>
+                <Text style={styles.memberText}>{item.currentMember}/{item.maxCapacity}</Text>
+              </View>
             </View>
+          </TouchableOpacity>
           </MeetingCard>
         )}>
         </FlatList>
@@ -107,21 +125,35 @@ const styles = StyleSheet.create({
   },
   card: {
     width: WIDTH * 0.845,
-    height: HEIGHT * 0.15,
-    borderWidth: 2,
+    height: HEIGHT * 0.25,
+    borderWidth: 1,
     borderRadius: 20
   },
+  titleView:{
+    width: WIDTH * 0.45,
+    height: HEIGHT * 0.17,
+  },
   title: {
-    margin: 10,
+    margin: 20,
     fontFamily: 'Cochin',
-    fontSize: 12,
+    fontSize: 15,
     fontWeight: 'bold',
+  },
+  coverView:{
+    width: WIDTH * 0.4,
+    height: HEIGHT * 0.17,
+  },
+  cover: {
+    width: WIDTH * 0.2,
+    height: HEIGHT * 0.15,
+    marginTop: 10,
+    marginLeft:40
   },
   detailButton: {
     width: WIDTH * 0.2,
     height: HEIGHT * 0.04,
     backgroundColor: '#728EA6',
-    marginTop: 40,
+    marginTop: 20,
     marginLeft: 10,
     borderRadius: 20
   },
@@ -131,16 +163,32 @@ const styles = StyleSheet.create({
     fontColor: '#010811'
   },
   member: {
-    left: 300,
-    bottom: 20
-  }
+    left: 270,
+    bottom: 35,
+    flexDirection: 'row',
+    width: WIDTH * 0.2,
+    height: HEIGHT * 0.1,
+  },
+  memberIcon: {
+    marginBottom: 20,
+    width: WIDTH * 0.05,
+    height: HEIGHT * 0.04,
+  },
+  memberText: {
+    fontSize: 15,
+    marginTop: 10,
+    marginLeft: 10,
+    width: WIDTH * 0.1,
+    height: HEIGHT * 0.05,
+  },
 });
 
 const SearchTextInput = styled.TextInput`
   margin: 10px;
   width: 300px;
   height: 50px;
-  border-radius: 10px;
+  border: 1px;
+  border-radius: 20px;
   padding: 10px;
   background-color: #f8dfaa;
 `;
@@ -157,6 +205,10 @@ const MeetingListView = styled.View`
 const MeetingCard= styled.View`
   background-color: white;
   margin: 5px;
+`;
+const TitleCoverView = styled.View`
+  display: flex;
+  flex-direction: row;
 `;
 
 
