@@ -41,7 +41,7 @@ function MeetingHomeScreen({ navigation }) {
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [refreshing]);
 
   return (
     <MeetingHomeView>

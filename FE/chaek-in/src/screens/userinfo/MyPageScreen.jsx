@@ -291,7 +291,7 @@ const ValueText = styled.Text`
 const SettingMenuContainer = styled.View`
   margin-top: 400px;
   width: 80%;
-  background-color: #ffffff;
+  background-color: #fcf9f0;
   border-radius: 15px;
   border: 1px solid #000;
   align-items: center;
@@ -300,15 +300,15 @@ const SettingMenuContainer = styled.View`
 
 const CancelContainer = styled.View`
   width: 80%
-  background-color: #ffffff;
+  background-color: #fcf9f0;
   border-radius: 15px;
   border: 1px solid #000;
   align-items: center;
 `;
 
 const MenuSelectContainer = styled.TouchableOpacity`
-  width: 80%;
-  background-color: #ffffff;
+  width: 100%;
+  background-color: #fcf9f0;
   align-items: center;
   margin: 5%;
 `;
@@ -322,7 +322,7 @@ const MenuOverLay = styled.TouchableOpacity`
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: rgba(102, 100, 100, 0.5);
+  // background-color: rgba(102, 100, 100, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;

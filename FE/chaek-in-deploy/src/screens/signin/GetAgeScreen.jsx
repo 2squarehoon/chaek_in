@@ -29,6 +29,8 @@ function GetAgeScreen({ navigation, route }) {
             <SelectDropdown
               data={getYears(25, 1980)}
               // defaultValue='2000'
+              buttonTextStyle={{ fontFamily: 'Light' }}
+              rowTextStyle={{ fontFamily: 'Light' }}
               onSelect={(selectedItem, index) => {
                 console.log(selectedItem);
                 goToGender(selectedItem);
@@ -60,6 +62,7 @@ const TitleContainer = styled.View`
 
 const TitleText = styled.Text`
   font-size: 35px;
+  font-family: 'Medium';
 `;
 
 const FormContainer = styled.View`

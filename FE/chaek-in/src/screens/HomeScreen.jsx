@@ -25,10 +25,12 @@ function HomeScreen({ navigation }) {
   const [bookNumber, changeBookNumber] = useState('');
   const [readingBooks, setReadingBooks] = useState([]);
   const [bookActive, setbookActive] = useState(0);
+  const [recomBookActive, setRecombookActive] = useState(0);
   const [meetingList, setMeetingList] = useState([]);
   const [randomNumber, setRandomNumber] = useState(1);
   const [meeting, setMeeting] = useState({});
   const [refreshing, setRefreshing] = useState(false);
+  const [bookList, setBookList] = useState([]);
 
   useEffect(() => {
     Axios.get(`${HOST}/api/v1/books/me?isReading=true`, {
@@ -43,7 +45,7 @@ function HomeScreen({ navigation }) {
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [refreshing]);
 
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -72,7 +74,7 @@ function HomeScreen({ navigation }) {
       });
     setRandomNumber(randomNum(1, meetingList.length + 1));
     // console.log(userId);
-  }, []);
+  }, [refreshing]);
 
   useEffect(() => {
     Axios.get(`${HOST}/api/v1/meetings/${randomNumber}`, {
@@ -90,6 +92,50 @@ function HomeScreen({ navigation }) {
       });
   }, [randomNumber]);
   // 위도, 경도 받아오기
+
+  useEffect(() => {
+    const randomRecom = Math.floor(Math.random() * 3 + 1);
+    if (randomRecom === 1) {
+      Axios.get(`${HOST}/api/data/books/cbf/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+        .then(function (response) {
+          console.log(response.data.cbfBooks.slice(0, 3));
+          setBookList(response.data.cbfBooks.slice(0, 3));
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    } else if (randomRecom === 2) {
+      Axios.get(`${HOST}/api/data/books/cf/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+        .then(function (response) {
+          console.log(response.data.cfBooks.slice(0, 3));
+          setBookList(response.data.cfBooks.slice(0, 3));
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    } else {
+      Axios.get(`${HOST}/api/data/books/bestseller`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+        .then(function (response) {
+          console.log(response.data.bestseller.slice(0, 3));
+          setBookList(response.data.bestseller.slice(0, 3));
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+  }, [accessToken, userId, refreshing]);
 
   const goToBookLog = (e) => {
     navigation.navigate('BookLogs');
@@ -110,6 +156,15 @@ function HomeScreen({ navigation }) {
       const slide = Math.ceil(nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width);
       if (slide != bookActive) {
         setbookActive(slide);
+      }
+    }
+  };
+
+  const onchangeRecom = (nativeEvent) => {
+    if (nativeEvent) {
+      const slide = Math.ceil(nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width);
+      if (slide != bookActive) {
+        setRecombookActive(slide);
       }
     }
   };
@@ -157,7 +212,7 @@ function HomeScreen({ navigation }) {
       <MeetingText>이런 독서모임 어때요?</MeetingText>
       {/* 일단 placeholder를 책 cover로 해서 모임 예시 만들고 meetingId로 detail로 연결 */}
       {/* bookTitle, cover, meetingTitle, currentMember, maxCapacity */}
-      <MyMeetingView onPress={() => navigation.navigate('MeetingDetail', { meetingId: 1 })}>
+      <MyMeetingView onPress={() => navigation.navigate('MeetingDetail', { meetingId: randomNumber })}>
         <MyMeetingContainer>
           <MyMeetingCoverImage source={{ uri: meeting.cover }} />
           <MyMeetingContents>
@@ -179,6 +234,41 @@ function HomeScreen({ navigation }) {
         </MyMeetingContainer>
       </MyMeetingView>
       <View style={styles.bottomSpace}></View>
+      <MeetingText>이런 책 어때요?</MeetingText>
+      <BookRecomItemsContainer>
+        <ScrollView
+          onScroll={({ nativeEvent }) => onchangeRecom(nativeEvent)}
+          showsHorizontalScrollIndicator={false}
+          pagingEnabled
+          horizontal
+        >
+          {bookList.map((book) => (
+            <TouchableOpacity key={book.bookId} onPress={() => goBookDetail(book.bookId)}>
+              <View style={styles.wrap}>
+                <Image source={{ uri: book.cover }} resizeMode='stretch' style={styles.cover}></Image>
+                <View style={styles.textView}>
+                  <Text style={styles.title}>{book.title}</Text>
+                  <Text style={styles.author}>{book.author}</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+            // <TouchableOpacity
+            //   key={book.bookId}
+            //   onPress={() => goBookDetail(book.bookId)}>
+            //     <BookItem item={book} />
+            // </TouchableOpacity>
+          ))}
+        </ScrollView>
+        <View style={styles.wrapDot}>
+          {bookList.map((book, index) => (
+            <Text key={book.bookId} style={recomBookActive == index ? styles.dotActive : styles.dot}>
+              ●
+            </Text>
+          ))}
+        </View>
+      </BookRecomItemsContainer>
+      <View style={styles.bottomSpace}></View>
+      <BlankContainer></BlankContainer>
     </HomeScrollView>
   );
 }
@@ -192,7 +282,7 @@ const styles = StyleSheet.create({
   },
   wrap: {
     width: WIDTH * 0.845,
-    height: HEIGHT * 0.21,
+    height: HEIGHT * 0.2,
     flexDirection: 'row',
   },
   wrapDot: {
@@ -214,6 +304,7 @@ const styles = StyleSheet.create({
     height: HEIGHT * 0.15,
     marginLeft: 15,
     marginRight: 15,
+    marginTop: 15,
   },
   textView: {
     width: WIDTH * 0.5,
@@ -221,15 +312,15 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 10,
-    fontFamily: 'Cochin',
+    fontFamily: 'Medium',
     fontSize: 15,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
   },
   author: {
     marginTop: 10,
-    fontFamily: 'Cochin',
+    fontFamily: 'Light',
     fontSize: 13,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
   },
   bottomSpace: {
     left: 45,
@@ -255,15 +346,24 @@ const ChangeInput = styled.TextInput`
 `;
 
 const TitleText = styled.Text`
-  font-family: Light;
+  font-family: Medium;
   font-size: 18px;
   margin-left: 8%;
   margin-top: 5%;
-  margin-bottom: 5%;
+  // margin-bottom: 5%;
 `;
 
 const BookItemsContainer = styled.View`
   margin-top: 5%;
+  margin-left: 7.5%;
+  margin-right: 7.5%;
+  display: flex;
+  border: 1px solid #000;
+  border-radius: 20px;
+  background-color: white;
+`;
+
+const BookRecomItemsContainer = styled.View`
   margin-left: 7.5%;
   margin-right: 7.5%;
   display: flex;
@@ -303,13 +403,13 @@ const MyMeetingCoverImage = styled.Image`
 const MyMeetingTitleText = styled.Text`
   font-family: 'Medium';
   font-size: 12px;
-  margin-right: 3%;
+  margin-right: 5%;
 `;
 
 const MyMeetingBookTitleText = styled.Text`
   font-family: 'Medium';
   font-size: 12px;
-  margin-right: 10%;
+  margin-right: 11%;
 `;
 
 const MyMeetingContentsText = styled.Text`
@@ -328,6 +428,10 @@ const MyMeetingView = styled.TouchableOpacity`
   border: 1px solid #000;
   border-radius: 20px;
   background-color: white;
+`;
+
+const BlankContainer = styled.View`
+  height: 150px;
 `;
 
 export default HomeScreen;
