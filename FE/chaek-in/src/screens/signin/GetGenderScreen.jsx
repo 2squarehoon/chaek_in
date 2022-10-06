@@ -28,6 +28,8 @@ function GetGenderScreen({ navigation, route }) {
             <SelectDropdown
               data={['남성', '여성']}
               defaultButtonText='성별을 선택해주세요'
+              buttonTextStyle={{ fontFamily: 'Light' }}
+              rowTextStyle={{ fontFamily: 'Light' }}
               onSelect={(selectedItem, index) => {
                 if (selectedItem == '남성') {
                   goToRating('MALE');
@@ -61,6 +63,7 @@ const TitleContainer = styled.View`
 
 const TitleText = styled.Text`
   font-size: 35px;
+  font-family: 'Medium';
 `;
 
 const FormContainer = styled.View`

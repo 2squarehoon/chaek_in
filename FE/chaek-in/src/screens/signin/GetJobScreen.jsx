@@ -47,6 +47,7 @@ const TitleContainer = styled.View`
 
 const TitleText = styled.Text`
   font-size: 35px;
+  font-family: 'Medium';
 `;
 
 const FormContainer = styled.View`
@@ -66,6 +67,7 @@ const UserinfoForm = styled.TextInput`
   border-bottom-color: #000000;
   border-bottom-width: 1px;
   font-size: 20px;
+  font-family: 'Light';
 `;
 
 export default GetJobScreen;
