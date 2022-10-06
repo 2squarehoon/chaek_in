@@ -9,24 +9,64 @@ import MeetingChallengeScreen from '../screens/meeting/MeetingChallengeScreen';
 import MeetingCreateScreen from '../screens/meeting/MeetingCreateScreen';
 import MeetingDetailScreen from '../screens/meeting/MeetingDetailScreen';
 import { useSelector } from 'react-redux';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const MeetingStack = createStackNavigator();
 
-function MeetingNavigation() {
+function MeetingNavigation({ navigation }) {
   const { nickname } = useSelector((state) => state.main);
 
   return (
-    <MeetingStack.Navigator initialRouteName='MeetingHome'>
+    <MeetingStack.Navigator
+      initialRouteName='MeetingHome'
+      screenOptions={{
+        headerTitleAlign: 'center',
+        headerTintColor: '#010811',
+        headerStyle: {
+          backgroundColor: '#FCF9F0',
+          shadowColor: '#FCF9F0',
+          elevation: 0,
+        },
+        headerTitleStyle: {
+          fontFamily: 'Medium',
+        },
+      }}
+    >
       <MeetingStack.Screen
         name='MeetingCreate'
         component={MeetingCreateScreen}
-        options={{ headerShown: false }}
+        options={{
+          title: '모임 시작하기',
+        }}
       />
       <MeetingStack.Screen
         name='MeetingHome'
         component={MeetingHomeScreen}
         options={{
-          title: '홈',
+          title: '책크人',
+          headerStyle: {
+            backgroundColor: '#FCF9F0',
+          },
+          headerTitleStyle: {
+            fontFamily: 'Medium',
+            fontSize: 16,
+          },
+          headerRight: () => (
+            <FontAwesome5
+              name='user-circle'
+              size={25}
+              style={{ right: 20 }}
+              color='#728EA6'
+              onPress={() => navigation.navigate('MyPage')}
+            />
+          ),
+        }}
+      ></MeetingStack.Screen>
+      <MeetingStack.Screen
+        name='MeetingAll'
+        component={MeetingAllScreen}
+        options={{
+          title: '모임 전체 보기',
           headerStyle: {
             backgroundColor: '#FCF9F0',
           },
@@ -36,7 +76,6 @@ function MeetingNavigation() {
           },
         }}
       ></MeetingStack.Screen>
-      <MeetingStack.Screen name='MeetingAll' component={MeetingAllScreen}></MeetingStack.Screen>
       <MeetingStack.Screen
         name='MeetingMyBook'
         component={MeetingMyBookScreen}
@@ -96,7 +135,16 @@ function MeetingNavigation() {
       <MeetingStack.Screen
         name='MeetingDetail'
         component={MeetingDetailScreen}
-        options={{ headerShown: false }}
+        options={{
+          title: '모임 상세보기',
+          headerStyle: {
+            backgroundColor: '#FCF9F0',
+          },
+          headerTitleStyle: {
+            fontFamily: 'Medium',
+            fontSize: 16,
+          },
+        }}
       ></MeetingStack.Screen>
     </MeetingStack.Navigator>
   );
