@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Axios from 'axios';
-import { View } from 'react-native';
+import { View, RefreshControl } from 'react-native';
 import { HOST } from '@env';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components/native';
@@ -8,6 +8,7 @@ import styled from 'styled-components/native';
 function MeetingHomeScreen({ navigation }) {
   const { accessToken, nickname, email } = useSelector((state) => state.main);
   const [myMeetingList, setMyMeetingList] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const goToMeetingAll = (e) => {
     navigation.navigate('MeetingAll');
@@ -15,6 +16,16 @@ function MeetingHomeScreen({ navigation }) {
   const goToMeetingCreate = (e) => {
     navigation.navigate('MeetingCreate');
   };
+
+  // refresh control
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
 
   // meetings/me에 내가 속한 모임 조회
   useEffect(() => {
@@ -34,7 +45,7 @@ function MeetingHomeScreen({ navigation }) {
 
   return (
     <MeetingHomeView>
-      <ScrollViewContainer>
+      <ScrollViewContainer refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         <MeetingCreateButton onPress={goToMeetingCreate}>
           <MeetingCreateText>모임 시작하기</MeetingCreateText>
         </MeetingCreateButton>
@@ -154,7 +165,7 @@ const ScrollViewContainer = styled.ScrollView`
 `;
 
 const RecomView = styled.View`
-  flex: 5;
+  flex: 7;
 `;
 
 const RecomHalfView = styled.View`
@@ -239,12 +250,11 @@ const MyMeetingCoverImage = styled.Image`
 // `;
 
 const MyMeetingView = styled.View`
-  flex; 1;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   width: 95%;
-  height: 250px;
-  
+  margin-bottom: 20%;
 `;
 
 const MyMeetingTitleText = styled.Text`

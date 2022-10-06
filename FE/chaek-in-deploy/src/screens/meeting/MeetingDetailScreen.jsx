@@ -25,6 +25,7 @@ function MeetingDetailScreen({ route, navigation }) {
   const [replyComment, setReplyComment] = useState('');
   const [isReplyOpened, setIsReplyOpened] = useState(0);
   const [reload, setReload] = useState(false);
+  const [meetingStatus, setMeetingStatus] = useState('');
 
   const isFocused = useIsFocused();
   // MeetingDetail 가져오기
@@ -35,6 +36,7 @@ function MeetingDetailScreen({ route, navigation }) {
       },
     })
       .then(function (response) {
+        console.log(response.data);
         setBookTitle(response.data.bookTitle);
         setCover(response.data.cover);
         setCreatedAt(response.data.createdAt);
@@ -43,11 +45,12 @@ function MeetingDetailScreen({ route, navigation }) {
         setIsMine(response.data.isMine);
         // 만약 내가 속한 모임이면 isParticipated를 true로
         if (response.data.isMine) {
-          setIsParticipated(false);
+          setIsParticipated(true);
         }
         setMaxCapacity(response.data.maxCapacity);
         setMeetingId(response.data.meetingId);
         setMeetingTitle(response.data.meetingTitle);
+        setMeetingStatus(response.data.meetingStatus);
       })
       .catch(function (error) {
         console.log(error);
@@ -146,9 +149,9 @@ function MeetingDetailScreen({ route, navigation }) {
 
   return (
     <MeetingContainer>
-      <IconView onPress={deleteMeeting}>
+      {/* <IconView onPress={deleteMeeting}>
         <EvilIcons name='trash' size={30} color='black' />
-      </IconView>
+      </IconView> */}
       <MeetingHeader>
         <MeetingTitle>{meetingTitle}</MeetingTitle>
         {/* 이미 참여한 모임이면 버튼 보여주지 않음 */}
@@ -156,7 +159,7 @@ function MeetingDetailScreen({ route, navigation }) {
           <CurrentMemberText>
             {currentMember} / {maxCapacity}명
           </CurrentMemberText>
-          {isParticipated ? (
+          {!isParticipated && meetingStatus === 'NONE' ? (
             <EnterButton
               onPress={() => {
                 participateMeeting();
@@ -389,7 +392,7 @@ const DescriptionText = styled.Text`
 `;
 
 const FakeView = styled.View`
-  height: 100px;
+  height: 150px;
 `;
 
 const IconView = styled.TouchableOpacity`
