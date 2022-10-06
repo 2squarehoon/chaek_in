@@ -238,7 +238,7 @@ function BookDetailScreen({ route, navigation }) {
           <AuthorText>
             <AntDesign name='star' size={20} color='#ffce31' /> {score}
           </AuthorText>
-          <AuthorText>지금 이 책을 {peopleCount}명이 읽고 있어요!</AuthorText>
+          <CountText>지금 이 책을 {peopleCount}명이 읽고 있어요!</CountText>
           <BorderLineText>------------------ 책 소개 ------------------</BorderLineText>
           <AuthorText>{description}</AuthorText>
           <BorderLineText>------------------ 책 리뷰 ------------------</BorderLineText>
@@ -351,6 +351,13 @@ const AuthorText = styled.Text`
   font-size: 15px;
   margin: 0% 10% 3%;
   font-family: Light;
+`;
+
+const CountText = styled.Text`
+  font-size: 15px;
+  margin: 0% 10% 3%;
+  font-family: Medium;
+  color: #a8ca47;
 `;
 
 const BorderLineText = styled.Text`

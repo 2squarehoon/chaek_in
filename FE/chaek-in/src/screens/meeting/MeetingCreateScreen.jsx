@@ -66,22 +66,29 @@ function MeetingCreateScreen({ navigation }) {
         }}
       >
         <ScrollView>
+          {/* bookList가 있으면 표시하고, 없으면 '결과가 없습니다' 표시 */}
           <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              {bookList.map((book) => (
-                <ModalPressable
-                  key={book.bookId}
-                  onPress={() => {
-                    setBookId(book.bookId);
-                    setBookTitle(book.title);
-                    setModalVisible(!modalVisible);
-                  }}
-                >
-                  <BookImage source={{ uri: book.cover }} />
-                  <ModalText>{book.title}</ModalText>
-                </ModalPressable>
-              ))}
-            </View>
+            {bookList.length > 0 ? (
+              <View style={styles.modalView}>
+                {bookList.map((book) => (
+                  <ModalPressable
+                    key={book.bookId}
+                    onPress={() => {
+                      setBookId(book.bookId);
+                      setBookTitle(book.title);
+                      setModalVisible(!modalVisible);
+                    }}
+                  >
+                    <BookImage source={{ uri: book.cover }} />
+                    <ModalText>{book.title}</ModalText>
+                  </ModalPressable>
+                ))}
+              </View>
+            ) : (
+              <View style={styles.modalView}>
+                <ModalText>결과가 없습니다</ModalText>
+              </View>
+            )}
           </View>
         </ScrollView>
       </Modal>
@@ -225,30 +232,28 @@ const ModalPressable = styled.Pressable`
   flex: 1;
   flex-direction: row;
   width: 100%;
-  height: 60px;
+  height: 90px;
   background-color: #f8dfaa;
   border-radius: 10px;
   border: 1px solid black;
   margin: 5px 0px;
   padding: 10px;
-  font-size: 14px;
-  font-family: Medium;
   justify-content: center;
   align-items: center;
 `;
 
 const ModalText = styled.Text`
-flex: 9
+  flex: 8;
   font-size: 14px;
   font-family: Medium;
   color: black;
 `;
 
 const BookImage = styled.Image`
-  flex: 1;
+  flex: 2;
   width: 40px;
-  height: 40px;
-  margin: 10px;
+  height: 50px;
+  margin: 0 10px;
   resize-mode: contain;
 `;
 
