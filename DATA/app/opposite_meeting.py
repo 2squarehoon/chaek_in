@@ -36,22 +36,32 @@ def opposite_meeting(memberId, booklog, review, meeting, df, rd):
     key = "user:opp:" + str(memberId)
     json_value = result.to_json(orient='records', force_ascii=False, indent=4)
     rd.set(key, json_value)
-    # meeting_reid = meeting.reset_index()
-    # revese_sim_meeting = pd.DataFrame(columns = ['book_id', 'bookTitle', 'cover', 
-    #                                             'currentMember']) 
-    # meeting_reid = meeting.reset_index()
-    # for bookid in list(result['id']):
-    #     if bookid in list(meeting_reid['book_id']):
+    meeting_reid = meeting.reset_index()
+    revese_sim_meeting = pd.DataFrame(columns = ['book_id', 'bookTitle', 'cover', 
+                                                'currentMember']) 
+    meeting_reid = meeting.reset_index()
+    for bookid in list(result['id']):
+        if bookid in list(meeting_reid['book_id']):
 
-    #         revese_sim_meeting = pd.concat([revese_sim_meeting , meeting_reid[meeting_reid['book_id'] == bookid]])
-    # print(revese_sim_meeting)
-    # revese_sim_meeting.rename(columns = {'created_at':'createdAt','updated_at':'updatedAt'},inplace=True)
-    # revese_sim_meeting['createdAt'] = pd.to_datetime(revese_sim_meeting['createdAt'], errors='coerce')
-    # revese_sim_meeting['createdAt'] = revese_sim_meeting['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
-    # revese_sim_meeting['id'] = revese_sim_meeting['id'].astype('int')
-    # revese_sim_meeting['capacity'] = revese_sim_meeting['capacity'].astype('int')
-    # revese_sim_meeting.rename(columns = {'id':'meetingId'},inplace=True)
-
-    # response = dict()
-    # response['oppositeMeetings'] = json.loads(revese_sim_meeting.to_json(orient='records', force_ascii=False, indent=4))
-    # return response
+            revese_sim_meeting = pd.concat([revese_sim_meeting , meeting_reid[meeting_reid['book_id'] == bookid]])
+    print(revese_sim_meeting)
+    revese_sim_meeting.rename(columns = {'created_at':'createdAt','updated_at':'updatedAt'},inplace=True)
+    revese_sim_meeting['createdAt'] = pd.to_datetime(revese_sim_meeting['createdAt'], errors='coerce')
+    revese_sim_meeting['createdAt'] = revese_sim_meeting['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
+    revese_sim_meeting['id'] = revese_sim_meeting['id'].astype('int')
+    revese_sim_meeting['capacity'] = revese_sim_meeting['capacity'].astype('int')
+    revese_sim_meeting.rename(columns = {'id':'meetingId'},inplace=True)
+    bookTitle = []
+    bookCover = []
+    crrr_member = []
+    for i in list(revese_sim_meeting['book_id']):
+        bookCover.append(book[book['id'] == i]['cover'].iloc[0])
+        bookTitle.append(book[book['id'] == i]['title'].iloc[0])
+        crrr_member.append(len(revese_sim_meeting[revese_sim_meeting['book_id'] == i]['meetingMembers'].iloc[0]))
+        
+    revese_sim_meeting['cover'] = bookCover
+    revese_sim_meeting['bookTitle'] = bookTitle
+    revese_sim_meeting['currentMember'] = crrr_member
+    response = dict()
+    response['oppositeMeetings'] = json.loads(revese_sim_meeting.to_json(orient='records', force_ascii=False, indent=4))
+    return response
