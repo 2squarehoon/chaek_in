@@ -82,7 +82,7 @@ def get_recommended(memberId: int):
     global df, booklog, review, cbf_result
     if len(booklog[booklog['member_id'] == memberId]) == 0:
         print("여기?")
-        return bestseller.bestseller()
+        return bestseller.bestseller('bestseller')
     else:
         start = time.time() # 실행시간 계산 코드
         
