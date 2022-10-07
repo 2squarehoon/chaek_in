@@ -18,8 +18,8 @@ function MeetingChallengeScreen({ navigation }) {
       },
     })
       .then(function (response) {
-        setMyMeetingList(response.data.willMeetings);
-        console.log(response.data.willMeetings);
+        setMyMeetingList(response.data.willMeeting);
+        console.log(response.data.willMeeting);
       })
       .catch(function (error) {
         console.log(error);
@@ -70,13 +70,13 @@ function MeetingChallengeScreen({ navigation }) {
                   <MyMeetingCoverImage source={{ uri: meeting.cover }} />
                   <MyMeetingContentsContainer>
                     <MyMeetingTitleText numberOfLines={2} elipseMode='tail'>
-                      {meeting.title}
+                      {meeting.meetingTitle}
                     </MyMeetingTitleText>
                     <MyMeetingText numberOfLines={2} elipseMode='tail'>
                       {meeting.bookTitle}
                     </MyMeetingText>
                     <MyMeetingMembersText>
-                      {meeting.currentMember} / {meeting.capacity}
+                      {meeting.currentMember} / {meeting.maxCapacity}
                     </MyMeetingMembersText>
                   </MyMeetingContentsContainer>
                 </MyMeetingItem>

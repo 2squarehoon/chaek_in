@@ -82,7 +82,7 @@ def get_recommended(memberId: int):
     global df, booklog, review, cbf_result
     if len(booklog[booklog['member_id'] == memberId]) == 0:
         print("여기?")
-        return bestseller.bestseller('bestseller')
+        return bestseller.bestseller()
     else:
         start = time.time() # 실행시간 계산 코드
         
@@ -205,7 +205,6 @@ def get_recommend_will_meeting(memberId: int):
         willmeetings['cover'] = bookCover
         willmeetings['bookTitle'] = bookTitle
         willmeetings['currentMember'] = crrr_member
-        willmeetings = willmeetings[willmeetings['meeting_status'] == 'NONE']
         response = dict()
         response['willMeetings'] = json.loads(willmeetings.to_json(orient='records', force_ascii=False, indent=4))   
         return response
@@ -432,28 +431,39 @@ def get_opposite_book_meeting(memberId: int):
             response['oppositeMeetings'] = json.loads(oppositeMeetings.to_json(orient='records', force_ascii=False, indent=4))
             return response
         else:
-            revese_sim_meeting.rename(columns = {'created_at':'createdAt','updated_at':'updatedAt'},inplace=True)
-            revese_sim_meeting['createdAt'] = pd.to_datetime(revese_sim_meeting['createdAt'], errors='coerce')
-            revese_sim_meeting['createdAt'] = revese_sim_meeting['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
-            revese_sim_meeting['id'] = revese_sim_meeting['id'].astype('int')
-            revese_sim_meeting['capacity'] = revese_sim_meeting['capacity'].astype('int')
-            revese_sim_meeting.rename(columns = {'id':'meetingId'},inplace=True)
-            bookTitle = []
-            bookCover = []
-            crrr_member = []
-            for i in list(revese_sim_meeting['book_id']):
-                bookCover.append(book[book['id'] == i]['cover'].iloc[0])
-                bookTitle.append(book[book['id'] == i]['title'].iloc[0])
-                crrr_member.append(len(revese_sim_meeting[revese_sim_meeting['book_id'] == i]['meetingMembers'].iloc[0]))
-                
-            revese_sim_meeting['cover'] = bookCover
-            revese_sim_meeting['bookTitle'] = bookTitle
-            revese_sim_meeting['currentMember'] = crrr_member
-            response = dict()
-            response['oppositeMeetings'] = json.loads(revese_sim_meeting.to_json(orient='records', force_ascii=False, indent=4))
-            return response
+            response['oppositeMeetings'] = random.sample(dict_list, 3)
+        end = time.time() # 실행 끝나는 시간 계산
+        print(f"{end - start:.5f} sec")
+        return response
     else:
+        oppositeMeetings = pd.DataFrame(columns = ['book_id', 'bookTitle', 'cover', 
+                                                'currentMember']) 
+        meeting_reid = meeting_members.reset_index()
+        # 사용자가 받은 추천 리스트에 평점 높은 순으로 추천 모임 탐색 후 데이터프레임에 저장
+        for bookid in list(result['id']):
+            if bookid in list(meeting_reid ['book_id']):
+                oppositeMeetings = pd.concat([oppositeMeetings, meeting_reid[meeting_reid['book_id'] == bookid]])
+        oppositeMeetings.rename(columns = {'created_at':'createdAt','updated_at':'updatedAt'},inplace=True)
+        oppositeMeetings['createdAt'] = pd.to_datetime(oppositeMeetings['createdAt'], errors='coerce')
+        oppositeMeetings['createdAt'] = oppositeMeetings['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
+        oppositeMeetings['id'] = oppositeMeetings['id'].astype('int')
+        oppositeMeetings['capacity'] = oppositeMeetings['capacity'].astype('int')
+        oppositeMeetings.rename(columns = {'id':'meetingId'},inplace=True)
 
+        bookTitle = []
+        bookCover = []
+        crrr_member = []
+        for i in list(oppositeMeetings['book_id']):
+            bookCover.append(book[book['id'] == i]['cover'].iloc[0])
+            bookTitle.append(book[book['id'] == i]['title'].iloc[0])
+            crrr_member.append(len(oppositeMeetings[oppositeMeetings['book_id'] == i]['meetingMembers'].iloc[0]))
+            
+        oppositeMeetings['cover'] = bookCover
+        oppositeMeetings['bookTitle'] = bookTitle
+        oppositeMeetings['currentMember'] = crrr_member
+        response = dict()
+        response['willMeetings'] = json.loads(oppositeMeetings.to_json(orient='records', force_ascii=False, indent=4))   
+        return response
         return opposite_meeting.opposite_meeting(memberId, booklog, review, meeting_members, df, rd)
 
 

@@ -19,7 +19,7 @@ function MeetingMyBookScreen({ navigation }) {
       },
     })
       .then(function (response) {
-        console.log(response.data);
+        console.log(response);
         setMyMeetingList(response.data.meetings);
       })
       .catch(function (error) {

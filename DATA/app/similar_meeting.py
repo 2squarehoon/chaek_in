@@ -39,43 +39,16 @@ def get_member_sim_meeting(memberId, booklog, review, meeting):
             member_sim.append(0)
 
     meeting['member_sim'] = member_sim
-
-    trigger = False
-    for i in meeting['member_sim'].values:
-        if i > 0:
-            trigger = not(trigger) 
-            break
-    print(1)
-    if trigger:
-        pritn(2)
-        member_sim_meeting = meeting.sort_values('member_sim', ascending=False)
-        member_sim_meeting = member_sim_meeting[member_sim_meeting['member_sim'] > 0]
-        member_sim_meeting.rename(columns = {'created_at':'createdAt','updated_at':'updatedAt'},inplace=True)
-        member_sim_meeting['createdAt'] = pd.to_datetime(member_sim_meeting['createdAt'], errors='coerce')
-        member_sim_meeting['createdAt'] = member_sim_meeting['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
-        crrr_member = []
-        for i in list(member_sim_meeting['book_id']):
-            crrr_member.append(len(member_sim_meeting[member_sim_meeting['book_id'] == i]['meetingMembers'].iloc[0]))
-        member_sim_meeting['currentMember'] = crrr_member
-        response = dict()
-        response['memberSimMeeting'] = json.loads(member_sim_meeting.to_json(orient='records', force_ascii=False, indent=4))    
-        
-        return response
-    else:
-        print(3)
-        meeting_reid = meeting.reset_index()
-        member_sim_meeting = pd.DataFrame(columns = ['book_id', 'bookTitle', 'cover', 
-                                                    'currentMember'])
-        member_sim_meeting = pd.concat([member_sim_meeting, meeting_reid])
-        member_sim_meeting = meeting_reid.sort_values('member_sim', ascending=False)
-        member_sim_meeting.rename(columns = {'created_at':'createdAt','updated_at':'updatedAt'},inplace=True)
-        member_sim_meeting['createdAt'] = pd.to_datetime(member_sim_meeting['createdAt'], errors='coerce')
-        member_sim_meeting['createdAt'] = member_sim_meeting['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
-        crrr_member = []
-        for i in list(member_sim_meeting['book_id']):
-            crrr_member.append(len(member_sim_meeting[member_sim_meeting['book_id'] == i]['meetingMembers'].iloc[0]))
-        member_sim_meeting['currentMember'] = crrr_member
-        response = dict()
-        response['memberSimMeeting'] = json.loads(member_sim_meeting.to_json(orient='records', force_ascii=False, indent=4))    
-        
-        return response
+    member_sim_meeting = meeting.sort_values('member_sim', ascending=False)
+    member_sim_meeting = member_sim_meeting[member_sim_meeting['member_sim'] > 0]
+    member_sim_meeting.rename(columns = {'created_at':'createdAt','updated_at':'updatedAt'},inplace=True)
+    member_sim_meeting['createdAt'] = pd.to_datetime(member_sim_meeting['createdAt'], errors='coerce')
+    member_sim_meeting['createdAt'] = member_sim_meeting['createdAt'].dt.strftime('%Y.%m.%d %H:%M')
+    crrr_member = []
+    for i in list(member_sim_meeting['book_id']):
+        crrr_member.append(len(member_sim_meeting[member_sim_meeting['book_id'] == i]['meetingMembers'].iloc[0]))
+    member_sim_meeting['currentMember'] = crrr_member
+    response = dict()
+    response['memberSimMeeting'] = json.loads(member_sim_meeting.to_json(orient='records', force_ascii=False, indent=4))    
+    
+    return response

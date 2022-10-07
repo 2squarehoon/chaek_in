@@ -92,8 +92,9 @@ function MeetingAllScreen({ navigation }) {
         </TouchableOpacity>
         {/* 모임 출력 */}
         {search.length !== 0 ? (
-          <MeetingListView>
-            {/* <FlatList
+          <ScrollView>
+            <MeetingListView>
+              {/* <FlatList
                 data={meeting}
                 onEndReached={fetchMore}
                 renderItem={({ item }) => {
@@ -129,39 +130,31 @@ function MeetingAllScreen({ navigation }) {
                   );
                 }}
               ></FlatList> */}
-            <MyMeetingView>
-              {meeting.map((meeting, index) => (
-                <MyMeetingSearchItem
-                  key={index}
-                  // key={meeting.meetingId}
-                  onPress={() => navigation.navigate('MeetingDetail', { meetingId: meeting.meetingId })}
-                >
-                  <MyMeetingCoverImage source={{ uri: meeting.cover }} />
-                  <MyMeetingContentsContainer>
-                    <MyMeetingTitleText numberOfLines={2} elipseMode='tail'>
-                      {meeting.meetingTitle}
-                    </MyMeetingTitleText>
-                    <MyMeetingText numberOfLines={2} elipseMode='tail'>
-                      {meeting.bookTitle}
-                    </MyMeetingText>
-                    {meeting.meetingStatus === 'COMPLETE' ? (
-                      <View style={{ flexDirection: 'row' }}>
-                        <MyMeetingStatusText>모임 완료</MyMeetingStatusText>
-                        <MyMeetingMembersText>
-                          {meeting.currentMember} / {meeting.maxCapacity}
-                        </MyMeetingMembersText>
-                      </View>
-                    ) : (
+              <MyMeetingView>
+                {meeting.map((meeting, index) => (
+                  <MyMeetingSearchItem
+                    key={index}
+                    // key={meeting.meetingId}
+                    onPress={() => navigation.navigate('MeetingDetail', { meetingId: meeting.meetingId })}
+                  >
+                    <MyMeetingCoverImage source={{ uri: meeting.cover }} />
+                    <MyMeetingContentsContainer>
+                      <MyMeetingTitleText numberOfLines={2} elipseMode='tail'>
+                        {meeting.meetingTitle}
+                      </MyMeetingTitleText>
+                      <MyMeetingText numberOfLines={2} elipseMode='tail'>
+                        {meeting.bookTitle}
+                      </MyMeetingText>
                       <MyMeetingMembersText>
                         {meeting.currentMember} / {meeting.maxCapacity}
                       </MyMeetingMembersText>
-                    )}
-                  </MyMeetingContentsContainer>
-                </MyMeetingSearchItem>
-              ))}
-            </MyMeetingView>
-            <BlankContainer></BlankContainer>
-          </MeetingListView>
+                    </MyMeetingContentsContainer>
+                  </MyMeetingSearchItem>
+                ))}
+              </MyMeetingView>
+              <BlankContainer></BlankContainer>
+            </MeetingListView>
+          </ScrollView>
         ) : (
           <MeetingListView>
             {/* <FlatList */}
@@ -332,7 +325,7 @@ const MeetingText = styled.Text`
   font-size: 10px;
 `;
 
-const MeetingListView = styled.lView`
+const MeetingListView = styled.ScrollView`
   background-color: #fcf9f0;
 `;
 
@@ -383,12 +376,6 @@ const MyMeetingMembersText = styled.Text`
   font-size: 10px;
   font-family: 'Light';
   margin-left: auto;
-`;
-
-const MyMeetingStatusText = styled.Text`
-  font-size: 10px;
-  font-family: 'Light';
-  margin-right: auto;
 `;
 
 const MyMeetingItem = styled.TouchableOpacity`

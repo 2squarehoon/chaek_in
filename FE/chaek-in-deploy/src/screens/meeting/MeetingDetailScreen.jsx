@@ -45,7 +45,6 @@ function MeetingDetailScreen({ route, navigation }) {
         setCurrentMember(response.data.currentMember);
         setDescription(response.data.description);
         setIsMine(response.data.isMine);
-        setIsParticipated(response.data.isParticipated);
         // 만약 내가 속한 모임이면 isParticipated를 true로
         if (response.data.isMine) {
           setIsParticipated(true);
@@ -72,7 +71,6 @@ function MeetingDetailScreen({ route, navigation }) {
     )
       .then(function (response) {
         setIsParticipated(true);
-        setReload(!reload);
       })
       .catch(function (error) {
         console.log(error);
@@ -154,15 +152,16 @@ function MeetingDetailScreen({ route, navigation }) {
   return (
     <MeetingContainer>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        {isMine && (
-          <IconView onPress={deleteMeeting}>
-            <EvilIcons name='trash' size={30} color='black' />
-          </IconView>
-        )}
+        {/* <IconView onPress={deleteMeeting}>
+        <EvilIcons name='trash' size={30} color='black' />
+      </IconView> */}
         <MeetingHeader>
           <MeetingTitle>{meetingTitle}</MeetingTitle>
           {/* 이미 참여한 모임이면 버튼 보여주지 않음 */}
           <MeetingHeaderRight>
+            <CurrentMemberText>
+              {currentMember} / {maxCapacity}명
+            </CurrentMemberText>
             {!isParticipated && meetingStatus === 'NONE' ? (
               <EnterButton
                 onPress={() => {
@@ -171,19 +170,15 @@ function MeetingDetailScreen({ route, navigation }) {
               >
                 <EnterButtonText>참가하기</EnterButtonText>
               </EnterButton>
-            ) : (
-              meetingStatus === 'COMPLETE' && <CurrentMemberText>모임 완료</CurrentMemberText>
-            )}
-            <CurrentMemberText>
-              {currentMember} / {maxCapacity}명
-            </CurrentMemberText>
+            ) : null}
           </MeetingHeaderRight>
         </MeetingHeader>
         <MeetingInfo>
           <MeetingInfoTitle>모임 소개</MeetingInfoTitle>
-          {/* <CreatedText>
+          <CreatedText>
+            {/* 시간 부분은 잘라내기 */}
             since {createdAt.split(' ')[0]}
-          </CreatedText> */}
+          </CreatedText>
           <DescriptionText>{description}</DescriptionText>
         </MeetingInfo>
         <BookInfo>
@@ -324,7 +319,6 @@ const MeetingHeaderRight = styled.View`
   flex-direction: column;
   align-items: flex-end;
   margin-top: 0px;
-  margin-left: 3%;
 `;
 
 const MeetingInfo = styled.View`
@@ -347,7 +341,7 @@ const MeetingTitle = styled.Text`
 `;
 
 const EnterButton = styled.TouchableOpacity`
-  width: 70px;
+  width: 80px;
   height: 30px;
   background-color: #a8ca47;
   border: 1px solid #000;
@@ -365,7 +359,6 @@ const EnterButtonText = styled.Text`
 const CurrentMemberText = styled.Text`
   font-size: 14px;
   font-family: Light;
-  margin-top: 5%;
 `;
 
 const MeetingInfoTitle = styled.Text`
